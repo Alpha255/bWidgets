@@ -52,50 +52,11 @@ set(GPU_INC
 	../extern/glm
 )
 
-if (VCPKG_TOOLCHAIN)
-	message(STATUS "Using vcpkg for library dependencies")
-
-	set(FREETYPE_INCLUDE_DIRS "${FREETYPE_INCLUDE_DIR_freetype2} ${FREETYPE_INCLUDE_DIR_ft2build}")
-elseif (WIN32)
-	if(NOT DEFINED LIBDIR)
-		set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib)
-	endif()
-
-	if(NOT EXISTS "${LIBDIR}/")
-		message(FATAL_ERROR "Windows without vcpkg requires pre-compiled libs at: '${LIBDIR}'")
-	endif()
-endif()
-
-if(LIBDIR)
-	message(STATUS "Pre-compiled libs expected at: '${LIBDIR}'")
-
-	set(ZLIB_INCLUDE_DIR ${LIBDIR}/zlib/include)
-	set(ZLIB_LIBRARY ${LIBDIR}/zlib/lib/libz_st.lib)
-
-	set(PNG_PNG_INCLUDE_DIR ${LIBDIR}/png/include)
-	set(PNG_LIBRARY ${LIBDIR}/png/lib/libpng.lib)
-	set(PNG "${LIBDIR}/png")
-	set(PNG_INCLUDE_DIR "${PNG}/include")
-	set(PNG_LIBPATH ${PNG}/lib)
-
-	set(FREETYPE ${LIBDIR}/freetype)
-	set(FREETYPE_INCLUDE_DIRS ${LIBDIR}/freetype/include/freetype2)
-	set(FREETYPE_LIBRARY ${LIBDIR}/freetype/lib/freetype2ST.lib)
-
-	set(PTHREADS_INCLUDE_DIR ${LIBDIR}/pthreads/include)
-	set(PTHREADS_LIBRARIES ${LIBDIR}/pthreads/lib/pthreadVC3.lib)
-endif()
-
 if (UNIX)
   set(OpenGL_GL_PREFERENCE GLVND)
 endif()
 
-find_package(PNG)
-find_package(Freetype REQUIRED)
 find_package(OpenGL REQUIRED)
-if (VCPKG_TOOLCHAIN AND WIN32)
-  find_package(PThreads REQUIRED)
-endif()
 
 list(APPEND LIB ${OPENGL_LIBRARIES})
 
@@ -105,6 +66,15 @@ add_executable(bWidgetsDemo)
 target_sources(bWidgetsDemo PRIVATE ${SRC})
 include_directories(${INC})
 target_link_libraries(bWidgetsDemo LINK_PRIVATE ${LIB})
+
+if(WIN32)
+    add_custom_command(
+        TARGET bWidgetsDemo POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:zlib>
+                $<TARGET_FILE_DIR:bWidgetsDemo>
+    )
+endif()
 
 # --- Resource files ---
 

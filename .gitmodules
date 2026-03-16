@@ -1,3 +1,15 @@
 [submodule "docs/resources/doxygen-awesome"]
 	path = docs/resources/doxygen-awesome
 	url = https://github.com/jothepro/doxygen-awesome-css.git
+[submodule "Submodules/pthreads"]
+	path = Submodules/pthreads
+	url = https://github.com/coapp-packages/pthreads.git
+[submodule "Submodules/freetype"]
+	path = Submodules/freetype
+	url = https://github.com/freetype/freetype.git
+[submodule "Submodules/zlib"]
+	path = Submodules/zlib
+	url = https://github.com/madler/zlib.git
+[submodule "Submodules/libpng"]
+	path = Submodules/libpng
+	url = https://github.com/pnggroup/libpng.git

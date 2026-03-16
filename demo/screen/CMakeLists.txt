@@ -18,9 +18,7 @@
 # ***** END GPL LICENSE BLOCK *****
 
 set(INC
-	${FREETYPE_INCLUDE_DIRS}
 	${GPU_INC}
-	${PNG_PNG_INCLUDE_DIR}
 	..
 	../extern/katana-parser/src
 	../extern/gawain
@@ -49,9 +47,9 @@ set(SRC
 )
 
 set(LIB
-	${FREETYPE_LIBRARY}
-	${ZLIB_LIBRARY}
-	${PNG_LIBRARY}
+	freetype
+	zlib
+	libpng
 	glfw
 	bWidgets
 

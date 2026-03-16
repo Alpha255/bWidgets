@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 
 # Avoid having emtpy build type
 set(CMAKE_BUILD_TYPE_INIT "Release")
@@ -82,6 +82,11 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_WARNINGS}")
 
 project(bWidgets)
 
+#-----------------------------------------------------------------------------
+# Global definitions
+
+add_definitions(-DHAVE_STRUCT_TIMESPEC)
+
 enable_testing()
 
 #-----------------------------------------------------------------------------
@@ -98,6 +103,7 @@ option(WITH_BWIDGETS_DEMO "Compile the demo application for bWidgets alongside b
 #-----------------------------------------------------------------------------
 # Sub-directories
 
+add_subdirectory(CMake/Submodules)
 add_subdirectory(bwidgets)
 
 if(WITH_BWIDGETS_DEMO)

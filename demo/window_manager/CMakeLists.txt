@@ -24,6 +24,7 @@ set(INC
 	../gpu
 	../utils
 	../extern/gawain
+	${CMAKE_CURRENT_SOURCE_DIR}/../../Submodules/freetype/include
 )
 
 set(SRC

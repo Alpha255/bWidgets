@@ -39,7 +39,7 @@ typedef unsigned int uint;
   #define TRUST_NO_ONE 0
 #else
   /* strict error checking, enabled for debug builds during early development */
-  #define TRUST_NO_ONE 1
+  #define TRUST_NO_ONE 0
 #endif
 
 #if defined(WITH_OPENGL)

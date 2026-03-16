@@ -24,8 +24,8 @@
 
 set(INC
 	../glew/include
-	${PTHREADS_INCLUDE_DIR}
 	gawain
+	${CMAKE_CURRENT_SOURCE_DIR}/../../../Submodules/pthreads
 )
 
 set(SRC
@@ -61,7 +61,7 @@ set(SRC
 
 set(LIB
 	bwd_extern_glew
-	${PTHREADS_LIBRARIES}
+	pthreads
 )
 
 add_definitions(-DWITH_GL_PROFILE_CORE -DWITH_OPENGL)
