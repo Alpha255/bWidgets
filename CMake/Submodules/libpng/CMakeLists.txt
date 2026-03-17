@@ -76,10 +76,10 @@ option(PNG_TESTS "Build the libpng tests" OFF)
 if(ANDROID OR IOS)
   option(PNG_TOOLS "Build the libpng tools" OFF)
 else()
-  option(PNG_TOOLS "Build the libpng tools" ON)
+  option(PNG_TOOLS "Build the libpng tools" OFF)
 endif()
 
-option(PNG_EXECUTABLES "[Deprecated; please use PNG_TOOLS]" ON)
+option(PNG_EXECUTABLES "[Deprecated; please use PNG_TOOLS]" OFF)
 if(NOT PNG_EXECUTABLES)
   message(DEPRECATION "The option PNG_EXECUTABLES has been deprecated in favour of PNG_TOOLS")
   if(PNG_TOOLS)
@@ -722,6 +722,8 @@ if(NOT WIN32 OR CYGWIN OR MINGW)
   create_symlink(libpng-config FILE libpng${PNGLIB_ABI_VERSION}-config)
 endif()
 
+set(SKIP_INSTALL_LIBRARIES ON)
+set(SKIP_INSTALL_ALL ON)
 if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
   install(TARGETS ${PNG_LIBRARY_TARGETS}
           EXPORT libpng
