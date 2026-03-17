@@ -63,11 +63,14 @@ Window::Window(const std::string& name, unsigned int size_x, unsigned int size_y
   glEnable(GL_SCISSOR_TEST);
 
   EventManager::setupWindowHandlers(*this);
+}
+
+void Window::setupStage()
+{
+  assert(stage);
 
   float px_scale_x, px_scale_y;
   glfwGetWindowContentScale(glfw_window, &px_scale_x, &px_scale_y);
-
-  stage = std::make_unique<DefaultStage>(getWidth(), getHeight());
   stage->setContentScale(px_scale_x, px_scale_y);
 }
 
@@ -89,7 +92,10 @@ void Window::draw()
   GWN_context_active_set(gwn_context);
   immActivate();
 
-  stage->draw();
+  if (stage)
+  {
+    stage->draw();
+  }
 
   immDeactivate();
   GWN_context_active_set(nullptr);

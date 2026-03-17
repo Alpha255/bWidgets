@@ -120,7 +120,7 @@ void EventManager::handleMouseMovementEvent(GLFWwindow* glfw_win, double /*x*/, 
   const bwPoint& position = win->getCursorPosition();
   MouseEvent event(MouseEvent::Type::MOVE, bwMouseButtonEvent::Button::UNKNOWN, position);
 
-  win->stage->handleMouseMovementEvent(event);
+  win->getStage()->handleMouseMovementEvent(event);
 }
 
 void EventManager::handleMouseButtonEvent(GLFWwindow* glfw_win,
@@ -134,7 +134,7 @@ void EventManager::handleMouseButtonEvent(GLFWwindow* glfw_win,
   const bwMouseButtonEvent::Button mouse_button = convertGlfwMouseButton(glfw_button);
   MouseEvent event(action_type, mouse_button, position);
 
-  win->stage->handleMouseButtonEvent(event);
+  win->getStage()->handleMouseButtonEvent(event);
 }
 
 void EventManager::handleMouseScrollEvent(GLFWwindow* glfw_win, double /*value_x*/, double value_y)
@@ -151,7 +151,7 @@ void EventManager::handleMouseScrollEvent(GLFWwindow* glfw_win, double /*value_x
   bwMouseWheelEvent::Direction dir = (value_y > 0) ? bwMouseWheelEvent::Direction::UP :
                                                      bwMouseWheelEvent::Direction::DOWN;
 
-  win->stage->handleMouseScrollEvent(event, dir);
+  win->getStage()->handleMouseScrollEvent(event, dir);
 }
 
 }  // namespace bWidgetsDemo

@@ -25,6 +25,8 @@
 
 #include "Application.h"
 
+#include "DefaultStage.h"
+
 namespace bWidgetsDemo {
 
 Application& Application::ensureApplication()
@@ -36,7 +38,7 @@ Application& Application::ensureApplication()
 void Application::setup()
 {
   WindowManager& wm = WindowManager::getWindowManager();
-  wm.addWindow("bWidgets Demo");
+  wm.addWindowWithStage<DefaultStage>("bWidgets Demo");
 }
 
 void Application::mainLoop()

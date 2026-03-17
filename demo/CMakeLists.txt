@@ -23,6 +23,7 @@ set(INC
 	../bwidgets/styling
 	../bwidgets/utils
 	../bwidgets/widgets
+	./utils
 	screen
 	window_manager
 )

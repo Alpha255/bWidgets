@@ -38,6 +38,7 @@ namespace bWidgetsDemo {
 class Window {
  public:
   Window(const std::string& name, unsigned int size_x = 600, unsigned int size_y = 350);
+
   ~Window();
 
   enum WindowAction {
@@ -51,12 +52,22 @@ class Window {
   void handleResizeEvent(const int new_win_x, const int new_win_y);
   void handleContentScaleEvent(const float new_scale_x, const float new_scale_y);
 
-  std::unique_ptr<class Stage> stage;
-
   auto getGlfwWindow() const -> GLFWwindow&;
 
   auto getWidth() const -> int;
   auto getHeight() const -> int;
+
+  class Stage* getStage() const
+  {
+    return stage.get();
+  }
+
+  template<class T>
+  void createStage()
+  {
+    stage = std::make_unique<T>(getWidth(), getHeight());
+    setupStage();
+  }
 
   friend auto operator==(const Window& lhs, const Window& rhs) -> bool
   {
@@ -70,6 +81,10 @@ class Window {
   }
 
  private:
+  std::unique_ptr<class Stage> stage;
+
+  void setupStage();
+
   GLFWwindow* glfw_window;
   Gwn_Context* gwn_context;
   unsigned int VertexArrayID = 0;

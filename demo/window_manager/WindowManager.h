@@ -41,6 +41,19 @@ class WindowManager {
   auto addWindow(std::string name) -> Window&;
   auto isMainWindow(const Window& win) const -> bool;
 
+  template<class T>
+  auto addWindowWithStage(std::string name) -> Window&
+  {
+    auto& win = windows.emplace_back(name);
+    if (windows.size() == 1) {
+      main_win = &windows.back();
+    }
+
+    win.createStage<T>();
+
+    return windows.back();
+  }
+
   void removeWindow(Window& win);
 
   using WindowList = std::list<Window>;
