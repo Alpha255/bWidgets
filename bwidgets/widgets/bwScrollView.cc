@@ -1,5 +1,5 @@
-#include <cmath>
 #include <cassert>
+#include <cmath>
 
 #include "bwEvent.h"
 #include "bwPainter.h"
@@ -57,7 +57,7 @@ void bwScrollView::drawScrollBars(bwStyle& style)
   validizeScrollValues();
 
   scrollbar.rectangle = getVerticalScrollbarRect(style);
-  scrollbar.ratio = (rectangle.height() - 2) / float(node.ContentRectangle().height());
+  scrollbar.ratio = (rectangle.height() - 2) / float(node->ContentRectangle().height());
   scrollbar.scroll_offset = vert_scroll;
 
   bwScreenGraph::Drawer::drawSubtree(*scrollbar_node, style);
@@ -85,8 +85,10 @@ void bwScrollView::validizeScrollValues()
 {
   assert(isScrollable());
 
-  bwRange<int>::clampValue(
-      vert_scroll, 0, node.ContentRectangle().height() - node.Rectangle().height());
+  if (node) {
+    bwRange<int>::clampValue(
+        vert_scroll, 0, node->ContentRectangle().height() - node->Rectangle().height());
+  }
 }
 
 auto bwScrollView::getScrollOffsetY() const -> int
@@ -105,7 +107,9 @@ auto bwScrollView::getContentBounds(float interface_scale) const -> bwRectangleP
 
 auto bwScrollView::isScrollable() const -> bool
 {
-  return (node.ContentRectangle().height() > node.Rectangle().height()) || (vert_scroll != 0);
+  if (!node)
+    return false;
+  return (node->ContentRectangle().height() > node->Rectangle().height()) || (vert_scroll != 0);
 }
 
 auto bwScrollView::getScrollbarWidth(float interface_scale) -> int

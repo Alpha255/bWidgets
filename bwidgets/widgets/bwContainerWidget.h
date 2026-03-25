@@ -20,9 +20,11 @@ class bwContainerWidget : public bwWidget {
   bwContainerWidget(const bwScreenGraph::ContainerNode& node,
                     std::optional<unsigned int> width_hint = std::nullopt,
                     std::optional<unsigned int> height_hint = std::nullopt);
+  bwContainerWidget(std::optional<unsigned int> width_hint = std::nullopt,
+                    std::optional<unsigned int> height_hint = std::nullopt);
 
   /** Reference to node owning this widget, for additional info queries. */
-  const bwScreenGraph::ContainerNode& node;
+  const bwScreenGraph::ContainerNode* node{nullptr};
 
  public:
   bwWidgetBaseStyle

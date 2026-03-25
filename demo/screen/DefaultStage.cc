@@ -117,6 +117,26 @@ DefaultStage::DefaultStage(unsigned int mask_width, unsigned int mask_height)
       std::make_unique<PanelLayout>(),
       "More Testing...",
       PANEL_HEADER_HEIGHT);
+
+  builder.buildContainer<bwPanel>(
+      [](Builder& builder) {
+        builder.buildLayout<ColumnLayout>([](Builder& builder) {
+          auto& menu = builder.addWidget<bwMenu>();
+          menu.addItem("New");
+          menu.addItem("Open");
+          menu.addItem("Save");
+          menu.addSeparator();
+          auto& submenu = menu.addSubmenu("Export");
+          menu.addItemToSubmenu(submenu, "PNG");
+          menu.addItemToSubmenu(submenu, "JPEG");
+          menu.addItemToSubmenu(submenu, "SVG");
+          menu.addSeparator();
+          menu.addItem("Exit");
+        });
+      },
+      std::make_unique<PanelLayout>(),
+      "Menu Test",
+      PANEL_HEADER_HEIGHT);
 }
 
 auto isUseCSSVersionToggleHidden(const bwStyle& style) -> bool

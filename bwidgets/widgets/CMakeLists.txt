@@ -6,6 +6,7 @@ set(SRC
 	bwCheckbox.cc
 	bwContainerWidget.cc
 	bwLabel.cc
+	bwMenu.cc
 	bwNumberSlider.cc
 	bwPanel.cc
 	bwPushButton.cc
@@ -20,6 +21,7 @@ set(SRC
 	bwCheckbox.h
 	bwContainerWidget.h
 	bwLabel.h
+	bwMenu.h
 	bwNumberSlider.h
 	bwPanel.h
 	bwPushButton.h
