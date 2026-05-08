@@ -36,7 +36,13 @@ void resolveScreenGraphNodeLayout(bwScreenGraph::LayoutNode& node,
                                   const float scale_fac)
 {
   if (LayoutItem* layout = static_cast<LayoutItem*>(node.Layout())) {
-    if (ScrollViewLayout* root = dynamic_cast<ScrollViewLayout*>(layout)) {
+    if (RootLayout* root = dynamic_cast<RootLayout*>(layout)) {
+      assert(node.Children());
+      root->width = int(rect.width());
+      root->height = int(rect.height());
+      root->resolve(node, {rect.xmin, rect.ymin}, root->item_margin, scale_fac);
+    }
+    else if (ScrollViewLayout* root = dynamic_cast<ScrollViewLayout*>(layout)) {
       assert(node.Children());
 
       if (bwWidget* widget = node.Widget()) {
@@ -380,6 +386,62 @@ RowLayout::RowLayout(const bool align)
 
 PanelLayout::PanelLayout() : LayoutItem(LayoutItem::Type::PANEL, false, FLOW_DIRECTION_VERTICAL)
 {
+}
+
+RootLayout::RootLayout()
+    : LayoutItem(LayoutItem::Type::ROOT, false, FLOW_DIRECTION_VERTICAL)
+{
+}
+
+void RootLayout::resolve(bwScreenGraph::Node& node,
+                         const bwPoint& layout_pos,
+                         const unsigned int item_margin,
+                         const float scale_fac)
+{
+  bwScreenGraph::Node::ChildList* children = node.Children();
+  if (!children || children->size() < 2) {
+    return;
+  }
+
+  location = layout_pos;
+
+  auto iter = children->begin();
+  bwScreenGraph::Node& menu_node = **iter++;
+  bwScreenGraph::Node& scroll_node = **iter;
+
+  /* Step 1: Resolve menu bar at the top of the screen.
+   * layout_pos.y is the bottom (ymin=0). The top is layout_pos.y + height.
+   * LayoutItem::resolve() starts placing items downward from layout_pos.y, so pass the top. */
+  unsigned int menu_bar_height = 0;
+  if (LayoutItem* menu_layout = static_cast<LayoutItem*>(menu_node.Layout())) {
+    menu_layout->width = width;
+
+    /* Find the bwMenu child and set its height_hint from its item count. */
+    if (bwScreenGraph::Node::ChildList* menu_children = menu_node.Children()) {
+      for (auto& child : *menu_children) {
+        if (bwWidget* w = child->Widget()) {
+          if (bwMenu* bw_menu = widget_cast<bwMenu>(w)) {
+            w->height_hint = bw_menu->getPreferredHeight();
+          }
+        }
+      }
+    }
+
+    /* Place from the top edge downward. */
+    menu_layout->resolve(
+        menu_node, {layout_pos.x, layout_pos.y + float(height)}, item_margin, scale_fac);
+    menu_bar_height = menu_layout->getHeight();
+  }
+
+  /* Step 2: Resolve the scroll view in the remaining area below the menu bar. */
+  if (bwWidget* sv_widget = scroll_node.Widget()) {
+    sv_widget->width_hint = width;
+    sv_widget->height_hint = (height > menu_bar_height) ? (height - menu_bar_height) : 0;
+  }
+  if (LayoutItem* sv_layout = static_cast<LayoutItem*>(scroll_node.Layout())) {
+    sv_layout->width = width;
+    sv_layout->resolve(scroll_node, {layout_pos.x, layout_pos.y}, item_margin, scale_fac);
+  }
 }
 
 ScrollViewLayout::ScrollViewLayout()

@@ -24,6 +24,7 @@
 #include <iostream>
 
 // bWidgets lib
+#include "bwMenu.h"
 #include "bwPainter.h"
 #include "bwRange.h"
 #include "bwRectangle.h"
@@ -58,16 +59,25 @@ float Stage::interface_scale = 1.0f;
 auto createScreenGraph(const unsigned int width, const unsigned int height)
     -> bwScreenGraph::ScreenGraph
 {
-  auto container = std::make_unique<bwScreenGraph::ContainerNode>();
-  auto layout = std::make_unique<ScrollViewLayout>();
-  auto scroll_view = std::make_unique<bwScrollView>(*container, width, height);
+  /* Root: LayoutNode with RootLayout — manages two regions (menu bar + scroll view). */
+  auto root = std::make_unique<bwScreenGraph::LayoutNode>();
+  bwScreenGraph::Builder::setLayout(*root, std::make_unique<RootLayout>());
 
-  layout->padding = 7;
-  layout->item_margin = 5;
-  bwScreenGraph::Builder::setLayout(*container, std::move(layout));
-  bwScreenGraph::Builder::setWidget(*container, std::move(scroll_view));
+  bwScreenGraph::Builder builder(*root);
 
-  return bwScreenGraph::ScreenGraph(std::move(container));
+  /* Region 1: menu bar — a plain ColumnLayout node, content added by DefaultStage. */
+  builder.addLayout<ColumnLayout>();
+
+  /* Region 2: scrollable content — the existing ScrollView container. */
+  builder.setActiveLayout(*root);
+  auto scroll_layout = std::make_unique<ScrollViewLayout>();
+  scroll_layout->padding = 7;
+  scroll_layout->item_margin = 5;
+  bwScreenGraph::ContainerNode& scroll_node = builder.addContainer<bwScrollView>(
+      std::move(scroll_layout), width, height);
+  (void)scroll_node;
+
+  return bwScreenGraph::ScreenGraph(std::move(root));
 }
 
 Stage::Stage(const unsigned int width, const unsigned int height)
@@ -143,7 +153,84 @@ void Stage::draw()
   bwPainter::s_paint_engine->setupViewport(stage_rect, clear_color);
 
   resolveScreenGraphNodeLayout(screen_graph.Root(), stage_rect, interface_scale);
+
+  /* For every bwMenu: save the title-bar rect, then (if open) expand the widget rectangle and
+   * the parent LayoutNode rectangle so findHoveredNode() routes events to the dropdown area. */
+  for (auto& node : screen_graph) {
+    if (!node.isVisible()) {
+      continue;
+    }
+    auto* menu = widget_cast<bwMenu>(node.Widget());
+    if (!menu) {
+      continue;
+    }
+    menu->title_rect = menu->rectangle;
+
+    /* Always compute the label button width: label text + one item_height of horizontal padding
+     * (item_height/2 each side), matching the compact look of Blender's menu bar buttons. */
+    menu->preferred_label_width = (int)font->calculateStringWidth(menu->label) +
+                                  (int)menu->getItemHeight();
+
+    if (menu->is_open) {
+      /* Compute preferred dropdown width: measure each item's label + shortcut text.
+       * Mirrors Blender's ui_block_bounds_calc_text() which uses BLF_width() per item.
+       * text_rect horizontal insets: 10px left (item_padding+5) + 5px right (item_padding).
+       * Shortcut gap: 20px minimum space between label and shortcut columns.
+       * Minimum width: 9 * item_height, matching Blender's UI_MENU_WIDTH_MIN. */
+      const int min_width = 9 * (int)menu->getItemHeight();
+      const int insets = 10 + 5;
+      const int shortcut_gap = 20;
+      int max_item_w = min_width;
+      for (const auto& item_ptr : menu->getItems()) {
+        const bwMenuItem& item = *item_ptr;
+        if (item.type == bwMenuItem::Type::SEPARATOR) {
+          continue;
+        }
+        int w = (int)font->calculateStringWidth(item.label) + insets;
+        if (!item.shortcut.empty()) {
+          w += shortcut_gap + (int)font->calculateStringWidth(item.shortcut);
+        }
+        max_item_w = std::max(max_item_w, w);
+      }
+      menu->preferred_dropdown_width = max_item_w;
+
+      bwRectanglePixel dropdown = menu->getDropdownRect();
+      menu->rectangle.ymin = std::min(menu->rectangle.ymin, dropdown.ymin);
+      menu->rectangle.xmax = std::max(menu->rectangle.xmax, dropdown.xmax);
+      if (bwScreenGraph::Node* parent = node.Parent()) {
+        if (auto* parent_layout = dynamic_cast<LayoutItem*>(parent->Layout())) {
+          const int extra = menu->title_rect.ymin - dropdown.ymin;
+          parent_layout->location.y -= extra;
+          parent_layout->height += extra;
+        }
+      }
+    }
+  }
+
   bwScreenGraph::Drawer::draw(screen_graph, *style);
+
+  /* Draw open menu dropdowns on top of everything else (overlay pass, no mask active). */
+  for (auto& node : screen_graph) {
+    if (!node.isVisible()) {
+      continue;
+    }
+    auto* menu = widget_cast<bwMenu>(node.Widget());
+    if (!menu || !menu->is_open) {
+      continue;
+    }
+    style->setWidgetStyle(*menu);
+    menu->drawDropdown(*style);
+  }
+}
+
+auto Stage::menuBarNode() -> bwScreenGraph::LayoutNode&
+{
+  return dynamic_cast<bwScreenGraph::LayoutNode&>(*screen_graph.Root().Children()->front());
+}
+
+auto Stage::scrollViewNode() -> bwScreenGraph::ContainerNode&
+{
+  return dynamic_cast<bwScreenGraph::ContainerNode&>(*screen_graph.Root().Children()->back());
 }
 
 void Stage::StyleSheetPolish(bwWidget& widget)

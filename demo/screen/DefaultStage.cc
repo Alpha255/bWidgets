@@ -50,11 +50,26 @@ DefaultStage::DefaultStage(unsigned int mask_width, unsigned int mask_height)
   /* Convenience */
   using RNABuilder = RNAScreenGraphBuilder<DefaultStage, DefaultStageRNAFunctor>;
 
-  RNABuilder builder(screen_graph, *this, properties);
+  /* Build the menu bar region (top, non-scrollable). */
+  {
+    Builder menu_builder(menuBarNode());
+    auto& menu = menu_builder.addWidget<bwMenu>();
+    menu.label = "File";
+    menu.addItem("New").shortcut = "Ctrl N";
+    menu.addItem("Open").shortcut = "Ctrl O";
+    menu.addItem("Save").shortcut = "Ctrl S";
+    menu.addSeparator();
+    menu.addSubmenu("Export");
+    menu.addSeparator();
+    menu.addItem("Exit").shortcut = "Alt F4";
+  }
+
+  /* Build the scrollable content region (below the menu bar). */
+  RNABuilder builder(scrollViewNode(), *this, properties);
 
   registerProperties(properties);
 
-  addStyleSelector(screen_graph.Root());
+  addStyleSelector(scrollViewNode());
 
   builder.addRNAWidget<bwNumberSlider>("interface_scale")
       .setMinMax(0.5f, 2.0f)
@@ -118,25 +133,6 @@ DefaultStage::DefaultStage(unsigned int mask_width, unsigned int mask_height)
       "More Testing...",
       PANEL_HEADER_HEIGHT);
 
-  builder.buildContainer<bwPanel>(
-      [](Builder& builder) {
-        builder.buildLayout<ColumnLayout>([](Builder& builder) {
-          auto& menu = builder.addWidget<bwMenu>();
-          menu.addItem("New");
-          menu.addItem("Open");
-          menu.addItem("Save");
-          menu.addSeparator();
-          auto& submenu = menu.addSubmenu("Export");
-          menu.addItemToSubmenu(submenu, "PNG");
-          menu.addItemToSubmenu(submenu, "JPEG");
-          menu.addItemToSubmenu(submenu, "SVG");
-          menu.addSeparator();
-          menu.addItem("Exit");
-        });
-      },
-      std::make_unique<PanelLayout>(),
-      "Menu Test",
-      PANEL_HEADER_HEIGHT);
 }
 
 auto isUseCSSVersionToggleHidden(const bwStyle& style) -> bool

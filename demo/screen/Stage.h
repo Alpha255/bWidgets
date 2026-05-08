@@ -64,6 +64,11 @@ class Stage {
  protected:
   virtual void activateStyleID(bWidgets::bwStyle::TypeID type_id);
 
+  /** Returns the top menu bar layout node (first child of the root RootLayout). */
+  auto menuBarNode() -> bWidgets::bwScreenGraph::LayoutNode&;
+  /** Returns the scrollable content container node (second child of the root RootLayout). */
+  auto scrollViewNode() -> bWidgets::bwScreenGraph::ContainerNode&;
+
   bWidgets::bwScreenGraph::ScreenGraph screen_graph;
 
   // Static members, global UI data for all stages

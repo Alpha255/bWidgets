@@ -135,6 +135,18 @@ static void widget_base_style_text_box_set(bwWidget& widget, bwWidgetBaseStyle& 
       break;
   }
 }
+static void widget_base_style_menu_set(bwWidget& /*widget*/, bwWidgetBaseStyle& r_base_style)
+{
+  /* Matches Blender's wcol_menu_back defaults:
+   * inner=#181818, outline=#242424, text=#999999, roundness=0.2 (at 20px widget_unit = 4px). */
+  r_base_style.background_color = bwColor(24u);
+  r_base_style.border_color = bwColor(36u);
+  r_base_style.text_color = bwColor(153u);
+  r_base_style.shade_top = 0;
+  r_base_style.shade_bottom = 0;
+  r_base_style.corner_radius = 4.0f;
+}
+
 static void widget_base_style_panel_set(bwWidget& widget, bwWidgetBaseStyle& r_base_style)
 {
   bwPanel& panel = *widget_cast<bwPanel>(widget);
@@ -164,7 +176,10 @@ static void widget_base_style_set(bwWidget& widget, bwWidgetBaseStyle& r_base_st
    * type is rather inefficient (compared to an enum type checked in a switch).
    * This isn't performance critical code, so it's fine-ish, even if ugly. More importantly, this
    * way of applying styles isn't meant as permanent solution anyway. */
-  if (widget_cast<bwCheckbox>(widget)) {
+  if (widget_cast<bwMenu>(widget)) {
+    widget_base_style_menu_set(widget, r_base_style);
+  }
+  else if (widget_cast<bwCheckbox>(widget)) {
     widget_base_style_checkbox_set(widget, r_base_style);
   }
   else if (widget_cast<bwNumberSlider>(widget)) {
@@ -208,6 +223,30 @@ void bwStyleClassic::setWidgetStyle(bwWidget& widget)
     text_box->base_style.roundbox_corners =
         RoundboxCorner::ALL;  // XXX Incorrect, should set this in layout.
     base_style = &text_box->base_style;
+  }
+  else if (auto* menu = widget_cast<bwMenu>(widget)) {
+    menu->base_style.roundbox_corners = RoundboxCorner::ALL;
+    base_style = &menu->base_style;
+
+    /* Blender wcol_menu_item: transparent bg with light gray text for normal items. */
+    menu->item_style.background_color = bwColor(0.0f, 0.0f, 0.0f, 0.0f);
+    menu->item_style.border_color = bwColor(0.0f, 0.0f, 0.0f, 0.0f);
+    menu->item_style.text_color = bwColor(221u);
+    menu->item_style.decoration_color = bwColor(255u, 143u);
+    menu->item_style.roundbox_corners = RoundboxCorner::ALL;
+    menu->item_style.corner_radius = 4.0f;
+    menu->item_style.shade_top = 0;
+    menu->item_style.shade_bottom = 0;
+
+    /* Blender wcol_menu_item inner_sel: blue bg (#4772b3) with white text when hovered. */
+    menu->item_hover_style.background_color = bwColor(71u, 114u, 179u);
+    menu->item_hover_style.border_color = bwColor(71u, 114u, 179u);
+    menu->item_hover_style.text_color = bwColor(255u);
+    menu->item_hover_style.decoration_color = bwColor(255u);
+    menu->item_hover_style.roundbox_corners = RoundboxCorner::ALL;
+    menu->item_hover_style.corner_radius = 4.0f;
+    menu->item_hover_style.shade_top = 0;
+    menu->item_hover_style.shade_bottom = 0;
   }
   else if (auto* container = widget_cast<bwContainerWidget>(widget)) {
     container->base_style.roundbox_corners = RoundboxCorner::ALL;
