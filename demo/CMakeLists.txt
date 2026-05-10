@@ -82,6 +82,7 @@ endif()
 if (NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
 	set(RESOURCES
 		bfont.ttf
+		Inter.ttf
 		blender_icons16.png
 		LICENSE-bfont.ttf.txt
 		classic_style.css

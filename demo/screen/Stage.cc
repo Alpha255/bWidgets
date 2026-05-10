@@ -108,7 +108,7 @@ void Stage::initFonts()
   Font::initFontReading();
 
   // Initialize default font
-  font = std::unique_ptr<Font>(Font::loadFont("bfont.ttf", RESOURCES_PATH_STR));
+  font = std::unique_ptr<Font>(Font::loadFont("Inter.ttf", RESOURCES_PATH_STR));
   font->setSize(11.0f * interface_scale);
 }
 
