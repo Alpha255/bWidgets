@@ -16,3 +16,6 @@
 [submodule "Submodules/nanosvg"]
 	path = Submodules/nanosvg
 	url = https://github.com/memononen/nanosvg.git
+[submodule "Submodules/magic_enum"]
+	path = Submodules/magic_enum
+	url = https://github.com/Neargye/magic_enum.git

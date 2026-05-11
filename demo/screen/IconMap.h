@@ -62,9 +62,9 @@ public:
     auto getIcon(unsigned int index) -> Icon&;
 
 private:
-    IconMap() = default;
+    IconMap();
 
-    std::array<std::unique_ptr<Icon>, 30 * 26> icons;  // ICON_GRID_ROWS * ICON_GRID_COLS
+    std::vector<std::unique_ptr<Icon>> icons;  // ICON_GRID_ROWS * ICON_GRID_COLS
 };
 
 class IconMapReader

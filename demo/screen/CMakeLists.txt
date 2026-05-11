@@ -27,6 +27,7 @@ set(INC
 	../stylesheet
 	../utils
 	../../Submodules/nanosvg/src
+	../../Submodules/magic_enum/include
 )
 
 set(SRC

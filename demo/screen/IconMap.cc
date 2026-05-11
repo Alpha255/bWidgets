@@ -26,6 +26,9 @@
 #include <filesystem>
 #include <unordered_map>
 
+#define MAGIC_ENUM_RANGE_MAX 1000
+#include <magic_enum/magic_enum.hpp>
+
 #define NANOSVG_IMPLEMENTATION
 #define NANOSVGRAST_IMPLEMENTATION
 #define NANOSVG_ALL_COLOR_KEYWORDS
@@ -49,7 +52,8 @@ struct IconReadData
     png_infop info_ptr;
 };
 
-IconMapReader::IconMapReader() : read_data(new IconReadData)
+IconMapReader::IconMapReader() 
+    : read_data(new IconReadData)
 {
     read_data->png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     if (!read_data->png_ptr)
@@ -124,12 +128,8 @@ auto IconMapReader::readIconMap(File& file) -> std::unique_ptr<IconMap>
     {
         return readIconMapFromPNGFile(file);
     }
-    else if (extension == "svg")
-    {
-        return readIconMapFromSVGFiles(file);
-    }
-
-    return std::unique_ptr<IconMap>();
+    
+    return readIconMapFromSVGFiles(file);
 }
 
 auto IconMapReader::readIconMapFromPNGFile(File& file) -> std::unique_ptr<IconMap>
@@ -172,55 +172,55 @@ auto IconMapReader::readIconMapFromPNGFile(File& file) -> std::unique_ptr<IconMa
                 row_pointers,
                 x * (ICON_GRID_W + ICON_GRID_MARGIN) + ICON_GRID_MARGIN,
                 height - (y * (ICON_GRID_H + ICON_GRID_MARGIN) + ICON_GRID_MARGIN));
-            icon_map->icons[icon_index++] = std::move(icon);
+            icon_map->icons.emplace_back(std::move(icon));
         }
     }
 
     return icon_map;
 }
 
-std::unordered_map<std::string, BIFIconSvg> GetSVGIconNameIDs()
-{
-    static std::unordered_map<std::string, BIFIconSvg> nameIDs;
-    if (nameIDs.empty())
-    {
-        for (int i = 0; i < (int)BIFIconSvg::BIFSVGICONID_LAST; i++)
-        {
-        }
-    }
-    return nameIDs;
-}
-
 auto IconMapReader::readIconMapFromSVGFiles(File& directory) -> std::unique_ptr<IconMap>
 {
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(directory.getPath()))
+    std::unique_ptr<IconMap> iconMap(new IconMap);
+
+    constexpr size_t prefixLen = sizeof("_icon") - 1;
+
+    for (uint32_t i = 0; i < (uint32_t)BIFIconSvg::BIFSVGICONID_LAST; i++)
     {
-        if (entry.is_directory())
+        assert(i < MAGIC_ENUM_RANGE_MAX);
+
+        auto name = std::string(magic_enum::enum_name(static_cast<BIFIconSvg>(i)));
+
+        if (name.empty())
         {
+            std::cout << "Warning: No name found for icon enum value: " << i << std::endl;
             continue;
         }
 
-        auto extension = entry.path().extension().string();
-        std::transform(extension.begin(), extension.end(), extension.begin(), [](char c) { return (char)tolower(c); });
+        name = name.substr(prefixLen);
+        name += ".svg";
         
-        if (extension != ".svg")
+        std::transform(name.begin(), name.end(), name.begin(), [](char c) { return (char)tolower(c); });
+
+        auto path = directory.getPath() + "/" + name;
+
+        if (!std::filesystem::exists(path))
         {
+            std::cout << "Warning: SVG icon file not found: " << path << std::endl;
             continue;
         }
-
-        auto path = entry.path().string();
-        auto name = entry.path().stem().string();
 
         auto svgImage = nsvgParseFromFile(path.c_str(), "px", 96.0f);
         if (!svgImage)
         {
+            std::cout << "Warning: Failed to parse SVG icon file: " << path << std::endl;
             continue;
         }
-
+        
         auto rasterizer = nsvgCreateRasterizer();
         constexpr int size = std::max(ICON_GRID_W, ICON_GRID_H);
         float scale = svgImage->width ? (float)size / svgImage->width : 1.0f;
-        
+
         std::unique_ptr<Icon> icon(new Icon(size, 4, 8));
 
         nsvgRasterize(rasterizer,
@@ -233,10 +233,13 @@ auto IconMapReader::readIconMapFromSVGFiles(File& directory) -> std::unique_ptr<
                       size,
                       size * 4);
         nsvgDeleteRasterizer(rasterizer);
+
         nsvgDelete(svgImage);
+
+        iconMap->icons.emplace_back(std::move(icon));
     }
 
-    return std::unique_ptr<IconMap>();
+    return iconMap;
 }
 
 // --------------------------------------------------------------------
@@ -260,6 +263,11 @@ auto Icon::getPixmap() -> Pixmap&
 auto Icon::getPixmap() const -> const Pixmap&
 {
     return _pixmap;
+}
+
+IconMap::IconMap()
+{
+    icons.reserve(ICON_GRID_ROWS * ICON_GRID_COLS);
 }
 
 auto IconMap::getIcon(unsigned int index) -> Icon&

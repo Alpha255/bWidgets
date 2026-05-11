@@ -47,6 +47,7 @@ public:
 private:
     const std::string _path;
     std::ifstream _file_stream;
+    std::ios::openmode _open_mode;
 };
 
 }  // namespace bWidgetsDemo

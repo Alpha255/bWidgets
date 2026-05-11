@@ -28,13 +28,18 @@ namespace bWidgetsDemo
 {
 
 File::File(const std::string& path, std::ios::openmode mode)
-    : _path(path), _file_stream(path, mode)
+    : _path(path)
+    , _open_mode(mode)
 {
-    assert(_file_stream.is_open());
 }
 
 std::string File::readIntoString()
 {
+    if (!_file_stream.is_open())
+    {
+        _file_stream.open(_path, _open_mode);
+    }
+
     std::string string;
     std::string line;
 
