@@ -213,8 +213,7 @@ static void render_glyph_texture(const Pixmap& pixmap,
     {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
-    glTexImage2D(
-        GL_TEXTURE_2D, 0, gl_format, w, h, 0, gl_format, GL_UNSIGNED_BYTE, &pixmap.getBytes()[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, gl_format, w, h, 0, gl_format, GL_UNSIGNED_BYTE, pixmap.getBytes());
 
     immBegin(GWN_PRIM_TRI_STRIP, 4);
     immAttrib2f(attr_texcoord, 0.0f, 0.0f);
@@ -259,7 +258,7 @@ void Font::renderGlyph(const FontGlyph& glyph,
                        Pen& pen) const
 {
     const Pixmap& pixmap = *glyph.pixmap;
-    const bool has_texture = pixmap.getBytes().size() > 0;
+    const bool has_texture = pixmap.getBytes() != nullptr;
     const bool use_kerning = previous_glyph != nullptr;
 
     if (use_kerning)
@@ -447,10 +446,10 @@ static auto createGlyphPixmap(FT_GlyphSlot freetype_glyph, const bool use_subpix
     {
         /* Increase width by 1px so we can draw with subpixel offset of up to 1px. */
 
-        if (pixmap.getBytes().size() > 0)
+        if (pixmap.getBytes() != nullptr)
         {
             const unsigned char* src_p = freetype_glyph->bitmap.buffer;
-            unsigned char* dst_p = &pixmap.getBytes()[0];
+            unsigned char* dst_p = pixmap.getBytes();
 
             for (unsigned int row = 0; row < height; row++)
             {

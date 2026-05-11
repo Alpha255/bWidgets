@@ -29,6 +29,7 @@
 
 #include "bwIconInterface.h"
 #include "bwUtil.h"
+#include "blender_icon_defines.h"
 
 namespace bWidgetsDemo
 {
@@ -41,7 +42,8 @@ class Icon : public bWidgets::bwIconInterface
 public:
     Icon(const unsigned int size,
          const unsigned int num_channels,
-         const unsigned int bits_per_channel);
+         const unsigned int bits_per_channel,
+         unsigned char* pixelData = nullptr);
 
     auto isValid() const -> bool override;
 
@@ -61,10 +63,23 @@ public:
 
     auto getIcon(unsigned int index) -> Icon&;
 
+    constexpr static uint32_t defaultNumChannel = 4u;
+    constexpr static uint32_t defaultBitsPerChannel = 8u;
 private:
     IconMap();
 
+    auto getPixelData(uint32_t index) -> unsigned char* 
+    {
+        assert(index < numIcons);
+        return &iconPixelStorage[index * iconPixelStride];
+    }
+
     std::vector<std::unique_ptr<Icon>> icons;  // ICON_GRID_ROWS * ICON_GRID_COLS
+    std::unique_ptr<unsigned char[]> iconPixelStorage;
+    constexpr static size_t iconPixelStride = ICON_GRID_W * ICON_GRID_H *
+                                              IconMap::defaultNumChannel *
+                                              IconMap::defaultBitsPerChannel;
+    constexpr static size_t numIcons = ICON_GRID_ROWS * ICON_GRID_COLS + 1u;
 };
 
 class IconMapReader

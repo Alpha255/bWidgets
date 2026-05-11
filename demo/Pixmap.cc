@@ -40,28 +40,29 @@ Pixmap::Pixmap(const int width,
                const int height,
                const unsigned int num_channels,
                const unsigned int bits_per_channel,
-               const unsigned int row_padding)
-    : _bytes(height * get_num_row_bytes_impl(width, num_channels, bits_per_channel, row_padding)),
-      _width(width), _height(height), _num_channels(num_channels),
-      _bits_per_channel(bits_per_channel), _row_padding(row_padding)
+               const unsigned int row_padding,
+               unsigned char* data)
+    : _bytes(data),
+      _width(width)
+    , _height(height)
+    , _num_channels(num_channels),
+      _bits_per_channel(bits_per_channel)
+    , _row_padding(row_padding)
+    , _num_bytes(height * get_num_row_bytes_impl(width, num_channels, bits_per_channel, row_padding))
 {
+    if (!_bytes)
+    {
+        _bytes = new unsigned char[_num_bytes]();
+        _owns_data = true;
+    }
 }
 
 void Pixmap::fill(const unsigned char* bytes)
 {
-    if (_bytes.size() > 0)
+    if (_bytes && _num_bytes > 0)
     {
-        std::copy_n(bytes, _bytes.size(), &_bytes[0]);
+        std::copy_n(bytes, _num_bytes, _bytes);
     }
-}
-
-std::vector<unsigned char>& Pixmap::getBytes()
-{
-    return _bytes;
-}
-const std::vector<unsigned char>& Pixmap::getBytes() const
-{
-    return _bytes;
 }
 
 int Pixmap::width() const
@@ -81,6 +82,15 @@ unsigned int Pixmap::getBitDepth() const
 unsigned int Pixmap::getNumChannels() const
 {
     return _num_channels;
+}
+
+Pixmap::~Pixmap()
+{
+    if (_owns_data && _bytes)
+    {
+        delete[] _bytes;
+        _bytes = nullptr;
+    }
 }
 
 }  // namespace bWidgetsDemo

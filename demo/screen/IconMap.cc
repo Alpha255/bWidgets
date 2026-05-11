@@ -37,8 +37,6 @@
 
 #include "png.h"
 
-#include "blender_icon_defines.h"
-
 #include "File.h"
 
 #include "IconMap.h"
@@ -165,7 +163,7 @@ auto IconMapReader::readIconMapFromPNGFile(File& file) -> std::unique_ptr<IconMa
     {
         for (int x = 0; x < ICON_GRID_COLS; x++)
         {
-            std::unique_ptr<Icon> icon(new Icon(ICON_GRID_W, channels, bit_depth));
+            std::unique_ptr<Icon> icon(new Icon(ICON_GRID_W, channels, bit_depth, icon_map->getPixelData(icon_index)));
 
             libpng_copy_rows_into_pixmap(
                 icon->getPixmap(),
@@ -173,6 +171,8 @@ auto IconMapReader::readIconMapFromPNGFile(File& file) -> std::unique_ptr<IconMa
                 x * (ICON_GRID_W + ICON_GRID_MARGIN) + ICON_GRID_MARGIN,
                 height - (y * (ICON_GRID_H + ICON_GRID_MARGIN) + ICON_GRID_MARGIN));
             icon_map->icons.emplace_back(std::move(icon));
+
+            ++icon_index;
         }
     }
 
@@ -221,17 +221,20 @@ auto IconMapReader::readIconMapFromSVGFiles(File& directory) -> std::unique_ptr<
         constexpr int size = std::max(ICON_GRID_W, ICON_GRID_H);
         float scale = svgImage->width ? (float)size / svgImage->width : 1.0f;
 
-        std::unique_ptr<Icon> icon(new Icon(size, 4, 8));
+        std::unique_ptr<Icon> icon(new Icon(size, 
+            IconMap::defaultNumChannel, 
+            IconMap::defaultBitsPerChannel, 
+            iconMap->getPixelData(i)));
 
         nsvgRasterize(rasterizer,
                       svgImage,
                       0.0f,
                       0.0f,
                       scale,
-                      icon->getPixmap().getBytes().data(),
+                      icon->getPixmap().getBytes(),
                       size,
                       size,
-                      size * 4);
+                      size * IconMap::defaultNumChannel);
         nsvgDeleteRasterizer(rasterizer);
 
         nsvgDelete(svgImage);
@@ -246,8 +249,9 @@ auto IconMapReader::readIconMapFromSVGFiles(File& directory) -> std::unique_ptr<
 
 Icon::Icon(const unsigned int size,
            const unsigned int num_channels,
-           const unsigned int bits_per_channel)
-    : _pixmap(size, size, num_channels, bits_per_channel)
+           const unsigned int bits_per_channel,
+           unsigned char* pixelData)
+    : _pixmap(size, size, num_channels, bits_per_channel, 0u, pixelData)
 {
 }
 
@@ -267,7 +271,8 @@ auto Icon::getPixmap() const -> const Pixmap&
 
 IconMap::IconMap()
 {
-    icons.reserve(ICON_GRID_ROWS * ICON_GRID_COLS);
+    icons.reserve(numIcons);
+    iconPixelStorage.reset(new unsigned char[iconPixelStride * numIcons]());
 }
 
 auto IconMap::getIcon(unsigned int index) -> Icon&

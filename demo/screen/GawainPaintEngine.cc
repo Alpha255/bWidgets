@@ -297,7 +297,7 @@ static void engine_icon_texture_drawing_prepare(const Pixmap& pixmap, GLuint& te
                  0,
                  GL_RGBA,
                  GL_UNSIGNED_BYTE,
-                 pixmap.getBytes().data());
+                 pixmap.getBytes());
 }
 static void engine_icon_texture_drawing_cleanup(GLuint texture_id)
 {

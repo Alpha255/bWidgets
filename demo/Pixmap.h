@@ -33,23 +33,66 @@ public:
            const int height,
            const unsigned int num_channels,
            const unsigned int bits_per_channel = 8,
-           const unsigned int row_padding = 0);
+           const unsigned int row_padding = 0,
+           unsigned char* data = nullptr);
+
+    ~Pixmap();
+
+    Pixmap(const Pixmap&) = default;
+    Pixmap& operator=(const Pixmap&) = default;
+
+    Pixmap(Pixmap&& other) noexcept 
+        : _bytes(other._bytes)
+        , _width(other._width)
+        , _height(other._height)
+        , _num_channels(other._num_channels)
+        , _bits_per_channel(other._bits_per_channel)
+        , _row_padding(other._row_padding)
+        , _num_bytes(other._num_bytes)
+        , _owns_data(other._owns_data)
+    {
+        other._bytes = nullptr;
+        other._owns_data = false;
+    }
+    Pixmap& operator=(Pixmap&& other) noexcept
+    {
+        _bytes = other._bytes;
+        _width = other._width;
+        _height = other._height;
+        _num_channels = other._num_channels;
+        _bits_per_channel = other._bits_per_channel;
+        _row_padding = other._row_padding;
+        _num_bytes = other._num_bytes;
+        _owns_data = other._owns_data;
+
+        other._bytes = nullptr;
+        other._owns_data = false;
+    }
 
     void fill(const unsigned char* bytes);
 
-    std::vector<unsigned char>& getBytes();
-    const std::vector<unsigned char>& getBytes() const;
+    unsigned char* getBytes() const
+    {
+        return _bytes;
+    }
+
     int width() const;
     int height() const;
     unsigned int getBitDepth() const;
     unsigned int getNumChannels() const;
+    uint32_t getNumBytes() const
+    {
+        return _num_bytes;
+    }
 
 private:
-    std::vector<unsigned char> _bytes;
+    unsigned char* _bytes;
     int _width, _height;
     unsigned int _num_channels;
     unsigned int _bits_per_channel;
     unsigned int _row_padding;
+    uint32_t _num_bytes;
+    bool _owns_data = false;
 };
 
 }  // namespace bWidgetsDemo
