@@ -82,6 +82,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_WARNINGS}")
 
 project(bWidgets)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 #-----------------------------------------------------------------------------
 # Global definitions
 
