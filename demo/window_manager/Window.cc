@@ -32,133 +32,137 @@ extern "C" {
 
 using namespace bWidgets;
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
 Window::Window(const std::string& name, unsigned int size_x, unsigned int size_y)
     : width(size_x), height(size_y)
 {
-  //	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-  //	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    //	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    //	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-  //	glfwWindowHint(GLFW_SAMPLES, 4);  // antialiasing
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);  // For MacOS
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+    //	glfwWindowHint(GLFW_SAMPLES, 4);  // antialiasing
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);  // For MacOS
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 
-  if (width == 0) {
-    //		width = 0.8f * mode->width;
-  }
-  if (height == 0) {
-    //		height = 0.8 * mode->height;
-  }
+    if (width == 0)
+    {
+        //		width = 0.8f * mode->width;
+    }
+    if (height == 0)
+    {
+        //		height = 0.8 * mode->height;
+    }
 
-  glfw_window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
-  glfwMakeContextCurrent(glfw_window);
+    glfw_window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
+    glfwMakeContextCurrent(glfw_window);
 
-  GPU_init();
-  gwn_context = GWN_context_create();
+    GPU_init();
+    gwn_context = GWN_context_create();
 
-  glEnable(GL_SCISSOR_TEST);
+    glEnable(GL_SCISSOR_TEST);
 
-  EventManager::setupWindowHandlers(*this);
+    EventManager::setupWindowHandlers(*this);
 }
 
 void Window::setupStage()
 {
-  assert(stage);
+    assert(stage);
 
-  float px_scale_x, px_scale_y;
-  glfwGetWindowContentScale(glfw_window, &px_scale_x, &px_scale_y);
-  stage->setContentScale(px_scale_x, px_scale_y);
+    float px_scale_x, px_scale_y;
+    glfwGetWindowContentScale(glfw_window, &px_scale_x, &px_scale_y);
+    stage->setContentScale(px_scale_x, px_scale_y);
 }
 
 Window::~Window()
 {
-  /* Let stage destruct shaders first. */
-  stage = nullptr;
+    /* Let stage destruct shaders first. */
+    stage = nullptr;
 
-  GWN_context_active_set(gwn_context);
-  GPU_exit();
-  GWN_context_discard(gwn_context);
+    GWN_context_active_set(gwn_context);
+    GPU_exit();
+    GWN_context_discard(gwn_context);
 
-  glfwMakeContextCurrent(nullptr);
-  glfwDestroyWindow(glfw_window);
+    glfwMakeContextCurrent(nullptr);
+    glfwDestroyWindow(glfw_window);
 }
 
 void Window::draw()
 {
-  GWN_context_active_set(gwn_context);
-  immActivate();
+    GWN_context_active_set(gwn_context);
+    immActivate();
 
-  if (stage)
-  {
-    stage->draw();
-  }
+    if (stage)
+    {
+        stage->draw();
+    }
 
-  immDeactivate();
-  GWN_context_active_set(nullptr);
+    immDeactivate();
+    GWN_context_active_set(nullptr);
 
-  glfwSwapBuffers(glfw_window);
+    glfwSwapBuffers(glfw_window);
 }
 
 auto Window::processEvents() -> Window::WindowAction
 {
-  if (glfwWindowShouldClose(glfw_window)) {
-    return WINDOW_ACTION_CLOSE;
-  }
+    if (glfwWindowShouldClose(glfw_window))
+    {
+        return WINDOW_ACTION_CLOSE;
+    }
 
-  return WINDOW_ACTION_CONTINUE;
+    return WINDOW_ACTION_CONTINUE;
 }
 
 auto Window::getCursorPosition() const -> bWidgets::bwPoint
 {
-  int win_size_y;
-  double x, y;
+    int win_size_y;
+    double x, y;
 
-  glfwGetCursorPos(glfw_window, &x, &y);
-  glfwGetWindowSize(glfw_window, nullptr, &win_size_y);
+    glfwGetCursorPos(glfw_window, &x, &y);
+    glfwGetWindowSize(glfw_window, nullptr, &win_size_y);
 
-  /* Invert vertically. */
-  bwPoint position{float(x), float(win_size_y - y)};
+    /* Invert vertically. */
+    bwPoint position{ float(x), float(win_size_y - y) };
 
 #ifndef __APPLE__
-  /* We need unscaled coordinates, which only Apple gives by default. */
-  float px_scale_x, px_scale_y;
-  glfwGetWindowContentScale(glfw_window, &px_scale_x, &px_scale_y);
-  position.x /= px_scale_x;
-  position.y /= px_scale_y;
+    /* We need unscaled coordinates, which only Apple gives by default. */
+    float px_scale_x, px_scale_y;
+    glfwGetWindowContentScale(glfw_window, &px_scale_x, &px_scale_y);
+    position.x /= px_scale_x;
+    position.y /= px_scale_y;
 #endif
 
-  return position;
+    return position;
 }
 
 void Window::handleResizeEvent(const int new_win_x, const int new_win_y)
 {
-  width = new_win_x;
-  height = new_win_y;
-  stage->handleWindowResizeEvent(*this);
+    width = new_win_x;
+    height = new_win_y;
+    stage->handleWindowResizeEvent(*this);
 }
 
 void Window::handleContentScaleEvent(const float new_scale_x, const float new_scale_y)
 {
-  stage->setContentScale(new_scale_x, new_scale_y);
+    stage->setContentScale(new_scale_x, new_scale_y);
 }
 
 auto Window::getGlfwWindow() const -> GLFWwindow&
 {
-  return *glfw_window;
+    return *glfw_window;
 }
 
 auto Window::getWidth() const -> int
 {
-  return width;
+    return width;
 }
 
 auto Window::getHeight() const -> int
 {
-  return height;
+    return height;
 }
 
 }  // namespace bWidgetsDemo

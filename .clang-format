@@ -39,7 +39,7 @@ ColumnLimit: 99
 
 # Cause initializer lists to have one member initialized per line, in the case
 # that all initializers can't fit on a single line.
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
+# ConstructorInitializerAllOnOneLineOrOnePerLine: true
 
 # Indent the : after a constructor. For example:
 #
@@ -61,13 +61,13 @@ ContinuationIndentWidth: 4
 # This tries to match Blender's style as much as possible. One
 BreakBeforeBraces: Custom
 BraceWrapping: {
-    AfterClass: 'false'
-    AfterControlStatement: 'false'
-    AfterEnum : 'false'
+    AfterClass: 'true'
+    AfterControlStatement: 'true'
+    AfterEnum : 'true'
     AfterFunction : 'true'
-    AfterNamespace : 'false'
-    AfterStruct : 'false'
-    AfterUnion : 'false'
+    AfterNamespace : 'true'
+    AfterStruct : 'true'
+    AfterUnion : 'true'
     BeforeCatch : 'true'
     BeforeElse : 'true'
     IndentBraces : 'false'
@@ -75,7 +75,7 @@ BraceWrapping: {
 }
 
 # For switch statements, indent the cases.
-IndentCaseLabels: true
+# IndentCaseLabels: true
 
 # Indent after the hash inside preprocessor directives
 IndentPPDirectives: AfterHash
@@ -103,9 +103,9 @@ ReflowComments: true
 
 # Never use tabs for indentation.
 # Note: TabWidth and IndentWidth must be the same, or strange things happen.
-UseTab: Never
-TabWidth: 2
-IndentWidth: 2
+# UseTab: Never
+TabWidth: 4
+IndentWidth: 4
 
 # Add a big penalty on breaking after the return type of functions. For example,
 #
@@ -157,3 +157,5 @@ PenaltyBreakString: 1000000
 # bWidgets stuff
 
 PointerBindsToType: true
+
+Cpp11BracedListStyle: false

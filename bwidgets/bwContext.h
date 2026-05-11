@@ -1,9 +1,11 @@
 #pragma once
 
-namespace bWidgets {
+namespace bWidgets
+{
 
 class bwWidget;
-namespace bwScreenGraph {
+namespace bwScreenGraph
+{
 class Node;
 }
 
@@ -16,12 +18,13 @@ class Node;
  * Rather than requiring lookups, bWidgets uses this context data-struture for
  * access to special state widgets.
  */
-struct bwContext {
-  /** The currently hovered node (if any). */
-  bwScreenGraph::Node* hovered = nullptr;
+struct bwContext
+{
+    /** The currently hovered node (if any). */
+    bwScreenGraph::Node* hovered = nullptr;
 
-  /** The currently active widget which gets any input (if any). */
-  bwScreenGraph::Node* active = nullptr;
+    /** The currently active widget which gets any input (if any). */
+    bwScreenGraph::Node* active = nullptr;
 };
 
 }  // namespace bWidgets

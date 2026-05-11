@@ -30,49 +30,53 @@
 #include "bwIconInterface.h"
 #include "bwUtil.h"
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
 struct IconReadData;
 class File;
 
-class Icon : public bWidgets::bwIconInterface {
- public:
-  Icon(const unsigned int size,
-       const unsigned int num_channels,
-       const unsigned int bits_per_channel);
+class Icon : public bWidgets::bwIconInterface
+{
+   public:
+    Icon(const unsigned int size,
+         const unsigned int num_channels,
+         const unsigned int bits_per_channel);
 
-  auto isValid() const -> bool override;
+    auto isValid() const -> bool override;
 
-  auto getPixmap() -> Pixmap&;  // TODO should get rid of this.
-  auto getPixmap() const -> const Pixmap&;
+    auto getPixmap() -> Pixmap&;  // TODO should get rid of this.
+    auto getPixmap() const -> const Pixmap&;
 
- private:
-  Pixmap _pixmap;
+   private:
+    Pixmap _pixmap;
 };
 
-class IconMap {
-  friend class IconMapReader;
+class IconMap
+{
+    friend class IconMapReader;
 
- public:
-  ~IconMap() = default;
+   public:
+    ~IconMap() = default;
 
-  auto getIcon(unsigned int index) -> Icon&;
+    auto getIcon(unsigned int index) -> Icon&;
 
- private:
-  IconMap() = default;
+   private:
+    IconMap() = default;
 
-  std::array<std::unique_ptr<Icon>, 30 * 26> icons;  // ICON_GRID_ROWS * ICON_GRID_COLS
+    std::array<std::unique_ptr<Icon>, 30 * 26> icons;  // ICON_GRID_ROWS * ICON_GRID_COLS
 };
 
-class IconMapReader {
- public:
-  IconMapReader();
-  ~IconMapReader();
+class IconMapReader
+{
+   public:
+    IconMapReader();
+    ~IconMapReader();
 
-  auto readIconMapFromPNGFile(File&) -> std::unique_ptr<IconMap>;
+    auto readIconMapFromPNGFile(File&) -> std::unique_ptr<IconMap>;
 
- private:
-  std::unique_ptr<IconReadData> read_data;
+   private:
+    std::unique_ptr<IconReadData> read_data;
 };
 
 }  // namespace bWidgetsDemo

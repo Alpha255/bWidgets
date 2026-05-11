@@ -25,7 +25,8 @@
 
 using namespace bWidgets;
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
 DefaultStageRNAFunctor::DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
                                                DefaultStage& stage,
@@ -33,8 +34,8 @@ DefaultStageRNAFunctor::DefaultStageRNAFunctor(RNAProperties<DefaultStage>& prop
                                                const bwWidget& widget)
     : m_props(props), m_stage(stage), m_prop_name(prop_name), m_widget(widget)
 {
-  /* Sanity check. */
-  assert(props.find(prop_name));
+    /* Sanity check. */
+    assert(props.find(prop_name));
 }
 
 DefaultStageRNAFunctor::DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
@@ -44,30 +45,33 @@ DefaultStageRNAFunctor::DefaultStageRNAFunctor(RNAProperties<DefaultStage>& prop
                                                int enum_value)
     : DefaultStageRNAFunctor(props, stage, prop_name, widget)
 {
-  m_enum_value = enum_value;
+    m_enum_value = enum_value;
 }
 
 void DefaultStageRNAFunctor::operator()()
 {
-  if (widget_cast<bwCheckbox>(m_widget)) {
-    m_props.set(m_prop_name, m_stage, m_widget.getState() == bwWidget::State::SUNKEN);
-  }
-  else if (auto* slider = widget_cast<bwNumberSlider>(m_widget)) {
-    m_props.set(m_prop_name, m_stage, slider->getValue());
-  }
-  else if (widget_cast<bwRadioButton>(m_widget)) {
-    m_props.set(m_prop_name, m_stage, m_enum_value.value());
-  }
+    if (widget_cast<bwCheckbox>(m_widget))
+    {
+        m_props.set(m_prop_name, m_stage, m_widget.getState() == bwWidget::State::SUNKEN);
+    }
+    else if (auto* slider = widget_cast<bwNumberSlider>(m_widget))
+    {
+        m_props.set(m_prop_name, m_stage, slider->getValue());
+    }
+    else if (widget_cast<bwRadioButton>(m_widget))
+    {
+        m_props.set(m_prop_name, m_stage, m_enum_value.value());
+    }
 }
 
 const std::string& DefaultStageRNAFunctor::getPropName() const
 {
-  return m_prop_name;
+    return m_prop_name;
 }
 
 std::optional<int> DefaultStageRNAFunctor::getEnumValue() const
 {
-  return m_enum_value;
+    return m_enum_value;
 }
 
 }  // namespace bWidgetsDemo

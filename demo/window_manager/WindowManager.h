@@ -29,50 +29,53 @@
 
 #include "Window.h"
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
-class WindowManager {
- public:
-  // Constructor is private (singleton!)
-  static auto getWindowManager() -> WindowManager&;
-  ~WindowManager();
+class WindowManager
+{
+   public:
+    // Constructor is private (singleton!)
+    static auto getWindowManager() -> WindowManager&;
+    ~WindowManager();
 
-  void mainLoop();
-  auto addWindow(std::string name) -> Window&;
-  auto isMainWindow(const Window& win) const -> bool;
+    void mainLoop();
+    auto addWindow(std::string name) -> Window&;
+    auto isMainWindow(const Window& win) const -> bool;
 
-  template<class T>
-  auto addWindowWithStage(std::string name) -> Window&
-  {
-    auto& win = windows.emplace_back(name);
-    if (windows.size() == 1) {
-      main_win = &windows.back();
+    template<class T> auto addWindowWithStage(std::string name) -> Window&
+    {
+        auto& win = windows.emplace_back(name);
+        if (windows.size() == 1)
+        {
+            main_win = &windows.back();
+        }
+
+        win.createStage<T>();
+
+        return windows.back();
     }
 
-    win.createStage<T>();
+    void removeWindow(Window& win);
 
-    return windows.back();
-  }
+    using WindowList = std::list<Window>;
 
-  void removeWindow(Window& win);
+   private:
+    WindowManager();
+    WindowManager(WindowManager const&) = delete;
+    void operator=(WindowManager const&) = delete;
 
-  using WindowList = std::list<Window>;
+    enum WindowManagerAction
+    {
+        WM_ACTION_CONTINUE,
+        WM_ACTION_CLOSE,
+    };
+    auto processEvents() -> WindowManagerAction;
+    void drawWindows();
 
- private:
-  WindowManager();
-  WindowManager(WindowManager const&) = delete;
-  void operator=(WindowManager const&) = delete;
-
-  enum WindowManagerAction {
-    WM_ACTION_CONTINUE,
-    WM_ACTION_CLOSE,
-  };
-  auto processEvents() -> WindowManagerAction;
-  void drawWindows();
-
-  class EventManager& event_manager;
-  WindowList windows;
-  Window* main_win;
+    class EventManager& event_manager;
+    WindowList windows;
+    Window* main_win;
 };
 
 }  // namespace bWidgetsDemo

@@ -1,6 +1,7 @@
 #pragma once
 
-namespace bWidgets {
+namespace bWidgets
+{
 
 /**
  * \brief Abstract function object class.
@@ -28,10 +29,11 @@ namespace bWidgets {
  * };
  * \endcode
  */
-class bwFunctorInterface {
- public:
-  virtual void operator()() = 0;
-  virtual ~bwFunctorInterface() = default;
+class bwFunctorInterface
+{
+   public:
+    virtual void operator()() = 0;
+    virtual ~bwFunctorInterface() = default;
 };
 
 }  // namespace bWidgets

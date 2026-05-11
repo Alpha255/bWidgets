@@ -35,21 +35,23 @@ static bool initialized = false;
  */
 void GPU_init()
 {
-  if (initialized) {
-    assert(0);
-    return;
-  }
-  initialized = true;
+    if (initialized)
+    {
+        assert(0);
+        return;
+    }
+    initialized = true;
 
-  GLenum glew_ret = glewInit();
-  if (glew_ret != GLEW_OK) {
-    std::cout << "Error: " << glewGetErrorString(glew_ret) << std::endl;
-    assert(0);
-  }
-  immInit();
+    GLenum glew_ret = glewInit();
+    if (glew_ret != GLEW_OK)
+    {
+        std::cout << "Error: " << glewGetErrorString(glew_ret) << std::endl;
+        assert(0);
+    }
+    immInit();
 }
 
 void GPU_exit()
 {
-  immDestroy();
+    immDestroy();
 }

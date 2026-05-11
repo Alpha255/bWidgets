@@ -4,29 +4,32 @@
 
 #include "bwRectangle.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 
 class bwStyle;
 
-namespace bwScreenGraph {
+namespace bwScreenGraph
+{
 class ScreenGraph;
 class Node;
 
-class Drawer {
- public:
-  static void draw(ScreenGraph& screen_graph, bwStyle& style);
-  static void drawSubtree(Node& subtree_root, bwStyle& style);
+class Drawer
+{
+   public:
+    static void draw(ScreenGraph& screen_graph, bwStyle& style);
+    static void drawSubtree(Node& subtree_root, bwStyle& style);
 
- private:
-  Drawer(bwStyle& style);
+   private:
+    Drawer(bwStyle& style);
 
-  void drawSubtreeRecursive(Node& subtree_root);
-  void drawNode(Node& node);
-  void pushMask(const Node& node);
-  void popMask();
+    void drawSubtreeRecursive(Node& subtree_root);
+    void drawNode(Node& node);
+    void pushMask(const Node& node);
+    void popMask();
 
-  bwStyle& style;
-  std::stack<bwRectanglePixel> maskrect_stack;
+    bwStyle& style;
+    std::stack<bwRectanglePixel> maskrect_stack;
 };
 
 }  // namespace bwScreenGraph

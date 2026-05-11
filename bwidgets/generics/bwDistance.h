@@ -2,7 +2,8 @@
 
 #include "bwPoint.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 
 using bwDistance = bwPoint;
 

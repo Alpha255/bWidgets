@@ -5,10 +5,12 @@
 #include "bwEvent.h"
 #include "bwPoint.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 
 struct bwContext;
-namespace bwScreenGraph {
+namespace bwScreenGraph
+{
 class ScreenGraph;
 class Node;
 }  // namespace bwScreenGraph
@@ -21,25 +23,26 @@ class Node;
  * in user focus (i.e. hovered or active node). That means, it calls the nodes
  * event listener corresponding to the determined event.
  */
-class bwEventDispatcher {
- public:
-  bwEventDispatcher(bwScreenGraph::ScreenGraph& _screen_graph);
+class bwEventDispatcher
+{
+   public:
+    bwEventDispatcher(bwScreenGraph::ScreenGraph& _screen_graph);
 
-  void dispatchMouseMovement(bwEvent);
-  void dispatchMouseButtonPress(bwMouseButtonEvent&);
-  void dispatchMouseButtonRelease(bwMouseButtonEvent&);
-  void dispatchMouseWheelScroll(bwMouseWheelEvent&);
+    void dispatchMouseMovement(bwEvent);
+    void dispatchMouseButtonPress(bwMouseButtonEvent&);
+    void dispatchMouseButtonRelease(bwMouseButtonEvent&);
+    void dispatchMouseWheelScroll(bwMouseWheelEvent&);
 
- private:
-  auto isDragging() -> bool;
-  void changeContextHovered(bwScreenGraph::Node*, bwEvent&);
+   private:
+    auto isDragging() -> bool;
+    void changeContextHovered(bwScreenGraph::Node*, bwEvent&);
 
-  /** Reference back to the screen-graph owning this dispatcher */
-  bwScreenGraph::ScreenGraph& screen_graph;
-  /** Reference to the screen-graph's context (convenience). */
-  bwContext& context;
+    /** Reference back to the screen-graph owning this dispatcher */
+    bwScreenGraph::ScreenGraph& screen_graph;
+    /** Reference to the screen-graph's context (convenience). */
+    bwContext& context;
 
-  std::optional<bwMouseButtonDragEvent> drag_event;
+    std::optional<bwMouseButtonDragEvent> drag_event;
 };
 
 }  // namespace bWidgets

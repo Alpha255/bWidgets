@@ -25,13 +25,15 @@
 
 #include "screen_graph/Node.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 class bwPoint;
 class bwStyle;
 class bwWidget;
 }  // namespace bWidgets
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
 void resolveScreenGraphNodeLayout(bWidgets::bwScreenGraph::LayoutNode& node,
                                   const bWidgets::bwRectangle<float>& rect,
@@ -54,89 +56,96 @@ void resolveScreenGraphNodeLayout(bWidgets::bwScreenGraph::LayoutNode& node,
  *       the needed position and size hints can be set. Without changing these, the
  *       calculated widget-coordinates don't change.
  */
-class LayoutItem : public bWidgets::bwLayoutInterface {
- public:
-  enum class Type {
-    ROW,
-    COLUMN,
-    PANEL,
-    SCROLL_VIEW,
-    ROOT,
-  };
+class LayoutItem : public bWidgets::bwLayoutInterface
+{
+   public:
+    enum class Type
+    {
+        ROW,
+        COLUMN,
+        PANEL,
+        SCROLL_VIEW,
+        ROOT,
+    };
 
-  enum FlowDirection {
-    // Widgets and child-layouts are added top to down
-    FLOW_DIRECTION_VERTICAL,
-    // Widgets and child-layouts are added left to right
-    FLOW_DIRECTION_HORIZONTAL,
-  };
+    enum FlowDirection
+    {
+        // Widgets and child-layouts are added top to down
+        FLOW_DIRECTION_VERTICAL,
+        // Widgets and child-layouts are added left to right
+        FLOW_DIRECTION_HORIZONTAL,
+    };
 
-  virtual ~LayoutItem() override = default;
+    virtual ~LayoutItem() override = default;
 
-  virtual void resolve(bWidgets::bwScreenGraph::Node& node,
-                       const bWidgets::bwPoint& layout_pos,
-                       const unsigned int item_margin,
-                       const float scale_fac);
+    virtual void resolve(bWidgets::bwScreenGraph::Node& node,
+                         const bWidgets::bwPoint& layout_pos,
+                         const unsigned int item_margin,
+                         const float scale_fac);
 
-  auto getRectangle() -> bWidgets::bwRectanglePixel override;
-  auto getHeight() const -> unsigned int;
+    auto getRectangle() -> bWidgets::bwRectanglePixel override;
+    auto getHeight() const -> unsigned int;
 
-  const Type type;
-  const FlowDirection flow_direction;
-  unsigned int padding = 0;
-  const bool align;
+    const Type type;
+    const FlowDirection flow_direction;
+    unsigned int padding = 0;
+    const bool align;
 
- protected:
-  using LayoutItemList = std::list<std::unique_ptr<LayoutItem>>;
-  using IteratorItem = LayoutItemList::const_iterator;
+   protected:
+    using LayoutItemList = std::list<std::unique_ptr<LayoutItem>>;
+    using IteratorItem = LayoutItemList::const_iterator;
 
-  // Protected constructor to force calling through inherited class (pseudo abstract).
-  LayoutItem(Type layout_type,
-             const bool align,
-             FlowDirection flow_direction = FLOW_DIRECTION_HORIZONTAL);
+    // Protected constructor to force calling through inherited class (pseudo abstract).
+    LayoutItem(Type layout_type,
+               const bool align,
+               FlowDirection flow_direction = FLOW_DIRECTION_HORIZONTAL);
 
-  static void resolvePanelContents(bWidgets::bwScreenGraph::Node& panel_node,
-                                   const bWidgets::bwPoint& panel_pos,
-                                   const unsigned int padding,
-                                   const unsigned int item_margin,
-                                   const float scale_fac);
+    static void resolvePanelContents(bWidgets::bwScreenGraph::Node& panel_node,
+                                     const bWidgets::bwPoint& panel_pos,
+                                     const unsigned int padding,
+                                     const unsigned int item_margin,
+                                     const float scale_fac);
 
- public:
-  int width{0}, height{0};
-  bWidgets::bwPoint location;
+   public:
+    int width{ 0 }, height{ 0 };
+    bWidgets::bwPoint location;
 
- private:
-  auto countRowColumns(const bWidgets::bwScreenGraph::Node::ChildList& children) const
-      -> unsigned int;
-  auto countNeededMargins(const bWidgets::bwScreenGraph::Node::ChildList& children) const
-      -> unsigned int;
+   private:
+    auto countRowColumns(const bWidgets::bwScreenGraph::Node::ChildList& children) const
+        -> unsigned int;
+    auto countNeededMargins(const bWidgets::bwScreenGraph::Node::ChildList& children) const
+        -> unsigned int;
 };
 
-class ColumnLayout : public LayoutItem {
- public:
-  explicit ColumnLayout(const bool align = false);
+class ColumnLayout : public LayoutItem
+{
+   public:
+    explicit ColumnLayout(const bool align = false);
 };
 
-class RowLayout : public LayoutItem {
- public:
-  explicit RowLayout(const bool align = false);
+class RowLayout : public LayoutItem
+{
+   public:
+    explicit RowLayout(const bool align = false);
 };
 
-class PanelLayout : public LayoutItem {
- public:
-  explicit PanelLayout();
+class PanelLayout : public LayoutItem
+{
+   public:
+    explicit PanelLayout();
 };
 
-class ScrollViewLayout : public LayoutItem {
- public:
-  explicit ScrollViewLayout();
+class ScrollViewLayout : public LayoutItem
+{
+   public:
+    explicit ScrollViewLayout();
 
-  void resolve(bWidgets::bwScreenGraph::Node& node,
-               const bWidgets::bwPoint& layout_pos,
-               const unsigned int item_margin,
-               const float scale_fac) override;
+    void resolve(bWidgets::bwScreenGraph::Node& node,
+                 const bWidgets::bwPoint& layout_pos,
+                 const unsigned int item_margin,
+                 const float scale_fac) override;
 
-  unsigned int item_margin = 0;
+    unsigned int item_margin = 0;
 };
 
 /**
@@ -145,16 +154,17 @@ class ScrollViewLayout : public LayoutItem {
  * The first child node is the menu bar (ColumnLayout, fixed height derived from bwMenu content).
  * The second child node is the scroll view (ScrollViewLayout, fills remaining area).
  */
-class RootLayout : public LayoutItem {
- public:
-  explicit RootLayout();
+class RootLayout : public LayoutItem
+{
+   public:
+    explicit RootLayout();
 
-  void resolve(bWidgets::bwScreenGraph::Node& node,
-               const bWidgets::bwPoint& layout_pos,
-               const unsigned int item_margin,
-               const float scale_fac) override;
+    void resolve(bWidgets::bwScreenGraph::Node& node,
+                 const bWidgets::bwPoint& layout_pos,
+                 const unsigned int item_margin,
+                 const float scale_fac) override;
 
-  unsigned int item_margin = 0;
+    unsigned int item_margin = 0;
 };
 
 }  // namespace bWidgetsDemo

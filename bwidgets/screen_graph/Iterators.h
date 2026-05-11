@@ -5,8 +5,10 @@
 #include "Node.h"
 #include "ScreenGraph.h"
 
-namespace bWidgets {
-namespace bwScreenGraph {
+namespace bWidgets
+{
+namespace bwScreenGraph
+{
 
 /**
  * \brief Iterator for pre-order (depth-first) traversal.
@@ -22,34 +24,36 @@ namespace bwScreenGraph {
  * memory to keep information about visited ancestors up to the root of
  * iteration. Even that only adds trivial overhead though.
  */
-class PreOrderIterator {
- public:
-  PreOrderIterator();
-  PreOrderIterator(Node& node);
-  ~PreOrderIterator();
+class PreOrderIterator
+{
+   public:
+    PreOrderIterator();
+    PreOrderIterator(Node& node);
+    ~PreOrderIterator();
 
-  // Delete copy but keep move constructor for now. We store a parent path
-  // below which would require deep copying. So prefer move over copy.
-  PreOrderIterator(const PreOrderIterator&) = delete;
-  PreOrderIterator(PreOrderIterator&&);
+    // Delete copy but keep move constructor for now. We store a parent path
+    // below which would require deep copying. So prefer move over copy.
+    PreOrderIterator(const PreOrderIterator&) = delete;
+    PreOrderIterator(PreOrderIterator&&);
 
-  auto operator!=(const PreOrderIterator&) const -> bool;
-  auto operator*() -> Node&;
-  auto operator++() -> PreOrderIterator&;
+    auto operator!=(const PreOrderIterator&) const -> bool;
+    auto operator*() -> Node&;
+    auto operator++() -> PreOrderIterator&;
 
- private:
-  void triggerIterationEnd();
-  bool hasExceededLastSibling();
+   private:
+    void triggerIterationEnd();
+    bool hasExceededLastSibling();
 
-  union {
-    Node* node;
-    Node::ChildList::iterator node_iter;
-  };
+    union
+    {
+        Node* node;
+        Node::ChildList::iterator node_iter;
+    };
 
-  Node* root = nullptr;
-  bool is_root = true;
-  // Ancestors up to (but excluding!) node that started iteration.
-  std::list<Node::ChildList::iterator> ancestors;
+    Node* root = nullptr;
+    bool is_root = true;
+    // Ancestors up to (but excluding!) node that started iteration.
+    std::list<Node::ChildList::iterator> ancestors;
 };
 
 /* PreOrderIterator is the default iterator (implicitly chosen when passing a

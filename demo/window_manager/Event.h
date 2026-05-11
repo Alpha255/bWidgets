@@ -25,46 +25,50 @@
 #include "bwEvent.h"
 #include "bwWidget.h"
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
-class Event {
-  friend class EventManager;
+class Event
+{
+    friend class EventManager;
 
- protected:
-  Event() = default;
+   protected:
+    Event() = default;
 };
 
-class MouseEvent : Event {
- public:
-  enum class Type {
-    PRESS,
-    RELEASE,
-    MOVE,
-    SCROLL_UP,
-    SCROLL_DOWN,
+class MouseEvent : Event
+{
+   public:
+    enum class Type
+    {
+        PRESS,
+        RELEASE,
+        MOVE,
+        SCROLL_UP,
+        SCROLL_DOWN,
 
-    UNKNOWN
-  };
+        UNKNOWN
+    };
 
-  using Button = bWidgets::bwMouseButtonEvent::Button;
+    using Button = bWidgets::bwMouseButtonEvent::Button;
 
-  MouseEvent(Type type, Button button, const bWidgets::bwPoint& location);
+    MouseEvent(Type type, Button button, const bWidgets::bwPoint& location);
 
-  auto isClick() const -> bool;
+    auto isClick() const -> bool;
 
-  auto getButton() const -> Button;
-  auto getType() const -> Type;
+    auto getButton() const -> Button;
+    auto getType() const -> Type;
 
-  static auto getMouseLocation() -> const bWidgets::bwPoint&;
+    static auto getMouseLocation() -> const bWidgets::bwPoint&;
 
- private:
-  Type type;
-  Button button;
+   private:
+    Type type;
+    Button button;
 
-  static bWidgets::bwPoint location;
-  // Location during previous mouse button press.
-  static bWidgets::bwPoint last_down_location;
-  static Button last_down_button;
+    static bWidgets::bwPoint location;
+    // Location during previous mouse button press.
+    static bWidgets::bwPoint last_down_location;
+    static Button last_down_button;
 };
 
 }  // namespace bWidgetsDemo

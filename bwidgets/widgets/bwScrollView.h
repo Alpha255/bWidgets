@@ -4,44 +4,47 @@
 
 #include "bwContainerWidget.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 
-namespace bwScreenGraph {
+namespace bwScreenGraph
+{
 class WidgetNode;
 }
 class bwScrollBar;
 
-class bwScrollView : public bwContainerWidget {
-  friend class bwScrollViewHandler;
+class bwScrollView : public bwContainerWidget
+{
+    friend class bwScrollViewHandler;
 
- public:
-  bwScrollView(bwScreenGraph::ContainerNode& node,
-               unsigned int width = 0,
-               unsigned int height = 0);
+   public:
+    bwScrollView(bwScreenGraph::ContainerNode& node,
+                 unsigned int width = 0,
+                 unsigned int height = 0);
 
-  auto getTypeIdentifier() const -> std::string_view override;
+    auto getTypeIdentifier() const -> std::string_view override;
 
-  void draw(bwStyle& style) override;
+    void draw(bwStyle& style) override;
 
-  auto createHandler() -> std::unique_ptr<bwScreenGraph::EventHandler> override;
+    auto createHandler() -> std::unique_ptr<bwScreenGraph::EventHandler> override;
 
-  auto getScrollOffsetY() const -> int;
-  auto getContentBounds(float interface_scale) const -> bwRectanglePixel;
+    auto getScrollOffsetY() const -> int;
+    auto getContentBounds(float interface_scale) const -> bwRectanglePixel;
 
- private:
-  auto getVerticalScrollBar() const -> bwScrollBar&;
-  auto getVerticalScrollbarRect(const bwStyle& style) const -> bwRectanglePixel;
-  void drawScrollBars(bwStyle& style);
-  auto isScrollable() const -> bool;
-  void validizeScrollValues();
+   private:
+    auto getVerticalScrollBar() const -> bwScrollBar&;
+    auto getVerticalScrollbarRect(const bwStyle& style) const -> bwRectanglePixel;
+    void drawScrollBars(bwStyle& style);
+    auto isScrollable() const -> bool;
+    void validizeScrollValues();
 
-  static auto getScrollbarWidth(float interface_scale) -> int;
+    static auto getScrollbarWidth(float interface_scale) -> int;
 
-  constexpr static int SCROLL_BAR_SIZE = 17;
+    constexpr static int SCROLL_BAR_SIZE = 17;
 
-  std::unique_ptr<bwScreenGraph::WidgetNode> scrollbar_node;
+    std::unique_ptr<bwScreenGraph::WidgetNode> scrollbar_node;
 
-  int vert_scroll{0};
+    int vert_scroll{ 0 };
 };
 
 }  // namespace bWidgets

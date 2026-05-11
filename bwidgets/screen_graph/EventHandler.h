@@ -5,14 +5,16 @@
 #include <list>
 #include <unordered_map>
 
-namespace bWidgets {
+namespace bWidgets
+{
 
 class bwEvent;
 class bwMouseButtonEvent;
 class bwMouseButtonDragEvent;
 class bwMouseWheelEvent;
 
-namespace bwScreenGraph {
+namespace bwScreenGraph
+{
 
 class Node;
 
@@ -28,32 +30,34 @@ using EventListener = std::function<void(Node&)>;
  * * Many widget handlers are friend classes to the widgets to access internal data. Instead
  *   widgets should have APIs to manipulate their state anyway, which they don't have yet.
  */
-class EventHandler {
- public:
-  enum EventType {
-    MOUSE_ENTER,
-    MOUSE_LEAVE,
+class EventHandler
+{
+   public:
+    enum EventType
+    {
+        MOUSE_ENTER,
+        MOUSE_LEAVE,
 
-    TOT_EVENT_TYPES,
-  };
+        TOT_EVENT_TYPES,
+    };
 
-  EventHandler() = default;
-  virtual ~EventHandler() = default;
+    EventHandler() = default;
+    virtual ~EventHandler() = default;
 
-  void addEventListener(EventType event_type, EventListener listener);
+    void addEventListener(EventType event_type, EventListener listener);
 
-  virtual void onMouseMove(bwEvent&);
-  virtual void onMouseEnter(bwEvent&);
-  virtual void onMouseLeave(bwEvent&);
-  virtual void onMousePress(bwMouseButtonEvent&);
-  virtual void onMouseRelease(bwMouseButtonEvent&);
-  virtual void onMouseClick(bwMouseButtonEvent&);
-  virtual void onMouseDrag(bwMouseButtonDragEvent&);
-  virtual void onMouseWheel(bwMouseWheelEvent&);
+    virtual void onMouseMove(bwEvent&);
+    virtual void onMouseEnter(bwEvent&);
+    virtual void onMouseLeave(bwEvent&);
+    virtual void onMousePress(bwMouseButtonEvent&);
+    virtual void onMouseRelease(bwMouseButtonEvent&);
+    virtual void onMouseClick(bwMouseButtonEvent&);
+    virtual void onMouseDrag(bwMouseButtonDragEvent&);
+    virtual void onMouseWheel(bwMouseWheelEvent&);
 
- private:
-  std::array<std::list<EventListener>, TOT_EVENT_TYPES> listeners;
-  //	std::unordered_map<EventType, std::list<EventListener>> listener_map;
+   private:
+    std::array<std::list<EventListener>, TOT_EVENT_TYPES> listeners;
+    //	std::unordered_map<EventType, std::list<EventListener>> listener_map;
 };
 
 }  // namespace bwScreenGraph

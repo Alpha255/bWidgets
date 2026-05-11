@@ -2,46 +2,49 @@
 
 #include "bwContainerWidget.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 
-class bwPanel : public bwContainerWidget {
-  friend class bwPanelHandler;
+class bwPanel : public bwContainerWidget
+{
+    friend class bwPanelHandler;
 
- public:
-  enum class State {
-    OPEN,
-    CLOSED,
-  };
+   public:
+    enum class State
+    {
+        OPEN,
+        CLOSED,
+    };
 
-  bwPanel(const bwScreenGraph::ContainerNode& node,
-          std::string label,
-          std::optional<unsigned int> header_height_hint = std::nullopt);
+    bwPanel(const bwScreenGraph::ContainerNode& node,
+            std::string label,
+            std::optional<unsigned int> header_height_hint = std::nullopt);
 
-  auto getTypeIdentifier() const -> std::string_view override;
-  
-  void draw(class bwStyle& style) override;
+    auto getTypeIdentifier() const -> std::string_view override;
 
-  void registerProperties() override;
+    void draw(class bwStyle& style) override;
 
-  auto getLabel() const -> const std::string* override;
-  auto childrenVisible() const -> bool override;
+    void registerProperties() override;
 
-  auto createHandler() -> std::unique_ptr<bwScreenGraph::EventHandler> override;
+    auto getLabel() const -> const std::string* override;
+    auto childrenVisible() const -> bool override;
 
-  unsigned int getHeaderHeightHint() const;
+    auto createHandler() -> std::unique_ptr<bwScreenGraph::EventHandler> override;
 
-  unsigned int header_height;
-  State panel_state{State::OPEN};
+    unsigned int getHeaderHeightHint() const;
 
- private:
-  void drawHeader(class bwStyle& style) const;
-  auto getHeaderRectangle() const -> bwRectanglePixel;
-  auto isCoordinateInsideHeader(const bwPoint& point) const -> bool;
+    unsigned int header_height;
+    State panel_state{ State::OPEN };
 
-  std::string label;
+   private:
+    void drawHeader(class bwStyle& style) const;
+    auto getHeaderRectangle() const -> bwRectanglePixel;
+    auto isCoordinateInsideHeader(const bwPoint& point) const -> bool;
 
- public:
-  bool draw_separator = false;
+    std::string label;
+
+   public:
+    bool draw_separator = false;
 };
 
 }  // namespace bWidgets

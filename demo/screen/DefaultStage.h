@@ -23,29 +23,31 @@
 
 #include "Stage.h"
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
-class DefaultStage : public Stage {
-  friend class ScaleSetter;
-  friend class StyleSetter;
+class DefaultStage : public Stage
+{
+    friend class ScaleSetter;
+    friend class StyleSetter;
 
- public:
-  DefaultStage(unsigned int mask_width, unsigned int mask_height);
+   public:
+    DefaultStage(unsigned int mask_width, unsigned int mask_height);
 
- private:
-  void registerProperties(RNAProperties<DefaultStage>& properties);
+   private:
+    void registerProperties(RNAProperties<DefaultStage>& properties);
 
-  void activateStyleID(bWidgets::bwStyle::TypeID) override;
-  void addStyleSelector(bWidgets::bwScreenGraph::LayoutNode& parent_node);
-  void updateFontAAMode(bool value);
+    void activateStyleID(bWidgets::bwStyle::TypeID) override;
+    void addStyleSelector(bWidgets::bwScreenGraph::LayoutNode& parent_node);
+    void updateFontAAMode(bool value);
 
-  void useStyleCSSVersionSet(const bool use_css_version);
-  void updateStyleButtons();
-  auto updateStyleButton(bWidgets::bwWidget& widget_iter) -> bool;
+    void useStyleCSSVersionSet(const bool use_css_version);
+    void updateStyleButtons();
+    auto updateStyleButton(bWidgets::bwWidget& widget_iter) -> bool;
 
-  RNAProperties<DefaultStage> properties;
+    RNAProperties<DefaultStage> properties;
 
-  const unsigned int padding = 10;
+    const unsigned int padding = 10;
 };
 
 }  // namespace bWidgetsDemo

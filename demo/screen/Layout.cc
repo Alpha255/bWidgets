@@ -29,30 +29,35 @@
 
 using namespace bWidgets;  // Less verbose
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
 void resolveScreenGraphNodeLayout(bwScreenGraph::LayoutNode& node,
                                   const bwRectangle<float>& rect,
                                   const float scale_fac)
 {
-  if (LayoutItem* layout = static_cast<LayoutItem*>(node.Layout())) {
-    if (RootLayout* root = dynamic_cast<RootLayout*>(layout)) {
-      assert(node.Children());
-      root->width = int(rect.width());
-      root->height = int(rect.height());
-      root->resolve(node, {rect.xmin, rect.ymin}, root->item_margin, scale_fac);
-    }
-    else if (ScrollViewLayout* root = dynamic_cast<ScrollViewLayout*>(layout)) {
-      assert(node.Children());
+    if (LayoutItem* layout = static_cast<LayoutItem*>(node.Layout()))
+    {
+        if (RootLayout* root = dynamic_cast<RootLayout*>(layout))
+        {
+            assert(node.Children());
+            root->width = int(rect.width());
+            root->height = int(rect.height());
+            root->resolve(node, { rect.xmin, rect.ymin }, root->item_margin, scale_fac);
+        }
+        else if (ScrollViewLayout* root = dynamic_cast<ScrollViewLayout*>(layout))
+        {
+            assert(node.Children());
 
-      if (bwWidget* widget = node.Widget()) {
-        widget->width_hint = rect.width();
-        widget->height_hint = rect.height();
-      }
+            if (bwWidget* widget = node.Widget())
+            {
+                widget->width_hint = rect.width();
+                widget->height_hint = rect.height();
+            }
 
-      root->resolve(node, {rect.xmin, rect.ymin}, root->item_margin, scale_fac);
+            root->resolve(node, { rect.xmin, rect.ymin }, root->item_margin, scale_fac);
+        }
     }
-  }
 }
 
 LayoutItem::LayoutItem(LayoutItem::Type item_type, const bool align, FlowDirection flow_direction)
@@ -62,100 +67,114 @@ LayoutItem::LayoutItem(LayoutItem::Type item_type, const bool align, FlowDirecti
 
 auto LayoutItem::getHeight() const -> unsigned int
 {
-  return height;
+    return height;
 }
 
 static auto getNextUnhiddenNode(const bwScreenGraph::Node::ChildList::const_iterator& current)
     -> bwScreenGraph::Node*
 {
-  for (auto iter = ++bwScreenGraph::Node::ChildList::const_iterator(current);
-       iter != (*current)->Parent()->Children()->end();
-       ++iter) {
-    if ((*iter)->isVisible()) {
-      return iter->get();
+    for (auto iter = ++bwScreenGraph::Node::ChildList::const_iterator(current);
+         iter != (*current)->Parent()->Children()->end();
+         ++iter)
+    {
+        if ((*iter)->isVisible())
+        {
+            return iter->get();
+        }
     }
-  }
 
-  return nullptr;
+    return nullptr;
 }
 static auto getPreviousUnhiddenNode(const bwScreenGraph::Node::ChildIterator& current)
     -> bwScreenGraph::Node*
 {
-  for (auto iter = bwScreenGraph::Node::ChildList::reverse_iterator(current);
-       iter != (*current)->Parent()->Children()->rend();
-       ++iter) {
-    if ((*iter)->isVisible()) {
-      return iter->get();
+    for (auto iter = bwScreenGraph::Node::ChildList::reverse_iterator(current);
+         iter != (*current)->Parent()->Children()->rend();
+         ++iter)
+    {
+        if ((*iter)->isVisible())
+        {
+            return iter->get();
+        }
     }
-  }
 
-  return nullptr;
+    return nullptr;
 }
 
 static auto shouldWidgetAlignToPrevious(const bwScreenGraph::Node::ChildIterator& current) -> bool
 {
-  bwScreenGraph::Node* prev_item = getPreviousUnhiddenNode(current);
-  bwWidget* prev_widget = prev_item ? prev_item->Widget() : nullptr;
+    bwScreenGraph::Node* prev_item = getPreviousUnhiddenNode(current);
+    bwWidget* prev_widget = prev_item ? prev_item->Widget() : nullptr;
 
-  if (!prev_item || !prev_widget || !prev_widget->canAlign()) {
-    return false;
-  }
+    if (!prev_item || !prev_widget || !prev_widget->canAlign())
+    {
+        return false;
+    }
 
-  return true;
+    return true;
 }
 static auto shouldWidgetAlignToNext(const bwScreenGraph::Node::ChildIterator& current) -> bool
 {
-  bwScreenGraph::Node* next_item = getNextUnhiddenNode(current);
-  bwWidget* next_widget = next_item ? next_item->Widget() : nullptr;
+    bwScreenGraph::Node* next_item = getNextUnhiddenNode(current);
+    bwWidget* next_widget = next_item ? next_item->Widget() : nullptr;
 
-  if (!next_item || !next_widget || !next_widget->canAlign()) {
-    return false;
-  }
+    if (!next_item || !next_widget || !next_widget->canAlign())
+    {
+        return false;
+    }
 
-  return true;
+    return true;
 }
 static void alignNode(bwScreenGraph::Node::ChildIterator node_iter,
                       const LayoutItem::FlowDirection flow_direction)
 {
-  bwWidget* widget = (*node_iter)->Widget();
-  bwAbstractButton* abstract_button;
+    bwWidget* widget = (*node_iter)->Widget();
+    bwAbstractButton* abstract_button;
 
-  if (!widget || !widget->canAlign() ||
-      !(abstract_button = widget_cast<bwAbstractButton>(widget))) {
-    return;
-  }
-  abstract_button->rounded_corners = 0;
+    if (!widget || !widget->canAlign() ||
+        !(abstract_button = widget_cast<bwAbstractButton>(widget)))
+    {
+        return;
+    }
+    abstract_button->rounded_corners = 0;
 
-  if (!shouldWidgetAlignToPrevious(node_iter)) {
-    abstract_button->rounded_corners |= (flow_direction == LayoutItem::FLOW_DIRECTION_HORIZONTAL) ?
-                                            (TOP_LEFT | BOTTOM_LEFT) :
-                                            (TOP_LEFT | TOP_RIGHT);
-  }
-  if (!shouldWidgetAlignToNext(node_iter)) {
-    abstract_button->rounded_corners |= (flow_direction == LayoutItem::FLOW_DIRECTION_HORIZONTAL) ?
-                                            (TOP_RIGHT | BOTTOM_RIGHT) :
-                                            (BOTTOM_LEFT | BOTTOM_RIGHT);
-  }
+    if (!shouldWidgetAlignToPrevious(node_iter))
+    {
+        abstract_button->rounded_corners |= (flow_direction ==
+                                             LayoutItem::FLOW_DIRECTION_HORIZONTAL) ?
+                                                (TOP_LEFT | BOTTOM_LEFT) :
+                                                (TOP_LEFT | TOP_RIGHT);
+    }
+    if (!shouldWidgetAlignToNext(node_iter))
+    {
+        abstract_button->rounded_corners |= (flow_direction ==
+                                             LayoutItem::FLOW_DIRECTION_HORIZONTAL) ?
+                                                (TOP_RIGHT | BOTTOM_RIGHT) :
+                                                (BOTTOM_LEFT | BOTTOM_RIGHT);
+    }
 }
 
 static auto needsMarginAfterNode(const bwScreenGraph::Node::ChildList::const_iterator node_iter,
                                  const bool align) -> bool
 {
-  const bwWidget* widget = (*node_iter)->Widget();
-  const bwScreenGraph::Node* next_iter = getNextUnhiddenNode(node_iter);
-  const bwWidget* next_widget = next_iter ? next_iter->Widget() : nullptr;
+    const bwWidget* widget = (*node_iter)->Widget();
+    const bwScreenGraph::Node* next_iter = getNextUnhiddenNode(node_iter);
+    const bwWidget* next_widget = next_iter ? next_iter->Widget() : nullptr;
 
-  if (!next_iter) {
-    return false;
-  }
-
-  if (align && widget && next_widget) {
-    if (widget->canAlign() && next_widget->canAlign()) {
-      return false;
+    if (!next_iter)
+    {
+        return false;
     }
-  }
 
-  return true;
+    if (align && widget && next_widget)
+    {
+        if (widget->canAlign() && next_widget->canAlign())
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void LayoutItem::resolvePanelContents(bwScreenGraph::Node& panel_node,
@@ -164,20 +183,20 @@ void LayoutItem::resolvePanelContents(bwScreenGraph::Node& panel_node,
                                       const unsigned int item_margin,
                                       const float scale_fac)
 {
-  const bwPanel* panel = static_cast<bwPanel*>(panel_node.Widget());
-  LayoutItem* layout = static_cast<LayoutItem*>(panel_node.Layout());
-  const int initial_width = layout->width;
-  bwPoint panel_items_pos = panel_pos;
+    const bwPanel* panel = static_cast<bwPanel*>(panel_node.Widget());
+    LayoutItem* layout = static_cast<LayoutItem*>(panel_node.Layout());
+    const int initial_width = layout->width;
+    bwPoint panel_items_pos = panel_pos;
 
-  layout->padding = padding;
-  //  panel_items_pos.x += padding;
-  panel_items_pos.y -= panel->header_height + padding;
+    layout->padding = padding;
+    //  panel_items_pos.x += padding;
+    panel_items_pos.y -= panel->header_height + padding;
 
-  //  layout->width -= 2.0f * padding;
+    //  layout->width -= 2.0f * padding;
 
-  layout->resolve(panel_node, panel_items_pos, item_margin, scale_fac);
+    layout->resolve(panel_node, panel_items_pos, item_margin, scale_fac);
 
-  layout->width = initial_width;
+    layout->width = initial_width;
 }
 
 void LayoutItem::resolve(bwScreenGraph::Node& node,
@@ -185,171 +204,200 @@ void LayoutItem::resolve(bwScreenGraph::Node& node,
                          const unsigned int item_margin,
                          const float scale_fac)
 {
-  bwScreenGraph::Node::ChildList* children = node.Children();
-  int xpos = layout_pos.x + padding;
-  int ypos = layout_pos.y - padding;
-  int item_width_base = 0;
-  // Width calculations may have imprecisions so widths don't add up to full layout width. We 'fix'
-  // this by adding a pixel to each layout-item until the remainder is 0, meaning total width
-  // matches parent width precisely. Also makes layout less jaggy on window size changes.
-  int additional_remainder_x = 0;
+    bwScreenGraph::Node::ChildList* children = node.Children();
+    int xpos = layout_pos.x + padding;
+    int ypos = layout_pos.y - padding;
+    int item_width_base = 0;
+    // Width calculations may have imprecisions so widths don't add up to full layout width. We
+    // 'fix' this by adding a pixel to each layout-item until the remainder is 0, meaning total
+    // width matches parent width precisely. Also makes layout less jaggy on window size changes.
+    int additional_remainder_x = 0;
 
-  location = layout_pos;
+    location = layout_pos;
 
-  if (children == nullptr) {
-    return;
-  }
-
-  height = 0;
-
-  if (flow_direction == FLOW_DIRECTION_HORIZONTAL) {
-    const unsigned int margin_count = countNeededMargins(*children);
-    const unsigned int width_no_margins = width - (margin_count * item_margin) - (2 * padding);
-    // The max-width of each item is the max-width of the parent, divided by the count of its
-    // horizontally placed sub-items. In other words, each item has the same max-width that
-    // add up to the parent's max-width. From this max-width, the item margins are subtracted.
-    unsigned int tot_row_cols = countRowColumns(*children);
-
-    if (tot_row_cols == 0) {
-      width = 0;
-    }
-    else {
-      item_width_base = width_no_margins / tot_row_cols;
-      additional_remainder_x = width_no_margins % tot_row_cols;
-    }
-    assert(additional_remainder_x >= 0);
-  }
-  else {
-    item_width_base = width - (2 * padding);
-  }
-
-  for (auto node_iter = children->begin(); node_iter != children->end(); ++node_iter) {
-    bwScreenGraph::Node& child_node = **node_iter;
-    LayoutItem* layout = static_cast<LayoutItem*>(child_node.Layout());
-    bwWidget* widget = child_node.Widget();
-    int item_width = item_width_base;
-
-    if (!child_node.isVisible()) {
-      continue;
+    if (children == nullptr)
+    {
+        return;
     }
 
-    const bwScreenGraph::Node* next = getNextUnhiddenNode(node_iter);
+    height = 0;
 
-    // Simple correction for precision issues.
-    if (additional_remainder_x > 0) {
-      if (next) {
-        item_width++;
-        additional_remainder_x--;
-      }
-      else {
-        // For the last button in a row, additional_remainder_x may be
-        // larger than 1, so add all that is left to it.
-        //				assert(additional_remainder_x <= 2);
-        item_width += additional_remainder_x;
-        additional_remainder_x = 0;
-      }
+    if (flow_direction == FLOW_DIRECTION_HORIZONTAL)
+    {
+        const unsigned int margin_count = countNeededMargins(*children);
+        const unsigned int width_no_margins = width - (margin_count * item_margin) - (2 * padding);
+        // The max-width of each item is the max-width of the parent, divided by the count of
+        // its horizontally placed sub-items. In other words, each item has the same max-width
+        // that add up to the parent's max-width. From this max-width, the item margins are
+        // subtracted.
+        unsigned int tot_row_cols = countRowColumns(*children);
+
+        if (tot_row_cols == 0)
+        {
+            width = 0;
+        }
+        else
+        {
+            item_width_base = width_no_margins / tot_row_cols;
+            additional_remainder_x = width_no_margins % tot_row_cols;
+        }
+        assert(additional_remainder_x >= 0);
+    }
+    else
+    {
+        item_width_base = width - (2 * padding);
     }
 
-    if (widget && widget_cast<bwPanel>(widget)) {
-      bwPanel& panel = static_cast<bwPanel&>(*widget);
+    for (auto node_iter = children->begin(); node_iter != children->end(); ++node_iter)
+    {
+        bwScreenGraph::Node& child_node = **node_iter;
+        LayoutItem* layout = static_cast<LayoutItem*>(child_node.Layout());
+        bwWidget* widget = child_node.Widget();
+        int item_width = item_width_base;
 
-      assert(layout);
-      layout->width = item_width;
-      layout->height = 0;
+        if (!child_node.isVisible())
+        {
+            continue;
+        }
 
-      panel.header_height = panel.getHeaderHeightHint() * scale_fac;
-      if (child_node.childrenVisible()) {
-        resolvePanelContents(child_node, bwPoint(xpos, ypos), item_margin, item_margin, scale_fac);
-        layout->height += 2 * item_margin;
-      }
-      location.y = ypos - layout->height;
-      layout->height += panel.header_height;
-    }
-    else if (layout) {
-      layout->width = item_width;
-      layout->resolve(child_node, bwPoint(xpos, ypos), item_margin, scale_fac);
-      location.y = ypos;
-    }
-    if (widget) {
-      const int widget_height = layout ? layout->height : widget->height_hint * scale_fac;
-      widget->rectangle.set(xpos, item_width, ypos - widget_height, widget_height);
-      location.y = widget->rectangle.ymin;
-      if (align) {
-        alignNode(node_iter, flow_direction);
-      }
+        const bwScreenGraph::Node* next = getNextUnhiddenNode(node_iter);
+
+        // Simple correction for precision issues.
+        if (additional_remainder_x > 0)
+        {
+            if (next)
+            {
+                item_width++;
+                additional_remainder_x--;
+            }
+            else
+            {
+                // For the last button in a row, additional_remainder_x may be
+                // larger than 1, so add all that is left to it.
+                //				assert(additional_remainder_x <= 2);
+                item_width += additional_remainder_x;
+                additional_remainder_x = 0;
+            }
+        }
+
+        if (widget && widget_cast<bwPanel>(widget))
+        {
+            bwPanel& panel = static_cast<bwPanel&>(*widget);
+
+            assert(layout);
+            layout->width = item_width;
+            layout->height = 0;
+
+            panel.header_height = panel.getHeaderHeightHint() * scale_fac;
+            if (child_node.childrenVisible())
+            {
+                resolvePanelContents(
+                    child_node, bwPoint(xpos, ypos), item_margin, item_margin, scale_fac);
+                layout->height += 2 * item_margin;
+            }
+            location.y = ypos - layout->height;
+            layout->height += panel.header_height;
+        }
+        else if (layout)
+        {
+            layout->width = item_width;
+            layout->resolve(child_node, bwPoint(xpos, ypos), item_margin, scale_fac);
+            location.y = ypos;
+        }
+        if (widget)
+        {
+            const int widget_height = layout ? layout->height : widget->height_hint * scale_fac;
+            widget->rectangle.set(xpos, item_width, ypos - widget_height, widget_height);
+            location.y = widget->rectangle.ymin;
+            if (align)
+            {
+                alignNode(node_iter, flow_direction);
+            }
+        }
+
+        const int child_width = child_node.Rectangle().width();
+        const int child_height = child_node.Rectangle().height();
+
+        if (flow_direction == FLOW_DIRECTION_VERTICAL)
+        {
+            if (needsMarginAfterNode(node_iter, align))
+            {
+                ypos -= item_margin;
+                height += item_margin;
+            }
+            else if (next)
+            {
+                ypos += 1;
+                height -= 1;
+            }
+            ypos -= child_height;
+            height += child_height;
+        }
+        else if (flow_direction == FLOW_DIRECTION_HORIZONTAL)
+        {
+            if (needsMarginAfterNode(node_iter, align))
+            {
+                xpos += item_margin;
+            }
+            else if (next)
+            {
+                xpos -= 1;
+                additional_remainder_x += 1;
+            }
+            xpos += child_width;
+            height = std::max(height, child_height);
+        }
     }
 
-    const int child_width = child_node.Rectangle().width();
-    const int child_height = child_node.Rectangle().height();
-
-    if (flow_direction == FLOW_DIRECTION_VERTICAL) {
-      if (needsMarginAfterNode(node_iter, align)) {
-        ypos -= item_margin;
-        height += item_margin;
-      }
-      else if (next) {
-        ypos += 1;
-        height -= 1;
-      }
-      ypos -= child_height;
-      height += child_height;
-    }
-    else if (flow_direction == FLOW_DIRECTION_HORIZONTAL) {
-      if (needsMarginAfterNode(node_iter, align)) {
-        xpos += item_margin;
-      }
-      else if (next) {
-        xpos -= 1;
-        additional_remainder_x += 1;
-      }
-      xpos += child_width;
-      height = std::max(height, child_height);
-    }
-  }
-
-  height += padding;
-  if (flow_direction == FLOW_DIRECTION_HORIZONTAL) {
     height += padding;
-  }
+    if (flow_direction == FLOW_DIRECTION_HORIZONTAL)
+    {
+        height += padding;
+    }
 
-  // xpos should match right side of layout precisely now.
-  assert((flow_direction != FLOW_DIRECTION_HORIZONTAL) || (xpos == layout_pos.x + width));
+    // xpos should match right side of layout precisely now.
+    assert((flow_direction != FLOW_DIRECTION_HORIZONTAL) || (xpos == layout_pos.x + width));
 }
 
 auto LayoutItem::getRectangle() -> bwRectanglePixel
 {
-  const int xmin = int(location.x);
-  const int ymin = int(location.y);
+    const int xmin = int(location.x);
+    const int ymin = int(location.y);
 
-  return bwRectanglePixel{xmin, xmin + width, ymin, ymin + height};
+    return bwRectanglePixel{ xmin, xmin + width, ymin, ymin + height };
 }
 
 auto LayoutItem::countRowColumns(const bwScreenGraph::Node::ChildList& children) const
     -> unsigned int
 {
-  unsigned int count_child_cols = 0;
+    unsigned int count_child_cols = 0;
 
-  assert(type == LayoutItem::Type::ROW);
+    assert(type == LayoutItem::Type::ROW);
 
-  for (auto& node : children) {
-    const bwWidget* widget = node->Widget();
-    const LayoutItem* layout = static_cast<LayoutItem*>(node->Layout());
+    for (auto& node : children)
+    {
+        const bwWidget* widget = node->Widget();
+        const LayoutItem* layout = static_cast<LayoutItem*>(node->Layout());
 
-    if (!node->isVisible()) {
-      continue;
+        if (!node->isVisible())
+        {
+            continue;
+        }
+        if (widget)
+        {
+            count_child_cols++;
+        }
+        else if (layout && layout->type != LayoutItem::Type::ROW)
+        {
+            count_child_cols++;
+        }
+        else if (layout)
+        {
+            count_child_cols += layout->countRowColumns(*node->Children());
+        }
     }
-    if (widget) {
-      count_child_cols++;
-    }
-    else if (layout && layout->type != LayoutItem::Type::ROW) {
-      count_child_cols++;
-    }
-    else if (layout) {
-      count_child_cols += layout->countRowColumns(*node->Children());
-    }
-  }
 
-  return count_child_cols;
+    return count_child_cols;
 }
 
 /**
@@ -358,20 +406,23 @@ auto LayoutItem::countRowColumns(const bwScreenGraph::Node::ChildList& children)
 auto LayoutItem::countNeededMargins(const bwScreenGraph::Node::ChildList& children) const
     -> unsigned int
 {
-  unsigned int tot_margins = 0;
+    unsigned int tot_margins = 0;
 
-  for (auto child_iter = children.begin(); child_iter != children.end(); ++child_iter) {
-    const bwScreenGraph::Node& child = **child_iter;
+    for (auto child_iter = children.begin(); child_iter != children.end(); ++child_iter)
+    {
+        const bwScreenGraph::Node& child = **child_iter;
 
-    if (!child.isVisible()) {
-      continue;
+        if (!child.isVisible())
+        {
+            continue;
+        }
+        if (needsMarginAfterNode(child_iter, align))
+        {
+            tot_margins++;
+        }
     }
-    if (needsMarginAfterNode(child_iter, align)) {
-      tot_margins++;
-    }
-  }
 
-  return tot_margins;
+    return tot_margins;
 }
 
 ColumnLayout::ColumnLayout(const bool align)
@@ -388,8 +439,7 @@ PanelLayout::PanelLayout() : LayoutItem(LayoutItem::Type::PANEL, false, FLOW_DIR
 {
 }
 
-RootLayout::RootLayout()
-    : LayoutItem(LayoutItem::Type::ROOT, false, FLOW_DIRECTION_VERTICAL)
+RootLayout::RootLayout() : LayoutItem(LayoutItem::Type::ROOT, false, FLOW_DIRECTION_VERTICAL)
 {
 }
 
@@ -398,50 +448,58 @@ void RootLayout::resolve(bwScreenGraph::Node& node,
                          const unsigned int item_margin,
                          const float scale_fac)
 {
-  bwScreenGraph::Node::ChildList* children = node.Children();
-  if (!children || children->size() < 2) {
-    return;
-  }
-
-  location = layout_pos;
-
-  auto iter = children->begin();
-  bwScreenGraph::Node& menu_node = **iter++;
-  bwScreenGraph::Node& scroll_node = **iter;
-
-  /* Step 1: Resolve menu bar at the top of the screen.
-   * layout_pos.y is the bottom (ymin=0). The top is layout_pos.y + height.
-   * LayoutItem::resolve() starts placing items downward from layout_pos.y, so pass the top. */
-  unsigned int menu_bar_height = 0;
-  if (LayoutItem* menu_layout = static_cast<LayoutItem*>(menu_node.Layout())) {
-    menu_layout->width = width;
-
-    /* Find the bwMenu child and set its height_hint from its item count. */
-    if (bwScreenGraph::Node::ChildList* menu_children = menu_node.Children()) {
-      for (auto& child : *menu_children) {
-        if (bwWidget* w = child->Widget()) {
-          if (bwMenu* bw_menu = widget_cast<bwMenu>(w)) {
-            w->height_hint = bw_menu->getPreferredHeight();
-          }
-        }
-      }
+    bwScreenGraph::Node::ChildList* children = node.Children();
+    if (!children || children->size() < 2)
+    {
+        return;
     }
 
-    /* Place from the top edge downward. */
-    menu_layout->resolve(
-        menu_node, {layout_pos.x, layout_pos.y + float(height)}, item_margin, scale_fac);
-    menu_bar_height = menu_layout->getHeight();
-  }
+    location = layout_pos;
 
-  /* Step 2: Resolve the scroll view in the remaining area below the menu bar. */
-  if (bwWidget* sv_widget = scroll_node.Widget()) {
-    sv_widget->width_hint = width;
-    sv_widget->height_hint = (height > menu_bar_height) ? (height - menu_bar_height) : 0;
-  }
-  if (LayoutItem* sv_layout = static_cast<LayoutItem*>(scroll_node.Layout())) {
-    sv_layout->width = width;
-    sv_layout->resolve(scroll_node, {layout_pos.x, layout_pos.y}, item_margin, scale_fac);
-  }
+    auto iter = children->begin();
+    bwScreenGraph::Node& menu_node = **iter++;
+    bwScreenGraph::Node& scroll_node = **iter;
+
+    /* Step 1: Resolve menu bar at the top of the screen.
+     * layout_pos.y is the bottom (ymin=0). The top is layout_pos.y + height.
+     * LayoutItem::resolve() starts placing items downward from layout_pos.y, so pass the top. */
+    unsigned int menu_bar_height = 0;
+    if (LayoutItem* menu_layout = static_cast<LayoutItem*>(menu_node.Layout()))
+    {
+        menu_layout->width = width;
+
+        /* Find the bwMenu child and set its height_hint from its item count. */
+        if (bwScreenGraph::Node::ChildList* menu_children = menu_node.Children())
+        {
+            for (auto& child : *menu_children)
+            {
+                if (bwWidget* w = child->Widget())
+                {
+                    if (bwMenu* bw_menu = widget_cast<bwMenu>(w))
+                    {
+                        w->height_hint = bw_menu->getPreferredHeight();
+                    }
+                }
+            }
+        }
+
+        /* Place from the top edge downward. */
+        menu_layout->resolve(
+            menu_node, { layout_pos.x, layout_pos.y + float(height) }, item_margin, scale_fac);
+        menu_bar_height = menu_layout->getHeight();
+    }
+
+    /* Step 2: Resolve the scroll view in the remaining area below the menu bar. */
+    if (bwWidget* sv_widget = scroll_node.Widget())
+    {
+        sv_widget->width_hint = width;
+        sv_widget->height_hint = (height > menu_bar_height) ? (height - menu_bar_height) : 0;
+    }
+    if (LayoutItem* sv_layout = static_cast<LayoutItem*>(scroll_node.Layout()))
+    {
+        sv_layout->width = width;
+        sv_layout->resolve(scroll_node, { layout_pos.x, layout_pos.y }, item_margin, scale_fac);
+    }
 }
 
 ScrollViewLayout::ScrollViewLayout()
@@ -454,26 +512,27 @@ void ScrollViewLayout::resolve(bwScreenGraph::Node& node,
                                const unsigned int item_margin,
                                const float scale_fac)
 {
-  bwWidget* widget = node.Widget();
-  bwScrollView* view_widget = widget_cast<bwScrollView>(widget);
+    bwWidget* widget = node.Widget();
+    bwScrollView* view_widget = widget_cast<bwScrollView>(widget);
 
-  if (!widget || !view_widget) {
-    assert(false);
-    return;
-  }
+    if (!widget || !view_widget)
+    {
+        assert(false);
+        return;
+    }
 
-  // Could check if layout actually needs to be updated.
+    // Could check if layout actually needs to be updated.
 
-  widget->rectangle.set(layout_pos.x, widget->width_hint, layout_pos.y, widget->height_hint);
+    widget->rectangle.set(layout_pos.x, widget->width_hint, layout_pos.y, widget->height_hint);
 
-  bwRectanglePixel content_bounds = view_widget->getContentBounds(scale_fac);
-  width = content_bounds.width();
+    bwRectanglePixel content_bounds = view_widget->getContentBounds(scale_fac);
+    width = content_bounds.width();
 
-  bwPoint children_pos{float(content_bounds.xmin),
-                       float(content_bounds.ymax + view_widget->getScrollOffsetY())};
+    bwPoint children_pos{ float(content_bounds.xmin),
+                          float(content_bounds.ymax + view_widget->getScrollOffsetY()) };
 
-  LayoutItem::resolve(node, children_pos, item_margin, scale_fac);
-  height += padding;
+    LayoutItem::resolve(node, children_pos, item_margin, scale_fac);
+    height += padding;
 }
 
 }  // namespace bWidgetsDemo

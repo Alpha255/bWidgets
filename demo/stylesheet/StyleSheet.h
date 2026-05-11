@@ -25,31 +25,34 @@
 
 #include "katana.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 class bwStyleProperty;
 }
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
-class StyleSheet {
- public:
-  StyleSheet(std::string filepath);
-  ~StyleSheet();
+class StyleSheet
+{
+   public:
+    StyleSheet(std::string filepath);
+    ~StyleSheet();
 
-  void reload();
+    void reload();
 
-  void resolveValue(const std::string_view& class_name,
-                    bWidgets::bwWidget::State state,
-                    bWidgets::bwStyleProperty& property);
+    void resolveValue(const std::string_view& class_name,
+                      bWidgets::bwWidget::State state,
+                      bWidgets::bwStyleProperty& property);
 
-  const std::string& getFilepath() const;
+    const std::string& getFilepath() const;
 
- private:
-  void load();
-  void unload();
+   private:
+    void load();
+    void unload();
 
-  std::string filepath;
-  std::unique_ptr<class StyleSheetTree> tree;
+    std::string filepath;
+    std::unique_ptr<class StyleSheetTree> tree;
 };
 
 }  // namespace bWidgetsDemo

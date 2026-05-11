@@ -2,13 +2,15 @@
 
 #include "bwRectangle.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 
-class bwLayoutInterface {
- public:
-  virtual ~bwLayoutInterface() = default;
+class bwLayoutInterface
+{
+   public:
+    virtual ~bwLayoutInterface() = default;
 
-  virtual auto getRectangle() -> bwRectanglePixel = 0;
+    virtual auto getRectangle() -> bwRectanglePixel = 0;
 };
 
 }  // namespace bWidgets

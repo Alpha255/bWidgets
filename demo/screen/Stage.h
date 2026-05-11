@@ -33,59 +33,61 @@
 
 #include "Font.h"
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
 class MouseEvent;
 class Window;
 
-class Stage {
-  friend class UseFontSubPixelsToggleSetter;
+class Stage
+{
+    friend class UseFontSubPixelsToggleSetter;
 
- public:
-  Stage(const unsigned int mask_width, const unsigned int mask_height);
-  virtual ~Stage();
+   public:
+    Stage(const unsigned int mask_width, const unsigned int mask_height);
+    virtual ~Stage();
 
-  void draw();
+    void draw();
 
-  void handleMouseMovementEvent(const MouseEvent& event);
-  void handleMouseButtonEvent(const MouseEvent& event);
-  void handleMouseScrollEvent(const MouseEvent& event,
-                              enum bWidgets::bwMouseWheelEvent::Direction dir);
-  void handleWindowResizeEvent(const Window& win);
+    void handleMouseMovementEvent(const MouseEvent& event);
+    void handleMouseButtonEvent(const MouseEvent& event);
+    void handleMouseScrollEvent(const MouseEvent& event,
+                                enum bWidgets::bwMouseWheelEvent::Direction dir);
+    void handleWindowResizeEvent(const Window& win);
 
-  void setContentScale(float scale_x, float scale_y);
-  static void setInterfaceScale(const float value);
-  static void setFontSize(const float size);
-  static void setFontTightPositioning(const bool value);
-  static void setFontAntiAliasingMode(const Font::AntiAliasingMode aa_mode);
-  static void setFontHinting(const bool value);
-  static void setFontSubPixelPositioning(const bool value);
+    void setContentScale(float scale_x, float scale_y);
+    static void setInterfaceScale(const float value);
+    static void setFontSize(const float size);
+    static void setFontTightPositioning(const bool value);
+    static void setFontAntiAliasingMode(const Font::AntiAliasingMode aa_mode);
+    static void setFontHinting(const bool value);
+    static void setFontSubPixelPositioning(const bool value);
 
- protected:
-  virtual void activateStyleID(bWidgets::bwStyle::TypeID type_id);
+   protected:
+    virtual void activateStyleID(bWidgets::bwStyle::TypeID type_id);
 
-  /** Returns the top menu bar layout node (first child of the root RootLayout). */
-  auto menuBarNode() -> bWidgets::bwScreenGraph::LayoutNode&;
-  /** Returns the scrollable content container node (second child of the root RootLayout). */
-  auto scrollViewNode() -> bWidgets::bwScreenGraph::ContainerNode&;
+    /** Returns the top menu bar layout node (first child of the root RootLayout). */
+    auto menuBarNode() -> bWidgets::bwScreenGraph::LayoutNode&;
+    /** Returns the scrollable content container node (second child of the root RootLayout). */
+    auto scrollViewNode() -> bWidgets::bwScreenGraph::ContainerNode&;
 
-  bWidgets::bwScreenGraph::ScreenGraph screen_graph;
+    bWidgets::bwScreenGraph::ScreenGraph screen_graph;
 
-  // Static members, global UI data for all stages
-  static std::unique_ptr<bWidgets::bwStyle> style;
-  static std::unique_ptr<class Font> font;
-  static std::unique_ptr<class IconMap> icon_map;
-  static std::unique_ptr<class StyleSheet> style_sheet;
-  static float interface_scale;
+    // Static members, global UI data for all stages
+    static std::unique_ptr<bWidgets::bwStyle> style;
+    static std::unique_ptr<class Font> font;
+    static std::unique_ptr<class IconMap> icon_map;
+    static std::unique_ptr<class StyleSheet> style_sheet;
+    static float interface_scale;
 
-  unsigned int mask_width, mask_height;
+    unsigned int mask_width, mask_height;
 
- private:
-  static void StyleSheetPolish(bWidgets::bwWidget& widget);
+   private:
+    static void StyleSheetPolish(bWidgets::bwWidget& widget);
 
-  void initFonts();
-  void initIcons();
-  void setStyleSheet(const std::string& filepath);
+    void initFonts();
+    void initIcons();
+    void setStyleSheet(const std::string& filepath);
 };
 
 }  // namespace bWidgetsDemo

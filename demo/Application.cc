@@ -27,24 +27,25 @@
 
 #include "DefaultStage.h"
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
 Application& Application::ensureApplication()
 {
-  static Application app;
-  return app;
+    static Application app;
+    return app;
 }
 
 void Application::setup()
 {
-  WindowManager& wm = WindowManager::getWindowManager();
-  wm.addWindowWithStage<DefaultStage>("bWidgets Demo");
+    WindowManager& wm = WindowManager::getWindowManager();
+    wm.addWindowWithStage<DefaultStage>("bWidgets Demo");
 }
 
 void Application::mainLoop()
 {
-  WindowManager& wm = WindowManager::getWindowManager();
-  wm.mainLoop();
+    WindowManager& wm = WindowManager::getWindowManager();
+    wm.mainLoop();
 }
 
 void Application::exit()

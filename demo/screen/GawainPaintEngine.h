@@ -23,30 +23,32 @@
 
 #include "bwPaintEngine.h"
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
-class GawainPaintEngine : public bWidgets::bwPaintEngine {
- public:
-  GawainPaintEngine(class Font&, class IconMap&);
+class GawainPaintEngine : public bWidgets::bwPaintEngine
+{
+   public:
+    GawainPaintEngine(class Font&, class IconMap&);
 
-  void setupViewport(const bWidgets::bwRectanglePixel&, const class bWidgets::bwColor&) override;
-  void enableMask(const bWidgets::bwRectanglePixel&) override;
+    void setupViewport(const bWidgets::bwRectanglePixel&, const class bWidgets::bwColor&) override;
+    void enableMask(const bWidgets::bwRectanglePixel&) override;
 
-  void drawPolygon(const class bWidgets::bwPainter&, const class bWidgets::bwPolygon&) override;
-  void drawText(const class bWidgets::bwPainter&,
-                const std::string&,
-                const bWidgets::bwRectanglePixel&,
-                const bWidgets::TextAlignment) override;
-  void drawIcon(const class bWidgets::bwPainter&,
-                const bWidgets::bwIconInterface&,
-                const bWidgets::bwRectanglePixel&) override;
+    void drawPolygon(const class bWidgets::bwPainter&, const class bWidgets::bwPolygon&) override;
+    void drawText(const class bWidgets::bwPainter&,
+                  const std::string&,
+                  const bWidgets::bwRectanglePixel&,
+                  const bWidgets::TextAlignment) override;
+    void drawIcon(const class bWidgets::bwPainter&,
+                  const bWidgets::bwIconInterface&,
+                  const bWidgets::bwRectanglePixel&) override;
 
-  float m_scale_x{1.0f};
-  float m_scale_y{1.0f};
+    float m_scale_x{ 1.0f };
+    float m_scale_y{ 1.0f };
 
- private:
-  class Font& font;
-  class IconMap& icon_map;
+   private:
+    class Font& font;
+    class IconMap& icon_map;
 };
 
 }  // namespace bWidgetsDemo

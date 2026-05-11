@@ -31,39 +31,42 @@
 
 struct Gwn_ShaderInterface;
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
-class GPUShader {
- public:
-  enum ID {
-    ID_UNIFORM_COLOR,
-    ID_SMOOTH_COLOR,
-    ID_BITMAP_TEXTURE_UNIFORM_COLOR,
-    ID_SUBPIXEL_BITMAP_TEXTURE_UNIFORM_COLOR,
-    ID_TEXTURE_RECT,
+class GPUShader
+{
+   public:
+    enum ID
+    {
+        ID_UNIFORM_COLOR,
+        ID_SMOOTH_COLOR,
+        ID_BITMAP_TEXTURE_UNIFORM_COLOR,
+        ID_SUBPIXEL_BITMAP_TEXTURE_UNIFORM_COLOR,
+        ID_TEXTURE_RECT,
 
-    SHADER_ID_TOT
-  };
+        SHADER_ID_TOT
+    };
 
-  ~GPUShader();
+    ~GPUShader();
 
-  static void clearCache();
+    static void clearCache();
 
-  static void immBind(ID id);
-  static void immUnbind();
+    static void immBind(ID id);
+    static void immUnbind();
 
- private:
-  GPUShader(const std::string& vertexcode, const std::string& fragcode);
+   private:
+    GPUShader(const std::string& vertexcode, const std::string& fragcode);
 
-  static auto createFromID(GPUShader::ID id) -> std::unique_ptr<GPUShader>;
-  static auto ensureCached(ID id) -> GPUShader&;
+    static auto createFromID(GPUShader::ID id) -> std::unique_ptr<GPUShader>;
+    static auto ensureCached(ID id) -> GPUShader&;
 
-  GLuint m_program;
+    GLuint m_program;
 
-  GLuint m_vertex;
-  GLuint m_fragment;
+    GLuint m_vertex;
+    GLuint m_fragment;
 
-  Gwn_ShaderInterface* m_interface;
+    Gwn_ShaderInterface* m_interface;
 };
 
 }  // namespace bWidgetsDemo

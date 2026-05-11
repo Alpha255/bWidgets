@@ -2,15 +2,17 @@
 
 #include <vector>
 
-namespace bWidgets {
+namespace bWidgets
+{
 
-class bwPoint {
- public:
-  bwPoint(float x = 0, float y = 0);
+class bwPoint
+{
+   public:
+    bwPoint(float x = 0, float y = 0);
 
-  auto operator==(const bwPoint& rhs) const -> bool;
+    auto operator==(const bwPoint& rhs) const -> bool;
 
-  float x, y;
+    float x, y;
 };
 
 auto operator*(const bwPoint&, float) -> bwPoint;

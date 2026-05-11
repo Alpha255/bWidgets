@@ -30,10 +30,11 @@
 #define DEF_ICON(name) ICON_##name,
 #define DEF_VICO(name) VICO_##name,
 
-typedef enum {
+typedef enum
+{
 /* ui */
 #include "blender_icons.h"
-  BIFICONID_LAST
+    BIFICONID_LAST
 } BIFIconID;
 
 #define BIFICONID_FIRST (ICON_NONE)

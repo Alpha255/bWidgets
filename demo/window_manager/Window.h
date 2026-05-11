@@ -21,75 +21,79 @@
 
 #pragma once
 
-#include <string>
 #include <cassert>
+#include <string>
 
 #include "bwUtil.h"
 
 struct GLFWwindow;
 struct Gwn_Context;
 
-namespace bWidgets {
+namespace bWidgets
+{
 class bwPoint;
 }
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
-class Window {
- public:
-  Window(const std::string& name, unsigned int size_x = 600, unsigned int size_y = 350);
+class Window
+{
+   public:
+    Window(const std::string& name, unsigned int size_x = 600, unsigned int size_y = 350);
 
-  ~Window();
+    ~Window();
 
-  enum WindowAction {
-    WINDOW_ACTION_CONTINUE,
-    WINDOW_ACTION_CLOSE,
-  };
-  auto processEvents() -> WindowAction;
-  void draw();
+    enum WindowAction
+    {
+        WINDOW_ACTION_CONTINUE,
+        WINDOW_ACTION_CLOSE,
+    };
+    auto processEvents() -> WindowAction;
+    void draw();
 
-  auto getCursorPosition() const -> bWidgets::bwPoint;
-  void handleResizeEvent(const int new_win_x, const int new_win_y);
-  void handleContentScaleEvent(const float new_scale_x, const float new_scale_y);
+    auto getCursorPosition() const -> bWidgets::bwPoint;
+    void handleResizeEvent(const int new_win_x, const int new_win_y);
+    void handleContentScaleEvent(const float new_scale_x, const float new_scale_y);
 
-  auto getGlfwWindow() const -> GLFWwindow&;
+    auto getGlfwWindow() const -> GLFWwindow&;
 
-  auto getWidth() const -> int;
-  auto getHeight() const -> int;
+    auto getWidth() const -> int;
+    auto getHeight() const -> int;
 
-  class Stage* getStage() const
-  {
-    return stage.get();
-  }
-
-  template<class T>
-  void createStage()
-  {
-    stage = std::make_unique<T>(getWidth(), getHeight());
-    setupStage();
-  }
-
-  friend auto operator==(const Window& lhs, const Window& rhs) -> bool
-  {
-    if (lhs.glfw_window == rhs.glfw_window) {
-      assert(lhs.stage == rhs.stage);
-      assert(lhs.width == rhs.width);
-      assert(lhs.height == rhs.height);
-      return true;
+    class Stage* getStage() const
+    {
+        return stage.get();
     }
-    return false;
-  }
 
- private:
-  std::unique_ptr<class Stage> stage;
+    template<class T> void createStage()
+    {
+        stage = std::make_unique<T>(getWidth(), getHeight());
+        setupStage();
+    }
 
-  void setupStage();
+    friend auto operator==(const Window& lhs, const Window& rhs) -> bool
+    {
+        if (lhs.glfw_window == rhs.glfw_window)
+        {
+            assert(lhs.stage == rhs.stage);
+            assert(lhs.width == rhs.width);
+            assert(lhs.height == rhs.height);
+            return true;
+        }
+        return false;
+    }
 
-  GLFWwindow* glfw_window;
-  Gwn_Context* gwn_context;
-  unsigned int VertexArrayID = 0;
+   private:
+    std::unique_ptr<class Stage> stage;
 
-  int width, height;
+    void setupStage();
+
+    GLFWwindow* glfw_window;
+    Gwn_Context* gwn_context;
+    unsigned int VertexArrayID = 0;
+
+    int width, height;
 };
 
 }  // namespace bWidgetsDemo

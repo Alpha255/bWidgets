@@ -2,13 +2,15 @@
 
 #include "bwStyle.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 
-class bwStyleClassic : public bwStyle {
- public:
-  bwStyleClassic();
+class bwStyleClassic : public bwStyle
+{
+   public:
+    bwStyleClassic();
 
-  void setWidgetStyle(class bwWidget& widget) override;
+    void setWidgetStyle(class bwWidget& widget) override;
 };
 
 }  // namespace bWidgets

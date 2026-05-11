@@ -1,6 +1,7 @@
 #pragma once
 
-namespace bWidgets {
+namespace bWidgets
+{
 
 /**
  * \brief Interface to reference icons from within bWidgets.
@@ -19,10 +20,11 @@ namespace bWidgets {
  * \note Managing icons, including their memory, has to be done outside of
  *       bWidgets. At no point does bWidgets take ownership over icon data.
  */
-class bwIconInterface {
- public:
-  constexpr static float ICON_DEFAULT_SIZE = 16;
-  virtual auto isValid() const -> bool = 0;
+class bwIconInterface
+{
+   public:
+    constexpr static float ICON_DEFAULT_SIZE = 16;
+    virtual auto isValid() const -> bool = 0;
 };
 
 }  // namespace bWidgets

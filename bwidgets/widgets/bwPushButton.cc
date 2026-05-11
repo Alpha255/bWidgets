@@ -1,6 +1,7 @@
 #include "bwPushButton.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 
 bwPushButton::bwPushButton(const std::string& text,
                            std::optional<unsigned int> width_hint,
@@ -11,23 +12,23 @@ bwPushButton::bwPushButton(const std::string& text,
 
 auto bwPushButton::getTypeIdentifier() const -> std::string_view
 {
-  return "bwPushButton";
+    return "bwPushButton";
 }
 
 auto bwPushButton::getIcon() const -> const bwIconInterface*
 {
-  return icon;
+    return icon;
 }
 
 auto bwPushButton::setIcon(const bwIconInterface& icon_interface) -> bwPushButton&
 {
-  icon = &icon_interface;
-  return *this;
+    icon = &icon_interface;
+    return *this;
 }
 
 auto bwPushButton::canAlign() const -> bool
 {
-  return true;
+    return true;
 }
 
 }  // namespace bWidgets

@@ -23,7 +23,8 @@
 
 #include "EventManager.h"
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
 bWidgets::bwPoint MouseEvent::location{};
 bWidgets::bwPoint MouseEvent::last_down_location{};
@@ -31,43 +32,47 @@ MouseEvent::Button MouseEvent::last_down_button = Button::UNKNOWN;
 
 MouseEvent::MouseEvent(Type type, Button _button, const bWidgets::bwPoint& _location) : type(type)
 {
-  if (type == Type::PRESS) {
-    last_down_location = _location;
-    last_down_button = _button;
-  }
-  else if (type == Type::MOVE) {
-    _button = last_down_button;
-  }
-  location = _location;
-  button = _button;
+    if (type == Type::PRESS)
+    {
+        last_down_location = _location;
+        last_down_button = _button;
+    }
+    else if (type == Type::MOVE)
+    {
+        _button = last_down_button;
+    }
+    location = _location;
+    button = _button;
 }
 
 auto MouseEvent::isClick() const -> bool
 {
-  if ((type == Type::RELEASE) && (button == last_down_button)) {
-    const float dist = glm::distance(glm::vec2(location.x, location.y),
-                                     glm::vec2(last_down_location.x, last_down_location.y));
-    if (dist <= 3) {
-      return true;
+    if ((type == Type::RELEASE) && (button == last_down_button))
+    {
+        const float dist = glm::distance(glm::vec2(location.x, location.y),
+                                         glm::vec2(last_down_location.x, last_down_location.y));
+        if (dist <= 3)
+        {
+            return true;
+        }
     }
-  }
 
-  return false;
+    return false;
 }
 
 auto MouseEvent::getButton() const -> Button
 {
-  return button;
+    return button;
 }
 
 auto MouseEvent::getType() const -> Type
 {
-  return type;
+    return type;
 }
 
 auto MouseEvent::getMouseLocation() -> const bWidgets::bwPoint&
 {
-  return location;
+    return location;
 }
 
 }  // namespace bWidgetsDemo

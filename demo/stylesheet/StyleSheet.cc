@@ -31,16 +31,17 @@
 
 using namespace bWidgets;
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
 StyleSheet::StyleSheet(std::string filepath) : filepath(std::move(filepath))
 {
-  load();
+    load();
 }
 
 StyleSheet::~StyleSheet()
 {
-  unload();
+    unload();
 }
 
 // TODO Right now the type of properties in the style sheet is decided based on
@@ -51,50 +52,54 @@ StyleSheet::~StyleSheet()
 
 static bwStyleProperty::Type stylesheet_property_type_get_from_katana(const KatanaValue& value)
 {
-  switch (value.unit) {
+    switch (value.unit)
+    {
     case KATANA_VALUE_PARSER_FUNCTION: {
-      std::string function_name{value.function->name};
-      if ((function_name == "rgb(") || (function_name == "rgba(")) {
-        return bwStyleProperty::Type::COLOR;
-      }
-      break;
+        std::string function_name{ value.function->name };
+        if ((function_name == "rgb(") || (function_name == "rgba("))
+        {
+            return bwStyleProperty::Type::COLOR;
+        }
+        break;
     }
     case KATANA_VALUE_PX:
-      return bwStyleProperty::Type::FLOAT;
+        return bwStyleProperty::Type::FLOAT;
     case KATANA_VALUE_IDENT: {
-      // Customization to support booleans in CSS.
-      const std::string ident_value{value.string};
-      assert(ident_value == "true" || ident_value == "false");
-      return bwStyleProperty::Type::BOOL;
+        // Customization to support booleans in CSS.
+        const std::string ident_value{ value.string };
+        assert(ident_value == "true" || ident_value == "false");
+        return bwStyleProperty::Type::BOOL;
     }
     default:
-      return bwStyleProperty::Type::INTEGER;
-  }
+        return bwStyleProperty::Type::INTEGER;
+    }
 
-  return bwStyleProperty::Type::INTEGER;
+    return bwStyleProperty::Type::INTEGER;
 }
 
 static void stylesheet_set_value_from_katana_value(bwStyleProperty& property,
                                                    const KatanaValue& value)
 {
-  std::unique_ptr<PropertyParser> parser(PropertyParser::newFromPropertyType(property.getType()));
-  parser->parseIntoProperty(property, value);
+    std::unique_ptr<PropertyParser> parser(
+        PropertyParser::newFromPropertyType(property.getType()));
+    parser->parseIntoProperty(property, value);
 }
 
 static bwWidget::State stylesheet_property_state_from_katana(const KatanaSelector& selector)
 {
-  KatanaPseudoType pseudo_type = selector.tagHistory ? selector.tagHistory->pseudo :
-                                                       KatanaPseudoEmpty;
+    KatanaPseudoType pseudo_type = selector.tagHistory ? selector.tagHistory->pseudo :
+                                                         KatanaPseudoEmpty;
 
-  switch (pseudo_type) {
+    switch (pseudo_type)
+    {
     case KatanaPseudoHover:
-      return bwWidget::State::HIGHLIGHTED;
+        return bwWidget::State::HIGHLIGHTED;
     case KatanaPseudoActive:
-      return bwWidget::State::SUNKEN;
+        return bwWidget::State::SUNKEN;
     case KatanaPseudoEmpty:
     default:
-      return bwWidget::State::NORMAL;
-  }
+        return bwWidget::State::NORMAL;
+    }
 }
 
 static void stylesheet_tree_property_ensure_from_katana(StyleSheetTree& tree,
@@ -102,87 +107,93 @@ static void stylesheet_tree_property_ensure_from_katana(StyleSheetTree& tree,
                                                         const KatanaDeclaration& declaration,
                                                         const KatanaValue& value)
 {
-  bwStyleProperty& property = tree.ensureNodeWithProperty(
-      selector.tag->local,
-      stylesheet_property_state_from_katana(selector),
-      declaration.property,
-      stylesheet_property_type_get_from_katana(value));
-  stylesheet_set_value_from_katana_value(property, value);
+    bwStyleProperty& property = tree.ensureNodeWithProperty(
+        selector.tag->local,
+        stylesheet_property_state_from_katana(selector),
+        declaration.property,
+        stylesheet_property_type_get_from_katana(value));
+    stylesheet_set_value_from_katana_value(property, value);
 }
 
 static void stylesheet_tree_node_fill_from_katana(StyleSheetTree& tree,
                                                   const KatanaStyleRule& rule,
                                                   const KatanaSelector& selector)
 {
-  for (unsigned int declaration_idx = 0; declaration_idx < rule.declarations->length;
-       declaration_idx++) {
-    auto* declaration = (KatanaDeclaration*)rule.declarations->data[declaration_idx];
+    for (unsigned int declaration_idx = 0; declaration_idx < rule.declarations->length;
+         declaration_idx++)
+    {
+        auto* declaration = (KatanaDeclaration*)rule.declarations->data[declaration_idx];
 
-    for (unsigned int value_idx = 0; value_idx < declaration->values->length; value_idx++) {
-      auto* value = (KatanaValue*)declaration->values->data[value_idx];
-      stylesheet_tree_property_ensure_from_katana(tree, selector, *declaration, *value);
+        for (unsigned int value_idx = 0; value_idx < declaration->values->length; value_idx++)
+        {
+            auto* value = (KatanaValue*)declaration->values->data[value_idx];
+            stylesheet_tree_property_ensure_from_katana(tree, selector, *declaration, *value);
+        }
     }
-  }
 }
 
 static void stylesheet_tree_fill_from_katana(StyleSheetTree& tree,
                                              const KatanaOutput& katana_output)
 {
-  for (unsigned int rule_idx = 0; rule_idx < katana_output.stylesheet->rules.length; rule_idx++) {
-    const auto* rule = (KatanaStyleRule*)katana_output.stylesheet->rules.data[rule_idx];
+    for (unsigned int rule_idx = 0; rule_idx < katana_output.stylesheet->rules.length; rule_idx++)
+    {
+        const auto* rule = (KatanaStyleRule*)katana_output.stylesheet->rules.data[rule_idx];
 
-    for (unsigned int selector_idx = 0; selector_idx < rule->selectors->length; selector_idx++) {
-      auto* selector = (KatanaSelector*)rule->selectors->data[selector_idx];
-      stylesheet_tree_node_fill_from_katana(tree, *rule, *selector);
+        for (unsigned int selector_idx = 0; selector_idx < rule->selectors->length; selector_idx++)
+        {
+            auto* selector = (KatanaSelector*)rule->selectors->data[selector_idx];
+            stylesheet_tree_node_fill_from_katana(tree, *rule, *selector);
+        }
     }
-  }
 }
 
 void StyleSheet::load()
 {
-  File file{filepath};
-  std::string file_contents = file.readIntoString();
-  KatanaOutput* katana_output = katana_parse(
-      file_contents.c_str(), file_contents.length(), KatanaParserModeStylesheet);
+    File file{ filepath };
+    std::string file_contents = file.readIntoString();
+    KatanaOutput* katana_output = katana_parse(
+        file_contents.c_str(), file_contents.length(), KatanaParserModeStylesheet);
 
-  tree = std::make_unique<StyleSheetTree>();
-  stylesheet_tree_fill_from_katana(*tree, *katana_output);
-  katana_destroy_output(katana_output);
+    tree = std::make_unique<StyleSheetTree>();
+    stylesheet_tree_fill_from_katana(*tree, *katana_output);
+    katana_destroy_output(katana_output);
 }
 
 void StyleSheet::unload()
 {
-  // Nothing right now.
+    // Nothing right now.
 }
 
 void StyleSheet::reload()
 {
-  unload();
-  load();
+    unload();
+    load();
 }
 
 void StyleSheet::resolveValue(const std::string_view& class_name,
                               const bwWidget::State state,
                               bwStyleProperty& property)
 {
-  const bwStyleProperty* property_from_tree = tree->resolveProperty(
-      class_name, property.getIdentifier(), state);
+    const bwStyleProperty* property_from_tree = tree->resolveProperty(
+        class_name, property.getIdentifier(), state);
 
-  if (property_from_tree) {
-    property.setValue(*property_from_tree);
-  }
-  else {
-    property.setValueToDefault();
-    //		std::cout << filepath << std::endl;
-    //		std::cout << "CSS resolving error: Failed to find property \"" <<
-    // property.getIdentifier() <<
-    //		             "\" for " << class_name << "." << std::endl << std::endl;
-  }
+    if (property_from_tree)
+    {
+        property.setValue(*property_from_tree);
+    }
+    else
+    {
+        property.setValueToDefault();
+        //		std::cout << filepath << std::endl;
+        //		std::cout << "CSS resolving error: Failed to find property \"" <<
+        // property.getIdentifier() <<
+        //		             "\" for " << class_name << "." << std::endl << std::endl;
+    }
 }
 
 const std::string& StyleSheet::getFilepath() const
 {
-  return filepath;
+    return filepath;
 }
 
 }  // namespace bWidgetsDemo

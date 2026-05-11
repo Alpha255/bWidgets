@@ -27,37 +27,40 @@
 
 #include "RNAProperty.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 class bwWidget;
 }
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
 class DefaultStage;
 
-class DefaultStageRNAFunctor : public bWidgets::bwFunctorInterface {
- public:
-  DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
-                         DefaultStage& stage,
-                         const std::string& prop_name,
-                         const bWidgets::bwWidget& widget);
-  DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
-                         DefaultStage& stage,
-                         const std::string& prop_name,
-                         const bWidgets::bwWidget& widget,
-                         int enum_value);
+class DefaultStageRNAFunctor : public bWidgets::bwFunctorInterface
+{
+   public:
+    DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
+                           DefaultStage& stage,
+                           const std::string& prop_name,
+                           const bWidgets::bwWidget& widget);
+    DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
+                           DefaultStage& stage,
+                           const std::string& prop_name,
+                           const bWidgets::bwWidget& widget,
+                           int enum_value);
 
-  void operator()() override;
+    void operator()() override;
 
-  auto getPropName() const -> const std::string&;
-  auto getEnumValue() const -> std::optional<int>;
+    auto getPropName() const -> const std::string&;
+    auto getEnumValue() const -> std::optional<int>;
 
- private:
-  RNAProperties<DefaultStage>& m_props;
-  DefaultStage& m_stage;
-  std::string m_prop_name;
-  const bWidgets::bwWidget& m_widget;
-  std::optional<int> m_enum_value;
+   private:
+    RNAProperties<DefaultStage>& m_props;
+    DefaultStage& m_stage;
+    std::string m_prop_name;
+    const bWidgets::bwWidget& m_widget;
+    std::optional<int> m_enum_value;
 };
 
 }  // namespace bWidgetsDemo

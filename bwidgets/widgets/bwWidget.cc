@@ -2,11 +2,11 @@
 
 #include "bwWidget.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 
 bwWidget::bwWidget(std::optional<unsigned int> width_hint, std::optional<unsigned int> height_hint)
-    : state(State::NORMAL),
-      rectangle(0, 0, 0, 0),
+    : state(State::NORMAL), rectangle(0, 0, 0, 0),
       width_hint(width_hint.value_or(bwStyle::s_default_widget_size_hint)),
       height_hint(height_hint.value_or(bwStyle::s_default_widget_size_hint))
 {
@@ -14,34 +14,34 @@ bwWidget::bwWidget(std::optional<unsigned int> width_hint, std::optional<unsigne
 
 auto bwWidget::getState() const -> State
 {
-  return state;
+    return state;
 }
 
 auto bwWidget::setState(State value) -> bwWidget&
 {
-  state = value;
-  return *this;
+    state = value;
+    return *this;
 }
 
 auto bwWidget::hide(bool _hidden) -> bwWidget&
 {
-  hidden = _hidden;
-  return *this;
+    hidden = _hidden;
+    return *this;
 }
 
 auto bwWidget::isHidden() -> bool
 {
-  return hidden;
+    return hidden;
 }
 
 auto bwWidget::getLabel() const -> const std::string*
 {
-  return nullptr;
+    return nullptr;
 }
 
 auto bwWidget::canAlign() const -> bool
 {
-  return false;
+    return false;
 }
 
 /**
@@ -49,9 +49,9 @@ auto bwWidget::canAlign() const -> bool
  */
 void bwWidget::initialize()
 {
-  /* Has to be done in init, can't be called from bwWidget constructor (wouldn't call overwritten
-   * function). */
-  registerProperties();
+    /* Has to be done in init, can't be called from bwWidget constructor
+     * (wouldn't call overwritten function). */
+    registerProperties();
 }
 
 void bwWidget::registerProperties()

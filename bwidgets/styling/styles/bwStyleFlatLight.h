@@ -2,11 +2,13 @@
 
 #include "bwStyleCSS.h"
 
-namespace bWidgets {
+namespace bWidgets
+{
 
-class bwStyleFlatLight : public bwStyleCSS {
- public:
-  bwStyleFlatLight();
+class bwStyleFlatLight : public bwStyleCSS
+{
+   public:
+    bwStyleFlatLight();
 };
 
 }  // namespace bWidgets

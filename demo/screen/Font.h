@@ -35,113 +35,119 @@
 #include "bwRectangle.h"
 #include "bwUtil.h"
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
 class FontGlyph;
 class Pen;
 
-class Font {
- public:
-  enum AntiAliasingMode {
-    /** Default, pixel coverage based AA. The alpha value of a pixel is
-     * determined by how much it overlaps with filled the glyph outline. */
-    NORMAL_COVERAGE,
-    /* Works similar to NORMAL_COVERAGE, but gives up to 3x the horizontal
-     * resolution by addressing RGB channels separately rather than the
-     * entire pixel. A filter is used to minimize resulting color fringes,
-     * making them invisible to most people. */
-    SUBPIXEL_LCD_RGB_COVERAGE,
-  };
-
-  ~Font();
-
-  static void initFontReading();
-  static auto loadFont(const std::string& name, const std::string& path) -> Font*;
-
-  void render(const std::string& text, const int pos_x, const int pos_y);
-  auto calculateStringWidth(const std::string& text) -> unsigned int;
-
-  void setFontAntiAliasingMode(AntiAliasingMode);
-  void setTightPositioning(bool value);
-  void setHinting(bool value);
-  void setSubPixelPositioning(bool value);
-
-  void setSize(const float size);
-  auto getSize() const -> int;
-
-  auto getActiveColor() const -> const bWidgets::bwColor&;
-  void setActiveColor(const bWidgets::bwColor& value);
-
-  void setMask(const bWidgets::bwRectanglePixel& value);
-
- private:
-  class FontGlyphCache {
-    // Everything public, this nested class is private to Font anyway.
+class Font
+{
    public:
-    void invalidate();
-    void ensureUpdated(const Font&);
-    auto getCachedGlyph(const Font&, const char) const -> const FontGlyph&;
+    enum AntiAliasingMode
+    {
+        /** Default, pixel coverage based AA. The alpha value of a pixel is
+         * determined by how much it overlaps with filled the glyph outline. */
+        NORMAL_COVERAGE,
+        /* Works similar to NORMAL_COVERAGE, but gives up to 3x the horizontal
+         * resolution by addressing RGB channels separately rather than the
+         * entire pixel. A filter is used to minimize resulting color fringes,
+         * making them invisible to most people. */
+        SUBPIXEL_LCD_RGB_COVERAGE,
+    };
 
-    bool is_dirty{true};
-    std::vector<std::unique_ptr<FontGlyph>> cached_glyphs;
+    ~Font();
+
+    static void initFontReading();
+    static auto loadFont(const std::string& name, const std::string& path) -> Font*;
+
+    void render(const std::string& text, const int pos_x, const int pos_y);
+    auto calculateStringWidth(const std::string& text) -> unsigned int;
+
+    void setFontAntiAliasingMode(AntiAliasingMode);
+    void setTightPositioning(bool value);
+    void setHinting(bool value);
+    void setSubPixelPositioning(bool value);
+
+    void setSize(const float size);
+    auto getSize() const -> int;
+
+    auto getActiveColor() const -> const bWidgets::bwColor&;
+    void setActiveColor(const bWidgets::bwColor& value);
+
+    void setMask(const bWidgets::bwRectanglePixel& value);
 
    private:
-    void loadGlyphsIntoCache(const Font&);
-  };
+    class FontGlyphCache
+    {
+        // Everything public, this nested class is private to Font anyway.
+       public:
+        void invalidate();
+        void ensureUpdated(const Font&);
+        auto getCachedGlyph(const Font&, const char) const -> const FontGlyph&;
 
-  Font() = default;
+        bool is_dirty{ true };
+        std::vector<std::unique_ptr<FontGlyph>> cached_glyphs;
 
-  void renderGlyph(const FontGlyph& glyph,
-                   const FontGlyph* previous_glyph,
-                   const unsigned int attr_pos,
-                   const unsigned int attr_texcoord,
-                   Pen& pen) const;
+       private:
+        void loadGlyphsIntoCache(const Font&);
+    };
 
-  void applyPositionBias(FixedNum<F16p16>& value) const;
-  auto calcSubpixelOffset(const Pen& pen, const FontGlyph* previous_glyph) const -> float;
-  auto getKerningDistance(const FontGlyph& left, const FontGlyph& right) const -> FixedNum<F16p16>;
-  /* Accesses private members, so make it a member function. Would be better
-   * to keep freetype specific stuff out of the general Font class, but
-   * ignoring for now since this is just the demo app anyway. */
-  auto getFreeTypeLoadFlags() const -> FT_Int32;
-  auto getFreeTypeRenderFlags() const -> FT_Render_Mode;
-  auto useSubpixelPositioning() const -> bool;
+    Font() = default;
 
-  // The freetype library handle.
-  static FT_Library ft_library;
-  // The freetype font handle.
-  FT_Face face;
+    void renderGlyph(const FontGlyph& glyph,
+                     const FontGlyph* previous_glyph,
+                     const unsigned int attr_pos,
+                     const unsigned int attr_texcoord,
+                     Pen& pen) const;
 
-  // Height in pixels.
-  int size{0};
+    void applyPositionBias(FixedNum<F16p16>& value) const;
+    auto calcSubpixelOffset(const Pen& pen, const FontGlyph* previous_glyph) const -> float;
+    auto getKerningDistance(const FontGlyph& left, const FontGlyph& right) const
+        -> FixedNum<F16p16>;
+    /* Accesses private members, so make it a member function. Would be better
+     * to keep freetype specific stuff out of the general Font class, but
+     * ignoring for now since this is just the demo app anyway. */
+    auto getFreeTypeLoadFlags() const -> FT_Int32;
+    auto getFreeTypeRenderFlags() const -> FT_Render_Mode;
+    auto useSubpixelPositioning() const -> bool;
 
-  bWidgets::bwColor active_color;
-  bWidgets::bwRectanglePixel mask;
-  AntiAliasingMode render_mode;
-  bool use_tight_positioning;
-  bool use_hinting;
-  bool use_subpixel_pos;
+    // The freetype library handle.
+    static FT_Library ft_library;
+    // The freetype font handle.
+    FT_Face face;
 
-  FontGlyphCache cache;
+    // Height in pixels.
+    int size{ 0 };
+
+    bWidgets::bwColor active_color;
+    bWidgets::bwRectanglePixel mask;
+    AntiAliasingMode render_mode;
+    bool use_tight_positioning;
+    bool use_hinting;
+    bool use_subpixel_pos;
+
+    FontGlyphCache cache;
 };
 
-class FontGlyph {
- public:
-  FontGlyph(const unsigned int index,
-            std::unique_ptr<Pixmap>&& pixmap,
-            const int offset_left,
-            const int offset_top,
-            FixedNum<F16p16> advance_width);
-  FontGlyph() = default;
+class FontGlyph
+{
+   public:
+    FontGlyph(const unsigned int index,
+              std::unique_ptr<Pixmap>&& pixmap,
+              const int offset_left,
+              const int offset_top,
+              FixedNum<F16p16> advance_width);
+    FontGlyph() = default;
 
-  bool is_valid = false;
+    bool is_valid = false;
 
-  unsigned int index = 0;  // Same as freetype index
+    unsigned int index = 0;  // Same as freetype index
 
-  std::unique_ptr<Pixmap> pixmap;
-  int offset_left = 0, offset_top = 0;  // bitmap_left, bitmap_top
-  FixedNum<F16p16> advance_width;
-  int pitch = 0;
+    std::unique_ptr<Pixmap> pixmap;
+    int offset_left = 0, offset_top = 0;  // bitmap_left, bitmap_top
+    FixedNum<F16p16> advance_width;
+    int pitch = 0;
 };
 
 }  // namespace bWidgetsDemo

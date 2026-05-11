@@ -6,8 +6,10 @@
 #include "bwLayoutInterface.h"
 #include "bwWidget.h"
 
-namespace bWidgets {
-namespace bwScreenGraph {
+namespace bWidgets
+{
+namespace bwScreenGraph
+{
 
 class EventHandler;
 
@@ -33,129 +35,132 @@ class EventHandler;
  * Having to declare those helpers as friends may turn out to an annoyance
  * with small benefits. In that case we should just make data public.
  */
-class Node {
-  friend class Builder;
+class Node
+{
+    friend class Builder;
 
- public:
-  using ChildList = std::list<std::unique_ptr<Node>>;
-  using ChildIterator = ChildList::iterator;
+   public:
+    using ChildList = std::list<std::unique_ptr<Node>>;
+    using ChildIterator = ChildList::iterator;
 
-  Node() = default;
-  virtual ~Node() = default;
+    Node() = default;
+    virtual ~Node() = default;
 
-  virtual auto Children() const -> const ChildList*
-  {
-    return nullptr;
-  }
-  virtual auto Children() -> ChildList*
-  {
-    return nullptr;
-  }
+    virtual auto Children() const -> const ChildList*
+    {
+        return nullptr;
+    }
+    virtual auto Children() -> ChildList*
+    {
+        return nullptr;
+    }
 
-  virtual auto childrenVisible() const -> bool
-  {
-    return true;
-  }
+    virtual auto childrenVisible() const -> bool
+    {
+        return true;
+    }
 
-  virtual auto Layout() const -> bwLayoutInterface*
-  {
-    return nullptr;
-  }
+    virtual auto Layout() const -> bwLayoutInterface*
+    {
+        return nullptr;
+    }
 
-  virtual auto Widget() const -> bwWidget*
-  {
-    return nullptr;
-  }
+    virtual auto Widget() const -> bwWidget*
+    {
+        return nullptr;
+    }
 
-  auto Parent() const -> Node*
-  {
-    return parent;
-  }
+    auto Parent() const -> Node*
+    {
+        return parent;
+    }
 
-  auto eventHandler() const -> EventHandler*
-  {
-    return handler.get();
-  }
+    auto eventHandler() const -> EventHandler*
+    {
+        return handler.get();
+    }
 
-  virtual auto Rectangle() const -> bwRectanglePixel = 0;
-  virtual auto MaskRectangle() const -> std::optional<bwRectanglePixel> = 0;
-  virtual auto isVisible() const -> bool = 0;
+    virtual auto Rectangle() const -> bwRectanglePixel = 0;
+    virtual auto MaskRectangle() const -> std::optional<bwRectanglePixel> = 0;
+    virtual auto isVisible() const -> bool = 0;
 
- private:
-  Node* parent{nullptr};
-  std::unique_ptr<EventHandler> handler{nullptr};
+   private:
+    Node* parent{ nullptr };
+    std::unique_ptr<EventHandler> handler{ nullptr };
 };
 
 /**
  * \brief Node for aligning children to a specific layout.
  */
-class LayoutNode : virtual public Node {
-  friend class Builder;
+class LayoutNode : virtual public Node
+{
+    friend class Builder;
 
- public:
-  auto Children() const -> const ChildList* override
-  {
-    return &children;
-  }
-  auto Children() -> ChildList* override
-  {
-    return &children;
-  }
+   public:
+    auto Children() const -> const ChildList* override
+    {
+        return &children;
+    }
+    auto Children() -> ChildList* override
+    {
+        return &children;
+    }
 
-  auto Layout() const -> bwLayoutInterface* override
-  {
-    return layout.get();
-  }
+    auto Layout() const -> bwLayoutInterface* override
+    {
+        return layout.get();
+    }
 
-  auto Rectangle() const -> bwRectanglePixel override
-  {
-    return layout->getRectangle();
-  }
+    auto Rectangle() const -> bwRectanglePixel override
+    {
+        return layout->getRectangle();
+    }
 
-  auto MaskRectangle() const -> std::optional<bwRectanglePixel> override
-  {
-    return std::nullopt;
-  }
+    auto MaskRectangle() const -> std::optional<bwRectanglePixel> override
+    {
+        return std::nullopt;
+    }
 
-  auto isVisible() const -> bool override
-  {
-    return true;
-  }
+    auto isVisible() const -> bool override
+    {
+        return true;
+    }
 
- private:
-  ChildList children;
-  std::unique_ptr<bwLayoutInterface> layout;
+   private:
+    ChildList children;
+    std::unique_ptr<bwLayoutInterface> layout;
 };
 
 /**
  * \brief Node representing a single widget with no children.
  */
-class WidgetNode : virtual public Node {
-  friend class Builder;
+class WidgetNode : virtual public Node
+{
+    friend class Builder;
 
- public:
-  auto Widget() const -> bwWidget* override
-  {
-    return &*widget;
-  }
+   public:
+    auto Widget() const -> bwWidget* override
+    {
+        return &*widget;
+    }
 
-  auto Rectangle() const -> bwRectanglePixel override
-  {
-    return widget->rectangle;
-  }
+    auto Rectangle() const -> bwRectanglePixel override
+    {
+        return widget->rectangle;
+    }
 
-  auto MaskRectangle() const -> std::optional<bwRectanglePixel> override
-  {
-    return std::nullopt;
-  }
+    auto MaskRectangle() const -> std::optional<bwRectanglePixel> override
+    {
+        return std::nullopt;
+    }
 
-  auto isVisible() const -> bool override
-  {
-    return widget->isHidden() == false;
-  }
+    auto isVisible() const -> bool override
+    {
+        return widget->isHidden() == false;
+    }
 
- private:
-  std::unique_ptr<bwWidget> widget;
+   private:
+    std::unique_ptr<bwWidget> widget;
 };
 
 /**
@@ -164,55 +169,56 @@ class WidgetNode : virtual public Node {
  * Note virtual inheritance of LayoutNode and WidgetNode, required to solve
  * diamond problems.
  */
-class ContainerNode : public LayoutNode, public WidgetNode {
- public:
-  auto Children() const -> const ChildList* override
-  {
-    return LayoutNode::Children();
-  }
-  auto Children() -> ChildList* override
-  {
-    return LayoutNode::Children();
-  }
+class ContainerNode : public LayoutNode, public WidgetNode
+{
+   public:
+    auto Children() const -> const ChildList* override
+    {
+        return LayoutNode::Children();
+    }
+    auto Children() -> ChildList* override
+    {
+        return LayoutNode::Children();
+    }
 
-  auto Layout() const -> bwLayoutInterface* override
-  {
-    return LayoutNode::Layout();
-  }
+    auto Layout() const -> bwLayoutInterface* override
+    {
+        return LayoutNode::Layout();
+    }
 
-  auto Widget() const -> bwWidget* override
-  {
-    return WidgetNode::Widget();
-  }
+    auto Widget() const -> bwWidget* override
+    {
+        return WidgetNode::Widget();
+    }
 
-  auto ContainerWidget() const -> bwContainerWidget&
-  {
-    return static_cast<bwContainerWidget&>(*Widget());
-  }
+    auto ContainerWidget() const -> bwContainerWidget&
+    {
+        return static_cast<bwContainerWidget&>(*Widget());
+    }
 
-  auto Rectangle() const -> bwRectanglePixel override
-  {
-    return WidgetNode::Rectangle();
-  }
-  auto ContentRectangle() const -> bwRectanglePixel
-  {
-    return LayoutNode::Rectangle();
-  }
+    auto Rectangle() const -> bwRectanglePixel override
+    {
+        return WidgetNode::Rectangle();
+    }
+    auto ContentRectangle() const -> bwRectanglePixel
+    {
+        return LayoutNode::Rectangle();
+    }
 
-  auto MaskRectangle() const -> std::optional<bwRectanglePixel> override
-  {
-    return ContainerWidget().getMaskRectangle();
-  }
+    auto MaskRectangle() const -> std::optional<bwRectanglePixel> override
+    {
+        return ContainerWidget().getMaskRectangle();
+    }
 
-  auto isVisible() const -> bool override
-  {
-    return WidgetNode::isVisible();
-  }
+    auto isVisible() const -> bool override
+    {
+        return WidgetNode::isVisible();
+    }
 
-  auto childrenVisible() const -> bool override
-  {
-    return ContainerWidget().childrenVisible();
-  }
+    auto childrenVisible() const -> bool override
+    {
+        return ContainerWidget().childrenVisible();
+    }
 };
 
 }  // namespace bwScreenGraph

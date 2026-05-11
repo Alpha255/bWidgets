@@ -25,27 +25,29 @@
 
 #include "bwWidget.h"
 
-namespace bWidgetsDemo {
+namespace bWidgetsDemo
+{
 
-class StyleSheetTree {
- public:
-  ~StyleSheetTree();
+class StyleSheetTree
+{
+   public:
+    ~StyleSheetTree();
 
-  bWidgets::bwStyleProperty& ensureNodeWithProperty(const std::string_view& class_name,
-                                                    const bWidgets::bwWidget::State state,
-                                                    const std::string_view& identifier,
-                                                    const bWidgets::bwStyleProperty::Type type);
+    bWidgets::bwStyleProperty& ensureNodeWithProperty(const std::string_view& class_name,
+                                                      const bWidgets::bwWidget::State state,
+                                                      const std::string_view& identifier,
+                                                      const bWidgets::bwStyleProperty::Type type);
 
-  class StyleSheetNode& ensureNode(const std::string_view& class_name);
+    class StyleSheetNode& ensureNode(const std::string_view& class_name);
 
-  const bWidgets::bwStyleProperty* resolveProperty(const std::string_view& class_name,
-                                                   const std::string_view& property_name,
-                                                   const bWidgets::bwWidget::State state);
+    const bWidgets::bwStyleProperty* resolveProperty(const std::string_view& class_name,
+                                                     const std::string_view& property_name,
+                                                     const bWidgets::bwWidget::State state);
 
- private:
-  class StyleSheetNode* lookupNode(const std::string_view& name) const;
+   private:
+    class StyleSheetNode* lookupNode(const std::string_view& name) const;
 
-  std::unordered_map<std::string, class StyleSheetNode*> nodes{0};
+    std::unordered_map<std::string, class StyleSheetNode*> nodes{ 0 };
 };
 
 }  // namespace bWidgetsDemo
