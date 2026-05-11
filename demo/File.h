@@ -39,6 +39,11 @@ public:
 
     friend std::ostream& operator<<(std::ostream&, const File&);
 
+    inline auto getPath() const -> const std::string&
+    {
+        return _path;
+    }
+
 private:
     const std::string _path;
     std::ifstream _file_stream;

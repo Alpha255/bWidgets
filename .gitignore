@@ -9,3 +9,4 @@ CMakeSettings.json
 
 # Generated docs
 docs/doxygen_html_output/
+/demo/resources/blender_icons_svg.h

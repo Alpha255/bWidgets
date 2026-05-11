@@ -100,6 +100,21 @@ if (NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
 					${RESOURCES_PATH}/${RES}
 		)
 	endforeach()
+
+	add_custom_command(
+		TARGET bWidgetsDemo PRE_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+				${CMAKE_CURRENT_SOURCE_DIR}/resources/icons_svg
+				${RESOURCES_PATH}/icons_svg
+	)
+
+	add_custom_command(
+		TARGET bWidgetsDemo PRE_BUILD
+		COMMAND ${CMAKE_COMMAND}
+				-DICONS_SVG_DIR=${CMAKE_CURRENT_SOURCE_DIR}/resources/icons_svg
+				-DOUTPUT_HEADER=${CMAKE_CURRENT_SOURCE_DIR}/resources/blender_icons_svg.h
+				-P ${CMAKE_CURRENT_SOURCE_DIR}/GenerateIconsHeader.cmake
+	)
 else()
 	set(RESOURCES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/resources)
 endif()

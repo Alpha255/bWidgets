@@ -23,6 +23,14 @@
 #include <cassert>
 #include <cstring>
 #include <iostream>
+#include <filesystem>
+#include <unordered_map>
+
+#define NANOSVG_IMPLEMENTATION
+#define NANOSVGRAST_IMPLEMENTATION
+#define NANOSVG_ALL_COLOR_KEYWORDS
+#include <nanosvg.h>
+#include <nanosvgrast.h>
 
 #include "png.h"
 
@@ -106,6 +114,24 @@ static void libpng_read_from_istream(png_structp png_ptr, png_bytep data, png_si
     }
 }
 
+auto IconMapReader::readIconMap(File& file) -> std::unique_ptr<IconMap>
+{
+    auto path = file.getPath();
+    std::string extension = path.substr(path.find_last_of(".") + 1);
+    std::transform(extension.begin(), extension.end(), extension.begin(), [](char c) { return (char)tolower(c); });
+
+    if (extension == "png")
+    {
+        return readIconMapFromPNGFile(file);
+    }
+    else if (extension == "svg")
+    {
+        return readIconMapFromSVGFiles(file);
+    }
+
+    return std::unique_ptr<IconMap>();
+}
+
 auto IconMapReader::readIconMapFromPNGFile(File& file) -> std::unique_ptr<IconMap>
 {
     if (!icons_check_if_file_is_png(file))
@@ -151,6 +177,66 @@ auto IconMapReader::readIconMapFromPNGFile(File& file) -> std::unique_ptr<IconMa
     }
 
     return icon_map;
+}
+
+std::unordered_map<std::string, BIFIconSvg> GetSVGIconNameIDs()
+{
+    static std::unordered_map<std::string, BIFIconSvg> nameIDs;
+    if (nameIDs.empty())
+    {
+        for (int i = 0; i < (int)BIFIconSvg::BIFSVGICONID_LAST; i++)
+        {
+        }
+    }
+    return nameIDs;
+}
+
+auto IconMapReader::readIconMapFromSVGFiles(File& directory) -> std::unique_ptr<IconMap>
+{
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(directory.getPath()))
+    {
+        if (entry.is_directory())
+        {
+            continue;
+        }
+
+        auto extension = entry.path().extension().string();
+        std::transform(extension.begin(), extension.end(), extension.begin(), [](char c) { return (char)tolower(c); });
+        
+        if (extension != ".svg")
+        {
+            continue;
+        }
+
+        auto path = entry.path().string();
+        auto name = entry.path().stem().string();
+
+        auto svgImage = nsvgParseFromFile(path.c_str(), "px", 96.0f);
+        if (!svgImage)
+        {
+            continue;
+        }
+
+        auto rasterizer = nsvgCreateRasterizer();
+        constexpr int size = std::max(ICON_GRID_W, ICON_GRID_H);
+        float scale = svgImage->width ? (float)size / svgImage->width : 1.0f;
+        
+        std::unique_ptr<Icon> icon(new Icon(size, 4, 8));
+
+        nsvgRasterize(rasterizer,
+                      svgImage,
+                      0.0f,
+                      0.0f,
+                      scale,
+                      icon->getPixmap().getBytes().data(),
+                      size,
+                      size,
+                      size * 4);
+        nsvgDeleteRasterizer(rasterizer);
+        nsvgDelete(svgImage);
+    }
+
+    return std::unique_ptr<IconMap>();
 }
 
 // --------------------------------------------------------------------

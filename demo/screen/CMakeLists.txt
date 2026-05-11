@@ -26,6 +26,7 @@ set(INC
 	../resources
 	../stylesheet
 	../utils
+	../../Submodules/nanosvg/src
 )
 
 set(SRC

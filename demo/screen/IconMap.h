@@ -73,7 +73,11 @@ public:
     IconMapReader();
     ~IconMapReader();
 
+public:
+    auto readIconMap(File& file) -> std::unique_ptr<IconMap>;
+protected:
     auto readIconMapFromPNGFile(File&) -> std::unique_ptr<IconMap>;
+    auto readIconMapFromSVGFiles(File&) -> std::unique_ptr<IconMap>;
 
 private:
     std::unique_ptr<IconReadData> read_data;

@@ -116,9 +116,14 @@ void Stage::initFonts()
 void Stage::initIcons()
 {
     IconMapReader reader;
-    File png_file(RESOURCES_PATH_STR + std::string("/blender_icons16.png"), std::ios::binary);
 
-    icon_map = reader.readIconMapFromPNGFile(png_file);
+#if !USE_PNG_ICON_MAP
+    File iconFile(RESOURCES_PATH_STR + std::string("/icons_svg"), std::ios::binary);
+#else
+    File iconFile(RESOURCES_PATH_STR + std::string("/blender_icons16.png"), std::ios::binary);
+#endif
+
+    icon_map = reader.readIconMap(iconFile);
 }
 
 void Stage::activateStyleID(bwStyle::TypeID type_id)

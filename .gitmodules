@@ -13,3 +13,6 @@
 [submodule "Submodules/libpng"]
 	path = Submodules/libpng
 	url = https://github.com/pnggroup/libpng.git
+[submodule "Submodules/nanosvg"]
+	path = Submodules/nanosvg
+	url = https://github.com/memononen/nanosvg.git
