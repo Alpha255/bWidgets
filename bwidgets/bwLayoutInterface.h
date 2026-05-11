@@ -7,7 +7,7 @@ namespace bWidgets
 
 class bwLayoutInterface
 {
-   public:
+public:
     virtual ~bwLayoutInterface() = default;
 
     virtual auto getRectangle() -> bwRectanglePixel = 0;

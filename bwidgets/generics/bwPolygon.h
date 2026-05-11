@@ -11,7 +11,7 @@ using bwPointVec = std::vector<class bwPoint>;
 
 class bwPolygon
 {
-   public:
+public:
     bwPolygon() = default;
     bwPolygon(const bwPolygon& poly) = default;
     bwPolygon(const bwPointVec& vertices);
@@ -27,7 +27,7 @@ class bwPolygon
 
     auto isDrawable() const -> bool;
 
-   protected:
+protected:
     bwPointVec vertices{};
     size_t vert_count{ 0 };
 };

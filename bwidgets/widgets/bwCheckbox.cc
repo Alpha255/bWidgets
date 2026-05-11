@@ -73,7 +73,7 @@ auto bwCheckbox::getTextRectangle(const bwRectanglePixel& checkbox_rectangle) co
 
 class bwCheckboxHandler : public bwAbstractButtonHandler
 {
-   public:
+public:
     bwCheckboxHandler(bwCheckbox& checkbox);
     ~bwCheckboxHandler() = default;
 

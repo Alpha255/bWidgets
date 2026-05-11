@@ -22,7 +22,7 @@ class bwStyle;
  */
 class bwWidget
 {
-   public:
+public:
     enum class State
     {
         NORMAL = 0,
@@ -72,11 +72,11 @@ class bwWidget
 
     bwStyleProperties style_properties;
 
-   protected:
+protected:
     void initialize();
     virtual void registerProperties();
 
-   private:
+private:
     /**
      * Hint if widget was explicitly hidden. bWidgets itself doesn't do
      * anything with it (yet). The actual application can use it for its layout

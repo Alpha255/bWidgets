@@ -72,7 +72,7 @@ void bwScrollBar::draw(bwStyle& style)
 
 class bwScrollBarHandler : public bwAbstractButtonHandler
 {
-   public:
+public:
     bwScrollBarHandler(bwScrollBar& scrollbar);
     ~bwScrollBarHandler() = default;
 
@@ -80,7 +80,7 @@ class bwScrollBarHandler : public bwAbstractButtonHandler
     void onMouseClick(bwMouseButtonEvent&) override;
     void onMouseDrag(bwMouseButtonDragEvent&) override;
 
-   private:
+private:
     bwScrollBar& scrollbar;
 
     constexpr static float SCROLL_JUMP_FAC = 0.8f;

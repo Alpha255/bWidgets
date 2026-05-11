@@ -13,7 +13,7 @@ namespace bWidgets
 
 class bwMenuItem
 {
-   public:
+public:
     enum class Type
     {
         ACTION,
@@ -36,7 +36,7 @@ class bwMenu : public bwContainerWidget
 {
     friend class bwMenuHandler;
 
-   public:
+public:
     bwMenu(std::optional<unsigned int> width_hint = std::nullopt,
            std::optional<unsigned int> height_hint = std::nullopt);
 
@@ -85,7 +85,7 @@ class bwMenu : public bwContainerWidget
      * width. */
     int preferred_label_width{ 60 };
 
-   private:
+private:
     void drawItem(bwStyle& style,
                   const bwMenuItem& item,
                   const bwRectanglePixel& item_rect,

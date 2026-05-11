@@ -34,7 +34,7 @@ namespace bWidgetsDemo
 
 class WindowManager
 {
-   public:
+public:
     // Constructor is private (singleton!)
     static auto getWindowManager() -> WindowManager&;
     ~WindowManager();
@@ -60,7 +60,7 @@ class WindowManager
 
     using WindowList = std::list<Window>;
 
-   private:
+private:
     WindowManager();
     WindowManager(WindowManager const&) = delete;
     void operator=(WindowManager const&) = delete;

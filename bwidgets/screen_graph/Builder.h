@@ -24,7 +24,7 @@ namespace bwScreenGraph
  */
 class Builder
 {
-   public:
+public:
     /**
      * \brief A callable type to build a layout.
      *
@@ -209,7 +209,7 @@ class Builder
         return static_cast<_WidgetType&>(*new_node.widget);
     }
 
-   private:
+private:
     template<typename _NodeType> static auto addChildNode(LayoutNode& parent_node) -> _NodeType&
     {
         static_assert(std::is_base_of<Node, _NodeType>::value,

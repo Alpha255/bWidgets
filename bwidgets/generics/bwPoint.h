@@ -7,7 +7,7 @@ namespace bWidgets
 
 class bwPoint
 {
-   public:
+public:
     bwPoint(float x = 0, float y = 0);
 
     auto operator==(const bwPoint& rhs) const -> bool;

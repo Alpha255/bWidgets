@@ -32,13 +32,13 @@ class Event
 {
     friend class EventManager;
 
-   protected:
+protected:
     Event() = default;
 };
 
 class MouseEvent : Event
 {
-   public:
+public:
     enum class Type
     {
         PRESS,
@@ -61,7 +61,7 @@ class MouseEvent : Event
 
     static auto getMouseLocation() -> const bWidgets::bwPoint&;
 
-   private:
+private:
     Type type;
     Button button;
 

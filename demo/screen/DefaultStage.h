@@ -31,10 +31,10 @@ class DefaultStage : public Stage
     friend class ScaleSetter;
     friend class StyleSetter;
 
-   public:
+public:
     DefaultStage(unsigned int mask_width, unsigned int mask_height);
 
-   private:
+private:
     void registerProperties(RNAProperties<DefaultStage>& properties);
 
     void activateStyleID(bWidgets::bwStyle::TypeID) override;

@@ -37,7 +37,7 @@ class bwStyleProperty
 {
     template<typename> friend class bwStylePropertyInternal;
 
-   public:
+public:
     enum class Type
     {
         BOOL,
@@ -61,7 +61,7 @@ class bwStyleProperty
     auto getIdentifier() const -> std::string_view;
     auto getType() const -> Type;
 
-   private:
+private:
     bwStyleProperty(std::string_view identifier, enum Type type);
 
     const std::string identifier;
@@ -79,7 +79,7 @@ class bwStyleProperty
  */
 class bwStyleProperties
 {
-   public:
+public:
     // Store properties as pointer, they are actually created as bwStylePropertyInternal instances.
     using PropertyList = std::vector<std::unique_ptr<bwStyleProperty>>;
     using iterator = PropertyList::iterator;
@@ -103,7 +103,7 @@ class bwStyleProperties
     auto begin() const -> const_iterator;
     auto end() const -> const_iterator;
 
-   private:
+private:
     PropertyList properties{};
 };
 

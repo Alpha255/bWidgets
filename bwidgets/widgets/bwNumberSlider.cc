@@ -143,7 +143,7 @@ auto bwNumberSlider::calcValueIndicatorWidth(bwStyle& style) const -> float
 
 class bwNumberSliderHandler : public bwTextBoxHandler
 {
-   public:
+public:
     bwNumberSliderHandler(bwNumberSlider& numberslider);
     ~bwNumberSliderHandler() = default;
 
@@ -152,7 +152,7 @@ class bwNumberSliderHandler : public bwTextBoxHandler
     void onMouseClick(bwMouseButtonEvent&) override;
     void onMouseDrag(bwMouseButtonDragEvent&) override;
 
-   private:
+private:
     bwNumberSlider& numberslider;
 
     // Initial value before starting to edit.

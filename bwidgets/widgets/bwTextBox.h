@@ -10,7 +10,7 @@ class bwTextBox : public bwWidget
 {
     friend class bwTextBoxHandler;
 
-   public:
+public:
     bwTextBox(std::optional<unsigned int> width_hint = std::nullopt,
               std::optional<unsigned int> height_hint = std::nullopt);
 
@@ -28,18 +28,18 @@ class bwTextBox : public bwWidget
 
     bwRectanglePixel selection_rectangle;
 
-   protected:
+protected:
     std::string text;
     bool is_text_editing = false;
 
-   public:
+public:
     bwWidgetBaseStyle base_style;  // XXX public for setWidgetStyle. Should only
                                    // be temporarily needed.
 };
 
 class bwTextBoxHandler : public bwScreenGraph::EventHandler
 {
-   public:
+public:
     bwTextBoxHandler(bwTextBox& textbox);
     virtual ~bwTextBoxHandler() = default;
 
@@ -47,7 +47,7 @@ class bwTextBoxHandler : public bwScreenGraph::EventHandler
     void onMouseLeave(bwEvent&) override;
     void onMousePress(bwMouseButtonEvent&) override;
 
-   protected:
+protected:
     void startTextEditing();
     void endTextEditing();
 

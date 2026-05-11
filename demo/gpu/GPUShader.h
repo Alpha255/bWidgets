@@ -36,7 +36,7 @@ namespace bWidgetsDemo
 
 class GPUShader
 {
-   public:
+public:
     enum ID
     {
         ID_UNIFORM_COLOR,
@@ -55,7 +55,7 @@ class GPUShader
     static void immBind(ID id);
     static void immUnbind();
 
-   private:
+private:
     GPUShader(const std::string& vertexcode, const std::string& fragcode);
 
     static auto createFromID(GPUShader::ID id) -> std::unique_ptr<GPUShader>;

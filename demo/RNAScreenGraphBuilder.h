@@ -36,7 +36,7 @@ namespace bWidgetsDemo
 template<typename _Obj, typename _Func>
 class RNAScreenGraphBuilder : public bWidgets::bwScreenGraph::Builder
 {
-   public:
+public:
     RNAScreenGraphBuilder(bWidgets::bwScreenGraph::LayoutNode& node,
                           _Obj& obj,
                           RNAProperties<_Obj>& properties)
@@ -72,7 +72,7 @@ class RNAScreenGraphBuilder : public bWidgets::bwScreenGraph::Builder
         return widget;
     }
 
-   private:
+private:
     _Obj& m_obj;
     RNAProperties<_Obj>& m_props;
 };

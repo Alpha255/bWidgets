@@ -20,7 +20,7 @@ class bwWidget;
  */
 class bwStyleCSS : public bwStyle
 {
-   public:
+public:
     bwStyleCSS();
 
     void setWidgetStyle(bwWidget& widget);

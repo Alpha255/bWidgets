@@ -36,7 +36,7 @@ namespace bWidgetsDemo
 
 class RNAProperty
 {
-   protected:
+protected:
     RNAProperty() = default;
 };
 
@@ -65,7 +65,7 @@ template<typename _Obj, typename _T> class RNAPropertyInternal : public RNAPrope
         }
     } m_value;
 
-   public:
+public:
     RNAPropertyInternal(_T& ref) : m_value(ref), m_use_ref(true)
     {
     }
@@ -104,13 +104,13 @@ template<typename _Obj, typename _T> class RNAPropertyInternal : public RNAPrope
         }
     }
 
-   private:
+private:
     bool m_use_ref;
 };
 
 template<typename _Obj> class RNAProperties
 {
-   public:
+public:
     using ObjectT = _Obj;
 
     RNAProperties() = default;

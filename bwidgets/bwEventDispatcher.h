@@ -25,7 +25,7 @@ class Node;
  */
 class bwEventDispatcher
 {
-   public:
+public:
     bwEventDispatcher(bwScreenGraph::ScreenGraph& _screen_graph);
 
     void dispatchMouseMovement(bwEvent);
@@ -33,7 +33,7 @@ class bwEventDispatcher
     void dispatchMouseButtonRelease(bwMouseButtonEvent&);
     void dispatchMouseWheelScroll(bwMouseWheelEvent&);
 
-   private:
+private:
     auto isDragging() -> bool;
     void changeContextHovered(bwScreenGraph::Node*, bwEvent&);
 

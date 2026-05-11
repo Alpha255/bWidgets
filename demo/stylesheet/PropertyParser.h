@@ -30,7 +30,7 @@ namespace bWidgetsDemo
 
 class property_parsing_failure : public std::exception
 {
-   public:
+public:
     const char* what() const noexcept override
     {
         return "could not parse value for a property";
@@ -39,7 +39,7 @@ class property_parsing_failure : public std::exception
 
 class PropertyParser
 {
-   public:
+public:
     virtual ~PropertyParser() = default;
 
     static std::unique_ptr<PropertyParser> newFromPropertyType(bWidgets::bwStyleProperty::Type);
@@ -49,28 +49,28 @@ class PropertyParser
 
 class BooleanPropertyParser : public PropertyParser
 {
-   public:
+public:
     void parseIntoProperty(bWidgets::bwStyleProperty&, const KatanaValue&) const override;
 };
 
 class IntegerPropertyParser : public PropertyParser
 {
-   public:
+public:
     void parseIntoProperty(bWidgets::bwStyleProperty&, const KatanaValue&) const override;
 };
 
 class FloatPropertyParser : public PropertyParser
 {
-   public:
+public:
     void parseIntoProperty(bWidgets::bwStyleProperty&, const KatanaValue&) const override;
 };
 
 class ColorPropertyParser : public PropertyParser
 {
-   public:
+public:
     void parseIntoProperty(bWidgets::bwStyleProperty&, const KatanaValue&) const override;
 
-   private:
+private:
     bWidgets::bwColor parseFromFunction(const KatanaValue&) const;
     bool canParseFunction(const std::string&) const;
 };

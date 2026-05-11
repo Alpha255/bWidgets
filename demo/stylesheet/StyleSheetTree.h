@@ -30,7 +30,7 @@ namespace bWidgetsDemo
 
 class StyleSheetTree
 {
-   public:
+public:
     ~StyleSheetTree();
 
     bWidgets::bwStyleProperty& ensureNodeWithProperty(const std::string_view& class_name,
@@ -44,7 +44,7 @@ class StyleSheetTree
                                                      const std::string_view& property_name,
                                                      const bWidgets::bwWidget::State state);
 
-   private:
+private:
     class StyleSheetNode* lookupNode(const std::string_view& name) const;
 
     std::unordered_map<std::string, class StyleSheetNode*> nodes{ 0 };

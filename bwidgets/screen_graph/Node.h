@@ -39,7 +39,7 @@ class Node
 {
     friend class Builder;
 
-   public:
+public:
     using ChildList = std::list<std::unique_ptr<Node>>;
     using ChildIterator = ChildList::iterator;
 
@@ -84,7 +84,7 @@ class Node
     virtual auto MaskRectangle() const -> std::optional<bwRectanglePixel> = 0;
     virtual auto isVisible() const -> bool = 0;
 
-   private:
+private:
     Node* parent{ nullptr };
     std::unique_ptr<EventHandler> handler{ nullptr };
 };
@@ -96,7 +96,7 @@ class LayoutNode : virtual public Node
 {
     friend class Builder;
 
-   public:
+public:
     auto Children() const -> const ChildList* override
     {
         return &children;
@@ -126,7 +126,7 @@ class LayoutNode : virtual public Node
         return true;
     }
 
-   private:
+private:
     ChildList children;
     std::unique_ptr<bwLayoutInterface> layout;
 };
@@ -138,7 +138,7 @@ class WidgetNode : virtual public Node
 {
     friend class Builder;
 
-   public:
+public:
     auto Widget() const -> bwWidget* override
     {
         return &*widget;
@@ -159,7 +159,7 @@ class WidgetNode : virtual public Node
         return widget->isHidden() == false;
     }
 
-   private:
+private:
     std::unique_ptr<bwWidget> widget;
 };
 
@@ -171,7 +171,7 @@ class WidgetNode : virtual public Node
  */
 class ContainerNode : public LayoutNode, public WidgetNode
 {
-   public:
+public:
     auto Children() const -> const ChildList* override
     {
         return LayoutNode::Children();

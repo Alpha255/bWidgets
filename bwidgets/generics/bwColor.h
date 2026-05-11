@@ -5,7 +5,7 @@ namespace bWidgets
 
 class bwColor
 {
-   public:
+public:
     bwColor(float red, float green, float blue, float alpha = 1.0f);
     bwColor(float rgb, float alpha = 1.0f);
     bwColor(unsigned int red, unsigned int green, unsigned int blue, unsigned int alpha = 255);
@@ -29,7 +29,7 @@ class bwColor
     // Implicit conversion to float*
     operator const float*() const;
 
-   private:
+private:
     enum class Component
     {
         RED = 0,

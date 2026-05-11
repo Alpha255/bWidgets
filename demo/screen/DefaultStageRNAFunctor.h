@@ -39,7 +39,7 @@ class DefaultStage;
 
 class DefaultStageRNAFunctor : public bWidgets::bwFunctorInterface
 {
-   public:
+public:
     DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
                            DefaultStage& stage,
                            const std::string& prop_name,
@@ -55,7 +55,7 @@ class DefaultStageRNAFunctor : public bWidgets::bwFunctorInterface
     auto getPropName() const -> const std::string&;
     auto getEnumValue() const -> std::optional<int>;
 
-   private:
+private:
     RNAProperties<DefaultStage>& m_props;
     DefaultStage& m_stage;
     std::string m_prop_name;

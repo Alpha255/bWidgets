@@ -9,7 +9,7 @@ class bwPanel : public bwContainerWidget
 {
     friend class bwPanelHandler;
 
-   public:
+public:
     enum class State
     {
         OPEN,
@@ -36,14 +36,14 @@ class bwPanel : public bwContainerWidget
     unsigned int header_height;
     State panel_state{ State::OPEN };
 
-   private:
+private:
     void drawHeader(class bwStyle& style) const;
     auto getHeaderRectangle() const -> bwRectanglePixel;
     auto isCoordinateInsideHeader(const bwPoint& point) const -> bool;
 
     std::string label;
 
-   public:
+public:
     bool draw_separator = false;
 };
 

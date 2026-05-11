@@ -47,7 +47,7 @@ FT_Library Font::ft_library = nullptr;
 
 class Pen
 {
-   public:
+public:
     explicit Pen(FixedNum<F16p16> x = 0, FixedNum<F16p16> y = 0) : x(x), y(y)
     {
     }

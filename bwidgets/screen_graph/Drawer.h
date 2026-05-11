@@ -16,11 +16,11 @@ class Node;
 
 class Drawer
 {
-   public:
+public:
     static void draw(ScreenGraph& screen_graph, bwStyle& style);
     static void drawSubtree(Node& subtree_root, bwStyle& style);
 
-   private:
+private:
     Drawer(bwStyle& style);
 
     void drawSubtreeRecursive(Node& subtree_root);

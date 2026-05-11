@@ -14,7 +14,7 @@ class bwStyleProperties;
  */
 class bwWidgetBaseStyle
 {
-   public:
+public:
     bwWidgetBaseStyle();
 
     void registerProperties(bwStyleProperties& style_properties);

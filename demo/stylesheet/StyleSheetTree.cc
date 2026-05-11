@@ -28,18 +28,18 @@ namespace bWidgetsDemo
 
 class StateProperties
 {
-   public:
+public:
     const bwStyleProperty* lookupProperty(const std::string_view& identifier) const;
     bwStyleProperty& ensureProperty(const std::string_view& identifier,
                                     bwStyleProperty::Type type);
 
-   private:
+private:
     bwStyleProperties properties;
 };
 
 class StyleSheetNode
 {
-   public:
+public:
     class StateProperties state_properties[int(bwWidget::State::STATE_TOT)];
 };
 

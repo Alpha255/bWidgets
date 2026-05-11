@@ -10,7 +10,7 @@ class bwWidget;
 
 class bwStyle
 {
-   public:
+public:
     enum class TypeID
     {
         CLASSIC,
@@ -40,7 +40,7 @@ class bwStyle
     TypeID type_id;
     float dpi_fac{ 1.0f };
 
-   protected:
+protected:
     bwStyle(TypeID type_id);
 };
 

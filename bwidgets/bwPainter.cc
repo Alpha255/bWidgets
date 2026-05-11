@@ -216,7 +216,7 @@ void bwPainter::drawLine(const bwPoint& from, const bwPoint& to)
 
 class PolygonRoundboxCreator
 {
-   public:
+public:
     PolygonRoundboxCreator(const bwRectanglePixel& rect,
                            unsigned int corners,
                            float _radius,
@@ -224,7 +224,7 @@ class PolygonRoundboxCreator
 
     void addVerts(bwPolygon& polygon);
 
-   private:
+private:
     void startRoundbox(const bwPolygon& polygon);
     void endRoundbox(bwPolygon& polygon) const;
     void addVertsBottomLeft(bwPolygon& polygon) const;

@@ -58,7 +58,7 @@ void resolveScreenGraphNodeLayout(bWidgets::bwScreenGraph::LayoutNode& node,
  */
 class LayoutItem : public bWidgets::bwLayoutInterface
 {
-   public:
+public:
     enum class Type
     {
         ROW,
@@ -91,7 +91,7 @@ class LayoutItem : public bWidgets::bwLayoutInterface
     unsigned int padding = 0;
     const bool align;
 
-   protected:
+protected:
     using LayoutItemList = std::list<std::unique_ptr<LayoutItem>>;
     using IteratorItem = LayoutItemList::const_iterator;
 
@@ -106,11 +106,11 @@ class LayoutItem : public bWidgets::bwLayoutInterface
                                      const unsigned int item_margin,
                                      const float scale_fac);
 
-   public:
+public:
     int width{ 0 }, height{ 0 };
     bWidgets::bwPoint location;
 
-   private:
+private:
     auto countRowColumns(const bWidgets::bwScreenGraph::Node::ChildList& children) const
         -> unsigned int;
     auto countNeededMargins(const bWidgets::bwScreenGraph::Node::ChildList& children) const
@@ -119,25 +119,25 @@ class LayoutItem : public bWidgets::bwLayoutInterface
 
 class ColumnLayout : public LayoutItem
 {
-   public:
+public:
     explicit ColumnLayout(const bool align = false);
 };
 
 class RowLayout : public LayoutItem
 {
-   public:
+public:
     explicit RowLayout(const bool align = false);
 };
 
 class PanelLayout : public LayoutItem
 {
-   public:
+public:
     explicit PanelLayout();
 };
 
 class ScrollViewLayout : public LayoutItem
 {
-   public:
+public:
     explicit ScrollViewLayout();
 
     void resolve(bWidgets::bwScreenGraph::Node& node,
@@ -156,7 +156,7 @@ class ScrollViewLayout : public LayoutItem
  */
 class RootLayout : public LayoutItem
 {
-   public:
+public:
     explicit RootLayout();
 
     void resolve(bWidgets::bwScreenGraph::Node& node,

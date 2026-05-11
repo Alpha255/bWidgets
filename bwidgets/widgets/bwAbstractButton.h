@@ -17,7 +17,7 @@ class bwIconInterface;
  */
 class bwAbstractButton : public bwWidget
 {
-   public:
+public:
     void draw(class bwStyle& style) override;
     void registerProperties() override;
 
@@ -34,7 +34,7 @@ class bwAbstractButton : public bwWidget
 
     unsigned int rounded_corners;
 
-   protected:
+protected:
     // Protected constructor to force calling through inherited class (pseudo
     // abstract).
     bwAbstractButton(const std::string& text,
@@ -44,14 +44,14 @@ class bwAbstractButton : public bwWidget
 
     std::string text;
 
-   public:
+public:
     bwWidgetBaseStyle base_style;  // XXX public for setWidgetStyle. Should only
                                    // be temporarily needed.
 };
 
 class bwAbstractButtonHandler : public bwScreenGraph::EventHandler
 {
-   public:
+public:
     bwAbstractButtonHandler(bwAbstractButton& button);
     virtual ~bwAbstractButtonHandler() = default;
 
@@ -60,7 +60,7 @@ class bwAbstractButtonHandler : public bwScreenGraph::EventHandler
     void onMousePress(bwMouseButtonEvent&) override;
     void onMouseRelease(bwMouseButtonEvent&) override;
 
-   protected:
+protected:
     bwAbstractButton& button;
 
     void apply();

@@ -39,7 +39,7 @@ namespace bWidgetsDemo
 
 class Window
 {
-   public:
+public:
     Window(const std::string& name, unsigned int size_x = 600, unsigned int size_y = 350);
 
     ~Window();
@@ -84,7 +84,7 @@ class Window
         return false;
     }
 
-   private:
+private:
     std::unique_ptr<class Stage> stage;
 
     void setupStage();

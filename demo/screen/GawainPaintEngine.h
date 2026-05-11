@@ -28,7 +28,7 @@ namespace bWidgetsDemo
 
 class GawainPaintEngine : public bWidgets::bwPaintEngine
 {
-   public:
+public:
     GawainPaintEngine(class Font&, class IconMap&);
 
     void setupViewport(const bWidgets::bwRectanglePixel&, const class bWidgets::bwColor&) override;
@@ -46,7 +46,7 @@ class GawainPaintEngine : public bWidgets::bwPaintEngine
     float m_scale_x{ 1.0f };
     float m_scale_y{ 1.0f };
 
-   private:
+private:
     class Font& font;
     class IconMap& icon_map;
 };

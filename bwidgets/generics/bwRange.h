@@ -5,7 +5,7 @@ namespace bWidgets
 
 template<typename T> class bwRange
 {
-   public:
+public:
     bwRange(T _min, T _max) : min(_min), max(_max)
     {
     }

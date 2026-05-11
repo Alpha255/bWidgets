@@ -43,7 +43,7 @@ class Pen;
 
 class Font
 {
-   public:
+public:
     enum AntiAliasingMode
     {
         /** Default, pixel coverage based AA. The alpha value of a pixel is
@@ -77,11 +77,11 @@ class Font
 
     void setMask(const bWidgets::bwRectanglePixel& value);
 
-   private:
+private:
     class FontGlyphCache
     {
         // Everything public, this nested class is private to Font anyway.
-       public:
+    public:
         void invalidate();
         void ensureUpdated(const Font&);
         auto getCachedGlyph(const Font&, const char) const -> const FontGlyph&;
@@ -89,7 +89,7 @@ class Font
         bool is_dirty{ true };
         std::vector<std::unique_ptr<FontGlyph>> cached_glyphs;
 
-       private:
+    private:
         void loadGlyphsIntoCache(const Font&);
     };
 
@@ -132,7 +132,7 @@ class Font
 
 class FontGlyph
 {
-   public:
+public:
     FontGlyph(const unsigned int index,
               std::unique_ptr<Pixmap>&& pixmap,
               const int offset_left,

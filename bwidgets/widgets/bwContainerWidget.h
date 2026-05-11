@@ -13,13 +13,13 @@ class ContainerNode;
 
 class bwContainerWidget : public bwWidget
 {
-   public:
+public:
     virtual auto getMaskRectangle() -> bwRectanglePixel;
     virtual auto childrenVisible() const -> bool;
 
     void registerProperties() override;
 
-   protected:
+protected:
     bwContainerWidget(const bwScreenGraph::ContainerNode& node,
                       std::optional<unsigned int> width_hint = std::nullopt,
                       std::optional<unsigned int> height_hint = std::nullopt);
@@ -29,7 +29,7 @@ class bwContainerWidget : public bwWidget
     /** Reference to node owning this widget, for additional info queries. */
     const bwScreenGraph::ContainerNode* node{ nullptr };
 
-   public:
+public:
     bwWidgetBaseStyle base_style;  // XXX public for setWidgetStyle. Should only
                                    // be temporarily needed.
 };

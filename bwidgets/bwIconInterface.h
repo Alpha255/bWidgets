@@ -22,7 +22,7 @@ namespace bWidgets
  */
 class bwIconInterface
 {
-   public:
+public:
     constexpr static float ICON_DEFAULT_SIZE = 16;
     virtual auto isValid() const -> bool = 0;
 };

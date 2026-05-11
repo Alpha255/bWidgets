@@ -32,7 +32,7 @@ using EventListener = std::function<void(Node&)>;
  */
 class EventHandler
 {
-   public:
+public:
     enum EventType
     {
         MOUSE_ENTER,
@@ -55,7 +55,7 @@ class EventHandler
     virtual void onMouseDrag(bwMouseButtonDragEvent&);
     virtual void onMouseWheel(bwMouseWheelEvent&);
 
-   private:
+private:
     std::array<std::list<EventListener>, TOT_EVENT_TYPES> listeners;
     //	std::unordered_map<EventType, std::list<EventListener>> listener_map;
 };

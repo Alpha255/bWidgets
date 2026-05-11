@@ -15,7 +15,7 @@ namespace bWidgets
  */
 class bwGradient
 {
-   public:
+public:
     enum class Direction
     {
         TOP_BOTTOM,

@@ -31,7 +31,7 @@ enum class TextAlignment;
  */
 class bwPaintEngine
 {
-   public:
+public:
     virtual ~bwPaintEngine() = default;
 
     /**

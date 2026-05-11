@@ -7,7 +7,7 @@ namespace bWidgets
 
 class bwStyleFlatDark : public bwStyleCSS
 {
-   public:
+public:
     bwStyleFlatDark();
 };
 

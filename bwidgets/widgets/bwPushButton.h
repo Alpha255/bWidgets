@@ -9,7 +9,7 @@ namespace bWidgets
 
 class bwPushButton : public bwAbstractButton
 {
-   public:
+public:
     bwPushButton(const std::string& text,
                  std::optional<unsigned int> width_hint = std::nullopt,
                  std::optional<unsigned int> height_hint = std::nullopt);
@@ -21,7 +21,7 @@ class bwPushButton : public bwAbstractButton
 
     auto canAlign() const -> bool override;
 
-   private:
+private:
     const class bwIconInterface* icon{ nullptr };
 };
 

@@ -12,7 +12,7 @@ bwMenuItem::bwMenuItem(std::string label, Type type) : label(std::move(label)), 
 
 class bwMenuHandler : public bwScreenGraph::EventHandler
 {
-   public:
+public:
     explicit bwMenuHandler(bwMenu& menu) : menu(menu)
     {
     }
@@ -21,7 +21,7 @@ class bwMenuHandler : public bwScreenGraph::EventHandler
     void onMouseLeave(bwEvent&) override;
     void onMousePress(bwMouseButtonEvent& event) override;
 
-   private:
+private:
     auto itemIndexAt(float x, float y_coord) const -> int;
     bwMenu& menu;
 };

@@ -30,7 +30,7 @@ namespace bWidgetsDemo
 
 class File
 {
-   public:
+public:
     explicit File(const std::string& path, std::ios::openmode mode = std::ios::in);
     ~File() = default;
 
@@ -39,7 +39,7 @@ class File
 
     friend std::ostream& operator<<(std::ostream&, const File&);
 
-   private:
+private:
     const std::string _path;
     std::ifstream _file_stream;
 };

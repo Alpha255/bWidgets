@@ -43,7 +43,7 @@ class Stage
 {
     friend class UseFontSubPixelsToggleSetter;
 
-   public:
+public:
     Stage(const unsigned int mask_width, const unsigned int mask_height);
     virtual ~Stage();
 
@@ -63,7 +63,7 @@ class Stage
     static void setFontHinting(const bool value);
     static void setFontSubPixelPositioning(const bool value);
 
-   protected:
+protected:
     virtual void activateStyleID(bWidgets::bwStyle::TypeID type_id);
 
     /** Returns the top menu bar layout node (first child of the root RootLayout). */
@@ -82,7 +82,7 @@ class Stage
 
     unsigned int mask_width, mask_height;
 
-   private:
+private:
     static void StyleSheetPolish(bWidgets::bwWidget& widget);
 
     void initFonts();

@@ -34,7 +34,7 @@ namespace bWidgetsDemo
 
 class EventManager
 {
-   public:
+public:
     // Constructor is private (singleton!)
     static auto ensureEventManager() -> EventManager&;
     static void setupWindowHandlers(Window& window);
@@ -44,7 +44,7 @@ class EventManager
 
     auto isClickEvent() -> bool;
 
-   private:
+private:
     EventManager() = default;
     ~EventManager() = default;
     EventManager(EventManager const&) = delete;

@@ -40,7 +40,7 @@ extern "C" {
 
 class MatrixStack
 {
-   public:
+public:
     MatrixStack(const glm::mat4& top_mat = glm::mat4{})
     {
         stack[top] = top_mat;
@@ -52,7 +52,7 @@ class MatrixStack
 
 class MatrixState
 {
-   public:
+public:
     MatrixState(MatrixStack model_view_stack, MatrixStack projection_stack)
         : model_view_stack(model_view_stack), projection_stack(projection_stack), dirty(true)
     {

@@ -13,7 +13,7 @@ class LayoutNode;
 
 class ScreenGraph
 {
-   public:
+public:
     template<typename _NodeType>
     ScreenGraph(std::unique_ptr<_NodeType> _root_node)
         : event_dispatcher(*this), root_node(std::move(_root_node))
@@ -29,7 +29,7 @@ class ScreenGraph
     bwContext context;
     bwEventDispatcher event_dispatcher;
 
-   private:
+private:
     std::unique_ptr<LayoutNode> root_node;
 };
 

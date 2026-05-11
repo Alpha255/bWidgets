@@ -5,7 +5,7 @@ namespace bWidgets
 
 template<typename T> class bwRectangle
 {
-   public:
+public:
     inline bwRectangle(const T xmin = 0, const T xmax = 0, const T ymin = 0, const T ymax = 0)
         : xmin(xmin), xmax(xmax), ymin(ymin), ymax(ymax)
     {

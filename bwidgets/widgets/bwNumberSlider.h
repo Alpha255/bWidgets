@@ -10,7 +10,7 @@ class bwStyle;
 
 class bwNumberSlider : public bwTextBox
 {
-   public:
+public:
     friend class bwNumberSliderHandler;
 
     bwNumberSlider(std::optional<unsigned int> width_hint = std::nullopt,
@@ -28,7 +28,7 @@ class bwNumberSlider : public bwTextBox
 
     std::unique_ptr<bwFunctorInterface> apply_functor{ nullptr };
 
-   private:
+private:
     auto valueToString(unsigned int precision) const -> std::string;
     void drawValueIndicator(bwPainter& painter, bwStyle& style) const;
     auto calcValueIndicatorWidth(class bwStyle& style) const -> float;

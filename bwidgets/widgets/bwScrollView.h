@@ -17,7 +17,7 @@ class bwScrollView : public bwContainerWidget
 {
     friend class bwScrollViewHandler;
 
-   public:
+public:
     bwScrollView(bwScreenGraph::ContainerNode& node,
                  unsigned int width = 0,
                  unsigned int height = 0);
@@ -31,7 +31,7 @@ class bwScrollView : public bwContainerWidget
     auto getScrollOffsetY() const -> int;
     auto getContentBounds(float interface_scale) const -> bwRectanglePixel;
 
-   private:
+private:
     auto getVerticalScrollBar() const -> bwScrollBar&;
     auto getVerticalScrollbarRect(const bwStyle& style) const -> bwRectanglePixel;
     void drawScrollBars(bwStyle& style);

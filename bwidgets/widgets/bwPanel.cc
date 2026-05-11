@@ -161,13 +161,13 @@ auto bwPanel::getHeaderRectangle() const -> bwRectanglePixel
 
 class bwPanelHandler : public bwScreenGraph::EventHandler
 {
-   public:
+public:
     bwPanelHandler(bwPanel& panel);
     ~bwPanelHandler() = default;
 
     void onMousePress(bwMouseButtonEvent&) override;
 
-   private:
+private:
     bwPanel& panel;
 };
 

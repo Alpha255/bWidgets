@@ -28,7 +28,7 @@ namespace bWidgetsDemo
 
 class Pixmap
 {
-   public:
+public:
     Pixmap(const int width,
            const int height,
            const unsigned int num_channels,
@@ -44,7 +44,7 @@ class Pixmap
     unsigned int getBitDepth() const;
     unsigned int getNumChannels() const;
 
-   private:
+private:
     std::vector<unsigned char> _bytes;
     int _width, _height;
     unsigned int _num_channels;

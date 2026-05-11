@@ -7,7 +7,7 @@ namespace bWidgets
 
 class bwStyleClassic : public bwStyle
 {
-   public:
+public:
     bwStyleClassic();
 
     void setWidgetStyle(class bwWidget& widget) override;

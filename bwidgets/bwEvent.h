@@ -8,7 +8,7 @@ namespace bWidgets
 
 class bwEvent
 {
-   public:
+public:
     bwEvent(bwPoint _location);
     virtual ~bwEvent() = default;
 
@@ -19,13 +19,13 @@ class bwEvent
     /** Where did the event happen? */
     const bwPoint location;
 
-   private:
+private:
     bool is_swallowed{ false };
 };
 
 class bwMouseButtonEvent : public bwEvent
 {
-   public:
+public:
     enum class Button
     {
         LEFT,
@@ -42,7 +42,7 @@ class bwMouseButtonEvent : public bwEvent
 
 class bwMouseButtonDragEvent : public bwMouseButtonEvent
 {
-   public:
+public:
     enum DragState
     {
         DRAGGING_BELOW_THRESHOLD,
@@ -61,7 +61,7 @@ class bwMouseButtonDragEvent : public bwMouseButtonEvent
 
 class bwMouseWheelEvent : public bwMouseButtonEvent
 {
-   public:
+public:
     enum class Direction
     {
         UP,
@@ -72,7 +72,7 @@ class bwMouseWheelEvent : public bwMouseButtonEvent
 
     auto getDirection() const -> Direction;
 
-   private:
+private:
     Direction direction;
 };
 

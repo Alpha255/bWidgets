@@ -25,7 +25,7 @@ auto bwRadioButton::canAlign() const -> bool
 
 class bwRadioButtonHandler : public bwAbstractButtonHandler
 {
-   public:
+public:
     bwRadioButtonHandler(bwRadioButton& button);
     ~bwRadioButtonHandler() = default;
 

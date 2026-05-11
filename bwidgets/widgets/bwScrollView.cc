@@ -126,7 +126,7 @@ auto bwScrollView::getScrollbarWidth(float interface_scale) -> int
 
 class bwScrollViewHandler : public bwScreenGraph::EventHandler
 {
-   public:
+public:
     bwScrollViewHandler(bwScrollView& scrollview);
     ~bwScrollViewHandler() = default;
 
@@ -146,7 +146,7 @@ class bwScrollViewHandler : public bwScreenGraph::EventHandler
 
     void setScrollValue(int value);
 
-   private:
+private:
     bwScrollView& scrollview;
     constexpr static int SCROLL_STEP_SIZE = 40;
 

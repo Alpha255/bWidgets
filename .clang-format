@@ -51,7 +51,7 @@ ColumnLimit: 99
 ConstructorInitializerIndentWidth: 4
 
 # Make access modifier slightly more visible.
-AccessModifierOffset: -1
+AccessModifierOffset: -4
 
 # This will unfortunately use spaces in some cases where it's not desired (like
 # function calls) but the overall result is better since it will allow

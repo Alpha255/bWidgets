@@ -29,7 +29,7 @@ namespace bWidgetsDemo
  */
 class Application
 {
-   public:
+public:
     static Application& ensureApplication();
 
     void setup();
@@ -38,7 +38,7 @@ class Application
 
     static float interfaceScale();
 
-   private:
+private:
     Application()
     {
     }

@@ -13,7 +13,7 @@ namespace bWidgets
  */
 class bwStyleManager
 {
-   public:
+public:
     using StyleTypeArray = std::array<bwStyle::StyleType, int(bwStyle::TypeID::BUILTIN_TOT)>;
 
     static auto getStyleManager() -> bwStyleManager&;
@@ -23,7 +23,7 @@ class bwStyleManager
 
     auto getBuiltinStyleTypes() const -> const StyleTypeArray&;
 
-   private:
+private:
     bwStyleManager() = default;
     bwStyleManager(bwStyleManager const&) = delete;
 

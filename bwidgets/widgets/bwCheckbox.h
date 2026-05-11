@@ -7,7 +7,7 @@ namespace bWidgets
 
 class bwCheckbox : public bwAbstractButton
 {
-   public:
+public:
     bwCheckbox(const std::string& text = "",
                std::optional<unsigned int> width_hint = std::nullopt,
                std::optional<unsigned int> height_hint = std::nullopt);
@@ -20,7 +20,7 @@ class bwCheckbox : public bwAbstractButton
 
     auto isChecked() const -> bool;
 
-   private:
+private:
     auto isInsideCheckbox(const bwPoint& point) const -> bool;
 
     auto getCheckboxRectangle() const -> bwRectanglePixel;

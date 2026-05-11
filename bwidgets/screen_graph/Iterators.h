@@ -26,7 +26,7 @@ namespace bwScreenGraph
  */
 class PreOrderIterator
 {
-   public:
+public:
     PreOrderIterator();
     PreOrderIterator(Node& node);
     ~PreOrderIterator();
@@ -40,7 +40,7 @@ class PreOrderIterator
     auto operator*() -> Node&;
     auto operator++() -> PreOrderIterator&;
 
-   private:
+private:
     void triggerIterationEnd();
     bool hasExceededLastSibling();
 

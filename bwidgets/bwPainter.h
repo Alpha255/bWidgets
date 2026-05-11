@@ -43,7 +43,7 @@ enum class Direction
 
 class bwPainter
 {
-   public:
+public:
     enum class DrawType
     {
         FILLED,
@@ -92,7 +92,7 @@ class bwPainter
     bool use_antialiasing{ false };
     DrawType active_drawtype;
 
-   private:
+private:
     void fillVertexColorsWithGradient(const bwPolygon& polygon,
                                       const bwRectanglePixel& bounding_box);
 

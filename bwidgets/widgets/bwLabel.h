@@ -12,7 +12,7 @@ class bwIconInterface;
 
 class bwLabel : public bwWidget
 {
-   public:
+public:
     bwLabel(std::string text = "",
             std::optional<unsigned int> width_hint = std::nullopt,
             std::optional<unsigned int> height_hint = std::nullopt);
@@ -27,7 +27,7 @@ class bwLabel : public bwWidget
     auto setLabel(const std::string&) -> bwLabel&;
     auto setIcon(const bwIconInterface& icon_interface) -> bwLabel&;
 
-   private:
+private:
     std::string text;
     const class bwIconInterface* icon{ nullptr };
 

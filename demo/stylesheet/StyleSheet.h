@@ -35,7 +35,7 @@ namespace bWidgetsDemo
 
 class StyleSheet
 {
-   public:
+public:
     StyleSheet(std::string filepath);
     ~StyleSheet();
 
@@ -47,7 +47,7 @@ class StyleSheet
 
     const std::string& getFilepath() const;
 
-   private:
+private:
     void load();
     void unload();
 

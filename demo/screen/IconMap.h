@@ -38,7 +38,7 @@ class File;
 
 class Icon : public bWidgets::bwIconInterface
 {
-   public:
+public:
     Icon(const unsigned int size,
          const unsigned int num_channels,
          const unsigned int bits_per_channel);
@@ -48,7 +48,7 @@ class Icon : public bWidgets::bwIconInterface
     auto getPixmap() -> Pixmap&;  // TODO should get rid of this.
     auto getPixmap() const -> const Pixmap&;
 
-   private:
+private:
     Pixmap _pixmap;
 };
 
@@ -56,12 +56,12 @@ class IconMap
 {
     friend class IconMapReader;
 
-   public:
+public:
     ~IconMap() = default;
 
     auto getIcon(unsigned int index) -> Icon&;
 
-   private:
+private:
     IconMap() = default;
 
     std::array<std::unique_ptr<Icon>, 30 * 26> icons;  // ICON_GRID_ROWS * ICON_GRID_COLS
@@ -69,13 +69,13 @@ class IconMap
 
 class IconMapReader
 {
-   public:
+public:
     IconMapReader();
     ~IconMapReader();
 
     auto readIconMapFromPNGFile(File&) -> std::unique_ptr<IconMap>;
 
-   private:
+private:
     std::unique_ptr<IconReadData> read_data;
 };
 

@@ -10,7 +10,7 @@ namespace bWidgets
 
 template<typename _Type> class bwStylePropertyInternal : public bwStyleProperty
 {
-   public:
+public:
     bwStylePropertyInternal(const std::string_view& name, _Type& reference);
     bwStylePropertyInternal(const std::string_view& name);
 
@@ -19,7 +19,7 @@ template<typename _Type> class bwStylePropertyInternal : public bwStyleProperty
 
     _Type default_value{};
 
-   private:
+private:
     _Type& reference;
     // If #bwStylePropertyInternal constructor is called without reference
     // parameter, this value is used and reference references this.
