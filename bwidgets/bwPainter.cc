@@ -65,7 +65,9 @@ void bwPainter::drawText(const std::string& text,
     }
 }
 
-void bwPainter::drawIcon(const bwIconInterface& icon_interface, const bwRectanglePixel& rect) const
+void bwPainter::drawIcon(const bwIconInterface& icon_interface,
+                         const bwRectanglePixel& rect,
+                         const bwColor& color) const
 {
     if (!painter_check_paint_engine())
     {
@@ -74,7 +76,7 @@ void bwPainter::drawIcon(const bwIconInterface& icon_interface, const bwRectangl
 
     if (!rect.isEmpty() && icon_interface.isValid())
     {
-        s_paint_engine->drawIcon(*this, icon_interface, rect);
+        s_paint_engine->drawIcon(*this, icon_interface, rect, color);
     }
 }
 
@@ -123,7 +125,8 @@ void bwPainter::drawTextAndIcon(const std::string& text,
                                 const bwIconInterface* icon,
                                 const bwRectanglePixel& rectangle,
                                 const TextAlignment alignment,
-                                float dpi_fac) const
+                                float dpi_fac,
+                                const bwColor& color) const
 {
     bwRectanglePixel icon_rect{ rectangle };
     bwRectanglePixel text_rect{ rectangle };
@@ -133,7 +136,7 @@ void bwPainter::drawTextAndIcon(const std::string& text,
         const float icon_size = std::round(bwIconInterface::ICON_DEFAULT_SIZE * dpi_fac);
         icon_rect.xmax = int(icon_rect.xmin + icon_size);
         icon_rect.ymax = int(icon_rect.ymin + icon_size);
-        drawIcon(*icon, icon_rect);
+        drawIcon(*icon, icon_rect, color);
         text_rect.xmin = icon_rect.xmax;
     }
 

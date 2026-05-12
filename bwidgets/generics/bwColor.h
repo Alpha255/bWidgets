@@ -29,6 +29,7 @@ public:
     // Implicit conversion to float*
     operator const float*() const;
 
+    const static bwColor White;
 private:
     enum class Component
     {

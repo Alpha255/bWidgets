@@ -8,6 +8,8 @@
 namespace bWidgets
 {
 
+const bwColor bwColor::White = bwColor(1.0f, 1.0f, 1.0f, 1.0f);
+
 bwColor::bwColor(float red, float green, float blue, float alpha)
 {
     setColor(red, green, blue, alpha);

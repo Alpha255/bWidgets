@@ -57,7 +57,11 @@ public:
     void drawText(const std::string& text,
                   const bwRectanglePixel& rectangle,
                   const TextAlignment align) const;
-    void drawIcon(const bwIconInterface&, const bwRectanglePixel&) const;
+    void drawIcon(const bwIconInterface&, const bwRectanglePixel&, const bwColor& color) const;
+    void drawIcon(const bwIconInterface& interface, const bwRectanglePixel& rect) const
+    {
+        drawIcon(interface, rect, bwColor::White);
+    }
 
     void setActiveColor(const bwColor& color);
     auto getActiveColor() const -> const bwColor&;
@@ -73,7 +77,17 @@ public:
                          const bwIconInterface* icon,
                          const bwRectanglePixel& rectangle,
                          const TextAlignment alignment,
-                         float dpi_fac) const;
+                         float dpi_fac,
+                         const bwColor& color) const;
+    void drawTextAndIcon(
+        const std::string& text,
+        const bwIconInterface* icon,
+        const bwRectanglePixel& rectangle,
+        const TextAlignment alignment,
+        float dpi_fac) const
+    {
+        drawTextAndIcon(text, icon, rectangle, alignment, dpi_fac, bwColor::White);
+    }
 
     // Primitives
     void drawRoundbox(const bwRectanglePixel& rect, unsigned int corners, const float radius);

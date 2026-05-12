@@ -244,7 +244,7 @@ void GawainPaintEngine::drawText(const bwPainter& painter,
 // --------------------------------------------------------------------
 // Icon Drawing
 
-static void engine_icon_texture_draw(const bwRectanglePixel& icon_rect)
+static void engine_icon_texture_draw(const bwRectanglePixel& icon_rect, const bWidgets::bwColor& color)
 {
     Gwn_VertFormat* format = immVertexFormat();
     unsigned int pos = GWN_vertformat_attr_add(format, "pos", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
@@ -252,7 +252,7 @@ static void engine_icon_texture_draw(const bwRectanglePixel& icon_rect)
         format, "texCoord", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
 
     GPUShader::immBind(GPUShader::ID_TEXTURE_RECT);
-    immUniformColor4fv(bwColor(1.0f, 1.0f));
+    immUniformColor4fv(color);
     immUniform1i("image", 0);
 
     immBegin(GWN_PRIM_TRI_STRIP, 4);
@@ -329,7 +329,8 @@ static void engine_icon_rectangle_adjust(bwRectanglePixel& icon_rect,
 
 void GawainPaintEngine::drawIcon(const bwPainter& /*painter*/,
                                  const bwIconInterface& icon_interface,
-                                 const bwRectanglePixel& rectangle)
+                                 const bwRectanglePixel& rectangle,
+                                 const bWidgets::bwColor& color)
 {
     const auto& icon = static_cast<const Icon&>(icon_interface);
     const Pixmap& pixmap = icon.getPixmap();
@@ -339,7 +340,7 @@ void GawainPaintEngine::drawIcon(const bwPainter& /*painter*/,
     engine_icon_rectangle_adjust(icon_rect, rectangle, pixmap, m_scale_x, m_scale_y);
 
     engine_icon_texture_drawing_prepare(pixmap, texture_id);
-    engine_icon_texture_draw(icon_rect);
+    engine_icon_texture_draw(icon_rect, color);
     engine_icon_texture_drawing_cleanup(texture_id);
 }
 

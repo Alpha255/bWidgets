@@ -3,6 +3,7 @@
 #include <string>
 
 #include "bwRectangle.h"
+#include "bWColor.h"
 
 namespace bWidgets
 {
@@ -73,7 +74,8 @@ public:
      */
     virtual void drawIcon(const class bwPainter& painter,
                           const class bwIconInterface& icon_interface,
-                          const bwRectanglePixel& rect) = 0;
+                          const bwRectanglePixel& rect,
+                          const bWidgets::bwColor& color = bWidgets::bwColor::White) = 0;
 };
 
 }  // namespace bWidgets
