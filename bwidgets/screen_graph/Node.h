@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <assert.h>
 
 #include "bwContainerWidget.h"
 #include "bwLayoutInterface.h"
@@ -113,6 +114,7 @@ public:
 
     auto Rectangle() const -> bwRectanglePixel override
     {
+        assert(layout);
         return layout->getRectangle();
     }
 
@@ -127,8 +129,8 @@ public:
     }
 
 private:
-    ChildList children;
     std::unique_ptr<bwLayoutInterface> layout;
+    ChildList children;
 };
 
 /**
@@ -141,11 +143,13 @@ class WidgetNode : virtual public Node
 public:
     auto Widget() const -> bwWidget* override
     {
+        assert(widget);
         return &*widget;
     }
 
     auto Rectangle() const -> bwRectanglePixel override
     {
+        assert(widget);
         return widget->rectangle;
     }
 
@@ -156,6 +160,7 @@ public:
 
     auto isVisible() const -> bool override
     {
+        assert(widget);
         return widget->isHidden() == false;
     }
 

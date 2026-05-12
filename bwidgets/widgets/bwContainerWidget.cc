@@ -6,16 +6,8 @@ namespace bWidgets
 bwContainerWidget::bwContainerWidget(const bwScreenGraph::ContainerNode& node,
                                      std::optional<unsigned int> width_hint,
                                      std::optional<unsigned int> height_hint)
-    : bwWidget(width_hint, height_hint), node(&node)
+    : bwWidget(width_hint, height_hint), node(node)
 {
-    initialize();
-}
-
-bwContainerWidget::bwContainerWidget(std::optional<unsigned int> width_hint,
-                                     std::optional<unsigned int> height_hint)
-    : bwWidget(width_hint, height_hint), node(nullptr)
-{
-    initialize();
 }
 
 auto bwContainerWidget::getMaskRectangle() -> bwRectanglePixel

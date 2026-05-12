@@ -101,6 +101,19 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 option(WITH_GTESTS "Compile bWidgets with GTest unit tests" OFF)
 option(WITH_BWIDGETS_DEMO "Compile the demo application for bWidgets alongside bWidgets itself" ON)
+option(ENABLE_ASAN "Enable AddressSanitizer for memory error detection" OFF)
+
+if(ENABLE_ASAN)
+    if(MSVC)
+        # /RTC1 (runtime checks) is incompatible with ASAN — remove it from all configs.
+        remove_cc_flag("/RTC1" "/RTCc" "/RTCs" "/RTCu")
+        add_compile_options(/fsanitize=address)
+    else()
+        add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+        add_link_options(-fsanitize=address)
+    endif()
+    message(STATUS "AddressSanitizer enabled")
+endif()
 
 #-----------------------------------------------------------------------------
 # Sub-directories

@@ -64,8 +64,7 @@ public:
         ROW,
         COLUMN,
         PANEL,
-        SCROLL_VIEW,
-        ROOT,
+        SCROLL_VIEW
     };
 
     enum FlowDirection
@@ -106,7 +105,6 @@ protected:
                                      const unsigned int item_margin,
                                      const float scale_fac);
 
-public:
     int width{ 0 }, height{ 0 };
     bWidgets::bwPoint location;
 
@@ -139,25 +137,6 @@ class ScrollViewLayout : public LayoutItem
 {
 public:
     explicit ScrollViewLayout();
-
-    void resolve(bWidgets::bwScreenGraph::Node& node,
-                 const bWidgets::bwPoint& layout_pos,
-                 const unsigned int item_margin,
-                 const float scale_fac) override;
-
-    unsigned int item_margin = 0;
-};
-
-/**
- * \brief Two-region root layout: fixed menu bar at top, scrollable content below.
- *
- * The first child node is the menu bar (ColumnLayout, fixed height derived from bwMenu content).
- * The second child node is the scroll view (ScrollViewLayout, fills remaining area).
- */
-class RootLayout : public LayoutItem
-{
-public:
-    explicit RootLayout();
 
     void resolve(bWidgets::bwScreenGraph::Node& node,
                  const bWidgets::bwPoint& layout_pos,

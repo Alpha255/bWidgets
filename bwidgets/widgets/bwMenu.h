@@ -37,8 +37,9 @@ class bwMenu : public bwContainerWidget
     friend class bwMenuHandler;
 
 public:
-    bwMenu(std::optional<unsigned int> width_hint = std::nullopt,
-           std::optional<unsigned int> height_hint = std::nullopt);
+    bwMenu(const bwScreenGraph::ContainerNode& node,
+        std::optional<unsigned int> width_hint = std::nullopt,
+        std::optional<unsigned int> height_hint = std::nullopt);
 
     auto getTypeIdentifier() const -> std::string_view override;
 

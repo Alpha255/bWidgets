@@ -113,8 +113,10 @@ void bwMenuHandler::onMousePress(bwMouseButtonEvent& event)
     }
 }
 
-bwMenu::bwMenu(std::optional<unsigned int> width_hint, std::optional<unsigned int> height_hint)
-    : bwContainerWidget(width_hint, height_hint)
+bwMenu::bwMenu(const bwScreenGraph::ContainerNode& node, 
+    std::optional<unsigned int> width_hint,
+    std::optional<unsigned int> height_hint)
+    : bwContainerWidget(node, width_hint, height_hint)
 {
 }
 

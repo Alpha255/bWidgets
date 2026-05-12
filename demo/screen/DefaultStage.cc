@@ -51,26 +51,12 @@ DefaultStage::DefaultStage(unsigned int mask_width, unsigned int mask_height)
     /* Convenience */
     using RNABuilder = RNAScreenGraphBuilder<DefaultStage, DefaultStageRNAFunctor>;
 
-    /* Build the menu bar region (top, non-scrollable). */
-    {
-        Builder menu_builder(menuBarNode());
-        auto& menu = menu_builder.addWidget<bwMenu>();
-        menu.label = "File";
-        menu.addItem("New").shortcut = "Ctrl N";
-        menu.addItem("Open").shortcut = "Ctrl O";
-        menu.addItem("Save").shortcut = "Ctrl S";
-        menu.addSeparator();
-        menu.addSubmenu("Export");
-        menu.addSeparator();
-        menu.addItem("Exit").shortcut = "Alt F4";
-    }
-
     /* Build the scrollable content region (below the menu bar). */
-    RNABuilder builder(scrollViewNode(), *this, properties);
+    RNABuilder builder(screen_graph, *this, properties);
 
     registerProperties(properties);
 
-    addStyleSelector(scrollViewNode());
+    addStyleSelector(screen_graph.Root());
 
     builder.addRNAWidget<bwNumberSlider>("interface_scale")
         .setMinMax(0.5f, 2.0f)
