@@ -85,6 +85,12 @@ public:
     auto getRectangle() -> bWidgets::bwRectanglePixel override;
     auto getHeight() const -> unsigned int;
 
+    inline LayoutItem& setPadding(uint32_t inPadding)
+    {
+        padding = inPadding;
+        return *this;
+    }
+
     const Type type;
     const FlowDirection flow_direction;
     unsigned int padding = 0;
@@ -142,6 +148,12 @@ public:
                  const bWidgets::bwPoint& layout_pos,
                  const unsigned int item_margin,
                  const float scale_fac) override;
+
+    inline ScrollViewLayout& setItemMargin(uint32_t margin)
+    {
+        item_margin = margin;
+        return *this;
+    }
 
     unsigned int item_margin = 0;
 };

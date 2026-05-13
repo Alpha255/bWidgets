@@ -85,7 +85,7 @@ public:
     virtual auto MaskRectangle() const -> std::optional<bwRectanglePixel> = 0;
     virtual auto isVisible() const -> bool = 0;
 
-private:
+protected:
     Node* parent{ nullptr };
     std::unique_ptr<EventHandler> handler{ nullptr };
 };
@@ -128,6 +128,21 @@ public:
         return true;
     }
 
+    void setLayout(std::unique_ptr<bwLayoutInterface> inLayout)
+    {
+        layout = std::move(inLayout);
+    }
+
+    template<class Layout, typename... Args>
+    Layout& createLayout(Args&&... args)
+    {
+        static_assert(std::is_base_of<bwLayoutInterface, Layout>::value, "should be a valid layout type");
+        
+        assert(layout == nullptr);
+        layout = std::make_unique<Layout>(std::forward<Args>(args)...);
+        return static_cast<Layout&>(*layout);
+    }
+
 private:
     std::unique_ptr<bwLayoutInterface> layout;
     ChildList children;
@@ -164,6 +179,22 @@ public:
         return widget->isHidden() == false;
     }
 
+    void setWidget(std::unique_ptr<bwWidget> inWidget)
+    {
+        widget = std::move(inWidget);
+        handler = widget->createHandler();
+    }
+
+     template<class Widget, typename... Args> 
+     Widget& createWidget(Args&&... args)
+     {
+        static_assert(std::is_base_of<bwWidget, Widget>::value, "should be a valid widget type");
+
+        assert(widget == nullptr);
+        widget = std::make_unique<Widget>(std::forward<Args>(args)...);
+        handler = widget->createHandler();
+        return static_cast<Widget&>(*widget);
+     }
 private:
     std::unique_ptr<bwWidget> widget;
 };

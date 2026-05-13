@@ -11,6 +11,7 @@ set(SRC
 	bwEvent.cc
 	bwEventDispatcher.cc
 	bwPainter.cc
+	bwIcon.cc
 	screen_graph/Builder.cc
 	screen_graph/Drawer.cc
 	screen_graph/EventHandler.cc
@@ -32,6 +33,8 @@ set(SRC
 	bwLayoutInterface.h
 	bwPaintEngine.h
 	bwPainter.h
+	bwIcon.h
+	bwPreferences.h
 	screen_graph/Builder.h
 	screen_graph/Drawer.h
 	screen_graph/EventHandler.h

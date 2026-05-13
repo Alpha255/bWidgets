@@ -60,13 +60,10 @@ auto createScreenGraph(const unsigned int width, const unsigned int height)
     -> bwScreenGraph::ScreenGraph
 {
     auto container = std::make_unique<bwScreenGraph::ContainerNode>();
-    auto layout = std::make_unique<ScrollViewLayout>();
-    auto scroll_view = std::make_unique<bwScrollView>(*container, width, height);
-
-    layout->padding = 7;
-    layout->item_margin = 5;
-    bwScreenGraph::Builder::setLayout(*container, std::move(layout));
-    bwScreenGraph::Builder::setWidget(*container, std::move(scroll_view));
+    container->createLayout<ScrollViewLayout>()
+        .setItemMargin(5u)
+        .setPadding(7u);
+    container->createWidget<bwScrollView>(*container, width, height);
     
     return bwScreenGraph::ScreenGraph(std::move(container));
 }

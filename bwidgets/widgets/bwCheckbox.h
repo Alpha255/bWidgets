@@ -9,6 +9,7 @@ class bwCheckbox : public bwAbstractButton
 {
 public:
     bwCheckbox(const std::string& text = "",
+               bool useIcon = false,
                std::optional<unsigned int> width_hint = std::nullopt,
                std::optional<unsigned int> height_hint = std::nullopt);
 
@@ -25,6 +26,8 @@ private:
 
     auto getCheckboxRectangle() const -> bwRectanglePixel;
     auto getTextRectangle(const bwRectanglePixel& checkbox_rectangle) const -> bwRectanglePixel;
+
+    bool use_icon;
 };
 
 }  // namespace bWidgets
