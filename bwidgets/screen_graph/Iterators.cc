@@ -6,12 +6,18 @@ namespace bWidgets
 namespace bwScreenGraph
 {
 
+using NodeIterType = Node::ChildList::iterator;
+
 PreOrderIterator::PreOrderIterator() : node(nullptr)
 {
 }
 
 PreOrderIterator::~PreOrderIterator()
 {
+    if (!is_root)
+    {
+        node_iter.~NodeIterType();
+    }
 }
 
 PreOrderIterator::PreOrderIterator(Node& node) : node(&node), root(&node)
@@ -50,6 +56,7 @@ auto PreOrderIterator::operator*() -> Node&
 
 void PreOrderIterator::triggerIterationEnd()
 {
+    node_iter.~NodeIterType();
     is_root = true;
     node = nullptr;
 }
@@ -112,8 +119,12 @@ auto PreOrderIterator::operator++() -> PreOrderIterator&
         if (!is_root)
         {
             ancestors.push_back(node_iter);
+            node_iter.~NodeIterType();
         }
-        node = nullptr;
+        else
+        {
+            node = nullptr;
+        }
         node_iter = childs->begin();
         is_root = false;
     }
