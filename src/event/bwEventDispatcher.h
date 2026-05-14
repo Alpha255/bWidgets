@@ -34,7 +34,7 @@ public:
     void dispatchMouseWheelScroll(bwMouseWheelEvent&);
 
 private:
-    auto isDragging() -> bool;
+    bool isDragging();
     void changeContextHovered(bwScreenGraph::bwNode*, bwEvent&);
 
     /** Reference back to the screen-graph owning this dispatcher */

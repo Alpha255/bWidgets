@@ -24,14 +24,14 @@ class bwRadioButton : public bwAbstractButton
 {
 public:
     bwRadioButton(const std::string& text,
-                  std::optional<unsigned int> width_hint = std::nullopt,
-                  std::optional<unsigned int> height_hint = std::nullopt);
+                  std::optional<uint32_t> width_hint = std::nullopt,
+                  std::optional<uint32_t> height_hint = std::nullopt);
 
-    auto getTypeIdentifier() const -> std::string_view override;
+    std::string_view getTypeIdentifier() const override;
 
-    auto canAlign() const -> bool override;
+    bool canAlign() const override;
 
-    auto createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler> override;
+    std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 };
 
 }  // namespace bWidgets

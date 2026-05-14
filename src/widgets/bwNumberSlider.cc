@@ -14,13 +14,13 @@
 namespace bWidgets
 {
 
-bwNumberSlider::bwNumberSlider(std::optional<unsigned int> width_hint,
-                               std::optional<unsigned int> height_hint)
+bwNumberSlider::bwNumberSlider(std::optional<uint32_t> width_hint,
+                               std::optional<uint32_t> height_hint)
     : bwTextBox(width_hint, height_hint), precision(2)
 {
 }
 
-auto bwNumberSlider::getTypeIdentifier() const -> std::string_view
+std::string_view bwNumberSlider::getTypeIdentifier() const
 {
     return "bwNumberSlider";
 }
@@ -77,7 +77,7 @@ void bwNumberSlider::drawValueIndicator(bwPainter& painter, bwStyle& style) cons
                                      base_style.shadeTop());
     bwRectanglePixel indicator_offset_rect = rectangle;
     bwRectanglePixel indicator_rect = rectangle;
-    unsigned int roundbox_corners = base_style.roundbox_corners;
+    uint32_t roundbox_corners = base_style.roundbox_corners;
     const float radius = base_style.corner_radius * style.dpi_fac;
     float right_side_radius = radius;
 
@@ -102,35 +102,35 @@ void bwNumberSlider::drawValueIndicator(bwPainter& painter, bwStyle& style) cons
         indicator_rect, roundbox_corners & ~(TOP_LEFT | BOTTOM_LEFT), right_side_radius);
 }
 
-auto bwNumberSlider::setValue(float _value) -> bwNumberSlider&
+bwNumberSlider& bwNumberSlider::setValue(float _value)
 {
-    const int precision_fac = std::pow(10, precision);
+    const int32_t precision_fac = std::pow(10, precision);
     const float unclamped_value = std::max(min, std::min(max, _value));
 
     value = std::roundf(unclamped_value * precision_fac) / precision_fac;
     return *this;
 }
 
-auto bwNumberSlider::getValue() const -> float
+float bwNumberSlider::getValue() const
 {
     return value;
 }
 
-auto bwNumberSlider::setMinMax(float _min, float _max) -> bwNumberSlider&
+bwNumberSlider& bwNumberSlider::setMinMax(float _min, float _max)
 {
     min = _min;
     max = _max;
     return *this;
 }
 
-auto bwNumberSlider::valueToString(unsigned int precision) const -> std::string
+std::string bwNumberSlider::valueToString(uint32_t precision) const
 {
     std::stringstream string_stream;
     string_stream << std::fixed << std::setprecision(precision) << value;
     return string_stream.str();
 }
 
-auto bwNumberSlider::calcValueIndicatorWidth(bwStyle& style) const -> float
+float bwNumberSlider::calcValueIndicatorWidth(bwStyle& style) const
 {
     const float range = max - min;
     const float radius = base_style.corner_radius * style.dpi_fac;
@@ -164,7 +164,7 @@ bwNumberSliderHandler::bwNumberSliderHandler(bwNumberSlider& numberslider)
 {
 }
 
-auto bwNumberSlider::createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler>
+std::unique_ptr<bwScreenGraph::bwEventHandler> bwNumberSlider::createHandler()
 {
     return std::make_unique<bwNumberSliderHandler>(*this);
 }

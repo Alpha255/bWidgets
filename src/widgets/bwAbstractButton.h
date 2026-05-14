@@ -21,25 +21,25 @@ public:
     void draw(class bwStyle& style) override;
     void registerProperties() override;
 
-    auto getLabel() const -> const std::string* override;
-    auto setLabel(const std::string& label) -> bwAbstractButton&;
-    virtual auto getIcon() const -> const bwIconInterface*;
+    const std::string* getLabel() const override;
+    bwAbstractButton& setLabel(const std::string& label);
+    virtual const bwIconInterface* getIcon() const;
 
-    auto createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler> override;
+    std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
     /**
      * Function object called when applying changes to widget.
      */
     std::unique_ptr<bwFunctorInterface> apply_functor{ nullptr };
 
-    unsigned int rounded_corners;
+    uint32_t rounded_corners;
 
 protected:
     // Protected constructor to force calling through inherited class (pseudo
     // abstract).
     bwAbstractButton(const std::string& text,
-                     std::optional<unsigned int> width_hint = std::nullopt,
-                     std::optional<unsigned int> height_hint = std::nullopt);
+                     std::optional<uint32_t> width_hint = std::nullopt,
+                     std::optional<uint32_t> height_hint = std::nullopt);
     void apply();
 
     std::string text;

@@ -20,10 +20,11 @@
  */
 
 #include "Application.h"
+#include <stdint.h>
 
 using namespace bWidgetsDemo;
 
-int main(int /*argc*/, char** /*argv*/)
+int32_t main(int32_t /*argc*/, char** /*argv*/)
 {
     Application& app = Application::ensureApplication();
 

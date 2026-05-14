@@ -36,13 +36,13 @@ class bwEventManager
 {
 public:
     // Constructor is private (singleton!)
-    static auto ensureEventManager() -> bwEventManager&;
+    static bwEventManager& ensureEventManager();
     static void setupWindowHandlers(bwWindow& window);
 
     void waitEvents();
-    auto processEvents(bwWindowManager::WindowList& windows) -> bool;
+    bool processEvents(bwWindowManager::WindowList& windows);
 
-    auto isClickEvent() -> bool;
+    bool isClickEvent();
 
 private:
     bwEventManager() = default;
@@ -51,18 +51,18 @@ private:
 
     void operator=(bwEventManager const&) = delete;
 
-    static void handleWindowResizeEvent(GLFWwindow* glfw_win, int new_win_x, int new_win_y);
+    static void handleWindowResizeEvent(GLFWwindow* glfw_win, int32_t new_win_x, int32_t new_win_y);
     static void handleWindowContentScaleEvent(GLFWwindow* glfw_win,
                                               float new_scale_x,
                                               float new_scale_y);
     static void handleMouseMovementEvent(GLFWwindow* glfw_win, double x, double y);
     static void handleMouseButtonEvent(GLFWwindow* glfw_win,
-                                       int glfw_button,
-                                       int glfw_action,
-                                       int glfw_mods);
+                                       int32_t glfw_button,
+                                       int32_t glfw_action,
+                                       int32_t glfw_mods);
     static void handleMouseScrollEvent(GLFWwindow* glfw_win, double value_x, double value_y);
-    static auto convertGlfwMouseButton(int glfw_button) -> bwMouseButtonEvent::Button;
-    static auto convertGlfwMouseButtonAction(int glfw_action) -> bwMouseEvent::Type;
+    static bwMouseButtonEvent::Button convertGlfwMouseButton(int32_t glfw_button);
+    static bwMouseEvent::Type convertGlfwMouseButtonAction(int32_t glfw_action);
 };
 
 }  // namespace bWidgets

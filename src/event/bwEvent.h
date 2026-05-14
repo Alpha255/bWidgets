@@ -14,7 +14,7 @@ public:
 
     void swallow();
     void unswallow();
-    auto isSwallowed() const -> bool;
+    bool isSwallowed() const;
 
     /** Where did the event happen? */
     const bwPoint location;
@@ -70,7 +70,7 @@ public:
 
     bwMouseWheelEvent(Direction _direction, bwPoint _location);
 
-    auto getDirection() const -> Direction;
+    Direction getDirection() const;
 
 private:
     Direction direction;

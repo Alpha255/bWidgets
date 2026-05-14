@@ -26,7 +26,7 @@ void bwBuilder::setWidget(bwWidgetNode& node, std::unique_ptr<bwWidget> widget)
     node.handler = node.widget->createHandler();
 }
 
-auto bwBuilder::addWidget(bwLayoutNode& node, std::unique_ptr<bwWidget> widget) -> bwWidget&
+bwWidget& bwBuilder::addWidget(bwLayoutNode& node, std::unique_ptr<bwWidget> widget)
 {
     bwWidgetNode& node_ref = addChildNode<bwWidgetNode>(node);
     setWidget(node_ref, std::move(widget));

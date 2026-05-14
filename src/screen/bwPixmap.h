@@ -29,11 +29,11 @@ namespace bWidgets
 class bwPixmap
 {
 public:
-    bwPixmap(const int width,
-             const int height,
-             const unsigned int num_channels,
-             const unsigned int bits_per_channel = 8,
-             const unsigned int row_padding = 0,
+    bwPixmap(const int32_t width,
+             const int32_t height,
+             const uint32_t num_channels,
+             const uint32_t bits_per_channel = 8,
+             const uint32_t row_padding = 0,
              unsigned char* data = nullptr);
 
     ~bwPixmap();
@@ -76,10 +76,10 @@ public:
         return _bytes;
     }
 
-    int width() const;
-    int height() const;
-    unsigned int getBitDepth() const;
-    unsigned int getNumChannels() const;
+    int32_t width() const;
+    int32_t height() const;
+    uint32_t getBitDepth() const;
+    uint32_t getNumChannels() const;
     uint32_t getNumBytes() const
     {
         return _num_bytes;
@@ -87,10 +87,10 @@ public:
 
 private:
     unsigned char* _bytes;
-    int _width, _height;
-    unsigned int _num_channels;
-    unsigned int _bits_per_channel;
-    unsigned int _row_padding;
+    int32_t _width, _height;
+    uint32_t _num_channels;
+    uint32_t _bits_per_channel;
+    uint32_t _row_padding;
     uint32_t _num_bytes;
     bool _owns_data = false;
 };

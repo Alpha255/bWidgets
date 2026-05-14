@@ -42,7 +42,7 @@ DefaultStageRNAFunctor::DefaultStageRNAFunctor(RNAProperties<DefaultStage>& prop
                                                DefaultStage& stage,
                                                const std::string& prop_name,
                                                const bwWidget& widget,
-                                               int enum_value)
+                                               int32_t enum_value)
     : DefaultStageRNAFunctor(props, stage, prop_name, widget)
 {
     m_enum_value = enum_value;
@@ -69,7 +69,7 @@ const std::string& DefaultStageRNAFunctor::getPropName() const
     return m_prop_name;
 }
 
-std::optional<int> DefaultStageRNAFunctor::getEnumValue() const
+std::optional<int32_t> DefaultStageRNAFunctor::getEnumValue() const
 {
     return m_enum_value;
 }

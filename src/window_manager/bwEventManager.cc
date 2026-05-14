@@ -77,7 +77,7 @@ void bwEventManager::setupWindowHandlers(bwWindow& window)
     glfwSetScrollCallback(&glfw_window, handleMouseScrollEvent);
 }
 
-void bwEventManager::handleWindowResizeEvent(GLFWwindow* glfw_win, int new_win_x, int new_win_y)
+void bwEventManager::handleWindowResizeEvent(GLFWwindow* glfw_win, int32_t new_win_x, int32_t new_win_y)
 {
     auto* win = (bwWindow*)glfwGetWindowUserPointer(glfw_win);
     win->handleResizeEvent(new_win_x, new_win_y);
@@ -91,7 +91,7 @@ void bwEventManager::handleWindowContentScaleEvent(GLFWwindow* glfw_win,
     win->handleContentScaleEvent(new_scale_x, new_scale_y);
 }
 
-bwMouseButtonEvent::Button bwEventManager::convertGlfwMouseButton(int glfw_button)
+bwMouseButtonEvent::Button bwEventManager::convertGlfwMouseButton(int32_t glfw_button)
 {
     switch (glfw_button)
     {
@@ -104,7 +104,7 @@ bwMouseButtonEvent::Button bwEventManager::convertGlfwMouseButton(int glfw_butto
     return bwMouseButtonEvent::Button::UNKNOWN;
 }
 
-bwMouseEvent::Type bwEventManager::convertGlfwMouseButtonAction(int glfw_action)
+bwMouseEvent::Type bwEventManager::convertGlfwMouseButtonAction(int32_t glfw_action)
 {
     switch (glfw_action)
     {
@@ -127,9 +127,9 @@ void bwEventManager::handleMouseMovementEvent(GLFWwindow* glfw_win, double /*x*/
 }
 
 void bwEventManager::handleMouseButtonEvent(GLFWwindow* glfw_win,
-                                            int glfw_button,
-                                            int glfw_action,
-                                            int /*glfw_mods*/)
+                                            int32_t glfw_button,
+                                            int32_t glfw_action,
+                                            int32_t /*glfw_mods*/)
 {
     const bwWindow* win = (bwWindow*)glfwGetWindowUserPointer(glfw_win);
     const bwPoint& position = win->getCursorPosition();

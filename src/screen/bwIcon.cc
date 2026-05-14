@@ -76,9 +76,9 @@ bwIconMapReader::~bwIconMapReader()
     read_data.reset();
 }
 
-static auto icons_check_if_file_is_png(File& file) -> bool
+static bool icons_check_if_file_is_png(File& file)
 {
-    const int num_header_bytes = 8;
+    const int32_t num_header_bytes = 8;
     char header[num_header_bytes];
 
     if (file.readBytes(header, num_header_bytes, true))
@@ -91,15 +91,15 @@ static auto icons_check_if_file_is_png(File& file) -> bool
 
 static void libpng_copy_rows_into_pixmap(bwPixmap& pixmap,
                                          const png_bytep* row_pointers,
-                                         unsigned int position_x,
-                                         unsigned int position_y)
+                                         uint32_t position_x,
+                                         uint32_t position_y)
 {
     // Assumes pixmap channels and bit-depth match what row_pointers contains.
-    const int height = pixmap.height();
-    const int width = pixmap.width();
-    const unsigned int bytes_per_pixel = (pixmap.getBitDepth() / 8) * pixmap.getNumChannels();
+    const int32_t height = pixmap.height();
+    const int32_t width = pixmap.width();
+    const uint32_t bytes_per_pixel = (pixmap.getBitDepth() / 8) * pixmap.getNumChannels();
 
-    for (int row = 0; row < height; row++)
+    for (int32_t row = 0; row < height; row++)
     {
         std::copy_n(&row_pointers[position_y - row][position_x * bytes_per_pixel],
                     width * bytes_per_pixel,
@@ -110,13 +110,13 @@ static void libpng_copy_rows_into_pixmap(bwPixmap& pixmap,
 static void libpng_read_from_istream(png_structp png_ptr, png_bytep data, png_size_t length)
 {
     File& file = *(File*)png_get_io_ptr(png_ptr);
-    if (!file.readBytes((char*)data, (unsigned int)length, false))
+    if (!file.readBytes((char*)data, (uint32_t)length, false))
     {
         std::cout << "Error reading PNG" << std::endl;
     }
 }
 
-auto bwIconMapReader::readIconMap(File& file) -> std::unique_ptr<bwIconMap>
+std::unique_ptr<bwIconMap> bwIconMapReader::readIconMap(File& file)
 {
     auto path = file.getPath();
     std::string extension = path.substr(path.find_last_of(".") + 1);
@@ -130,7 +130,7 @@ auto bwIconMapReader::readIconMap(File& file) -> std::unique_ptr<bwIconMap>
     return readIconMapFromSVGFiles(file);
 }
 
-auto bwIconMapReader::readIconMapFromPNGFile(File& file) -> std::unique_ptr<bwIconMap>
+std::unique_ptr<bwIconMap> bwIconMapReader::readIconMapFromPNGFile(File& file)
 {
     if (!icons_check_if_file_is_png(file))
     {
@@ -157,9 +157,9 @@ auto bwIconMapReader::readIconMapFromPNGFile(File& file) -> std::unique_ptr<bwIc
 
     // TODO Icons don't scale with interface scale yet.
     std::unique_ptr<bwIconMap> icon_map(new bwIconMap);
-    for (int y = 0, icon_index = 0; y < ICON_GRID_ROWS; y++)
+    for (int32_t y = 0, icon_index = 0; y < ICON_GRID_ROWS; y++)
     {
-        for (int x = 0; x < ICON_GRID_COLS; x++)
+        for (int32_t x = 0; x < ICON_GRID_COLS; x++)
         {
             std::unique_ptr<bwIcon> icon(new bwIcon(ICON_GRID_W, channels, bit_depth, icon_map->getPixelData(icon_index)));
 
@@ -177,7 +177,7 @@ auto bwIconMapReader::readIconMapFromPNGFile(File& file) -> std::unique_ptr<bwIc
     return icon_map;
 }
 
-auto bwIconMapReader::readIconMapFromSVGFiles(File& directory) -> std::unique_ptr<bwIconMap>
+std::unique_ptr<bwIconMap> bwIconMapReader::readIconMapFromSVGFiles(File& directory)
 {
     std::unique_ptr<bwIconMap> iconMap(new bwIconMap);
 
@@ -216,7 +216,7 @@ auto bwIconMapReader::readIconMapFromSVGFiles(File& directory) -> std::unique_pt
         }
 
         auto rasterizer = nsvgCreateRasterizer();
-        constexpr int size = std::max(ICON_GRID_W, ICON_GRID_H);
+        constexpr int32_t size = std::max(ICON_GRID_W, ICON_GRID_H);
         float scale = svgImage->width ? (float)size / svgImage->width : 1.0f;
 
         std::unique_ptr<bwIcon> icon(new bwIcon(size,
@@ -245,24 +245,25 @@ auto bwIconMapReader::readIconMapFromSVGFiles(File& directory) -> std::unique_pt
 
 // --------------------------------------------------------------------
 
-bwIcon::bwIcon(const unsigned int size,
-               const unsigned int num_channels,
-               const unsigned int bits_per_channel,
+bwIcon::bwIcon(const uint32_t size,
+               const uint32_t num_channels,
+               const uint32_t bits_per_channel,
                unsigned char* pixelData)
     : _pixmap(size, size, num_channels, bits_per_channel, 0u, pixelData)
 {
 }
 
-auto bwIcon::isValid() const -> bool
+bool bwIcon::isValid() const
 {
     return true;
 }
 
-auto bwIcon::getPixmap() -> bwPixmap&
+bwPixmap& bwIcon::getPixmap()
 {
     return _pixmap;
 }
-auto bwIcon::getPixmap() const -> const bwPixmap&
+
+const bwPixmap& bwIcon::getPixmap() const
 {
     return _pixmap;
 }
@@ -273,7 +274,7 @@ bwIconMap::bwIconMap()
     iconPixelStorage.reset(new unsigned char[iconPixelStride * numIcons]());
 }
 
-auto bwIconMap::getIcon(unsigned int index) -> bwIcon&
+bwIcon& bwIconMap::getIcon(uint32_t index)
 {
     return *icons[index];
 }

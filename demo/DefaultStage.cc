@@ -42,7 +42,7 @@ namespace bWidgetsDemo
 
 #define PANEL_HEADER_HEIGHT 24
 
-DefaultStage::DefaultStage(unsigned int mask_width, unsigned int mask_height)
+DefaultStage::DefaultStage(uint32_t mask_width, uint32_t mask_height)
     : Stage(mask_width, mask_height)
 {
     using namespace bwScreenGraph;
@@ -119,7 +119,7 @@ DefaultStage::DefaultStage(unsigned int mask_width, unsigned int mask_height)
         PANEL_HEADER_HEIGHT);
 }
 
-auto isUseCSSVersionToggleHidden(const bwStyle& style) -> bool
+bool isUseCSSVersionToggleHidden(const bwStyle& style)
 {
     return (style.type_id != bwStyle::TypeID::CLASSIC) &&
            (style.type_id != bwStyle::TypeID::CLASSIC_CSS);
@@ -145,7 +145,7 @@ void DefaultStage::addStyleSelector(bwScreenGraph::bwLayoutNode& parent_node)
                     continue;
                 }
                 auto& style_button = builder.addRNAWidget<bwRadioButton>(
-                    int(type.type_id), "style_type", type.name);
+                    int32_t(type.type_id), "style_type", type.name);
 
                 if (type.type_id == style->type_id)
                 {
@@ -181,7 +181,7 @@ void DefaultStage::useStyleCSSVersionSet(const bool use_css_version)
     }
 }
 
-auto DefaultStage::updateStyleButton(bwWidget& widget_iter) -> bool
+bool DefaultStage::updateStyleButton(bwWidget& widget_iter)
 {
     bwStyle::TypeID active_type_id = DefaultStage::style->type_id;
 

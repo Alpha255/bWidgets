@@ -55,8 +55,8 @@ public:
 private:
     GPUShader(const std::string& vertexcode, const std::string& fragcode);
 
-    static auto createFromID(GPUShader::ID id) -> std::unique_ptr<GPUShader>;
-    static auto ensureCached(ID id) -> GPUShader&;
+    static std::unique_ptr<GPUShader> createFromID(GPUShader::ID id);
+    static GPUShader& ensureCached(ID id);
 
     GLuint m_program;
 

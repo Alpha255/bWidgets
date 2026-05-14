@@ -11,15 +11,15 @@ class bwPushButton : public bwAbstractButton
 {
 public:
     bwPushButton(const std::string& text,
-                 std::optional<unsigned int> width_hint = std::nullopt,
-                 std::optional<unsigned int> height_hint = std::nullopt);
+                 std::optional<uint32_t> width_hint = std::nullopt,
+                 std::optional<uint32_t> height_hint = std::nullopt);
 
-    auto getTypeIdentifier() const -> std::string_view override;
+    std::string_view getTypeIdentifier() const override;
 
-    auto getIcon() const -> const bwIconInterface* override;
-    auto setIcon(const class bwIconInterface&) -> bwPushButton&;
+    const bwIconInterface* getIcon() const override;
+    bwPushButton& setIcon(const class bwIconInterface&);
 
-    auto canAlign() const -> bool override;
+    bool canAlign() const override;
 
 private:
     const class bwIconInterface* icon{ nullptr };

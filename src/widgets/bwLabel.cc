@@ -9,14 +9,14 @@ namespace bWidgets
 {
 
 bwLabel::bwLabel(std::string text,
-                 std::optional<unsigned int> width_hint,
-                 std::optional<unsigned int> height_hint)
+                 std::optional<uint32_t> width_hint,
+                 std::optional<uint32_t> height_hint)
     : bwWidget(width_hint, height_hint), text(std::move(text))
 {
     initialize();
 }
 
-auto bwLabel::getTypeIdentifier() const -> std::string_view
+std::string_view bwLabel::getTypeIdentifier() const
 {
     return "bwLabel";
 }
@@ -35,23 +35,23 @@ void bwLabel::registerProperties()
     style_properties.addColor("color", text_color);
 }
 
-auto bwLabel::getLabel() const -> const std::string*
+const std::string* bwLabel::getLabel() const
 {
     return &text;
 }
 
-auto bwLabel::setLabel(const std::string& label) -> bwLabel&
+bwLabel& bwLabel::setLabel(const std::string& label)
 {
     text = label;
     return *this;
 }
 
-auto bwLabel::createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler>
+std::unique_ptr<bwScreenGraph::bwEventHandler> bwLabel::createHandler()
 {
     return nullptr;
 }
 
-auto bwLabel::setIcon(const bwIconInterface& icon_interface) -> bwLabel&
+bwLabel& bwLabel::setIcon(const bwIconInterface& icon_interface)
 {
     icon = &icon_interface;
     return *this;

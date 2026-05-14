@@ -39,7 +39,7 @@ public:
 
     static void setLayout(bwLayoutNode& node, std::unique_ptr<bwLayoutInterface> layout);
     static void setWidget(bwWidgetNode& node, std::unique_ptr<bwWidget> widget);
-    static auto addWidget(bwLayoutNode& node, std::unique_ptr<bwWidget> widget) -> bwWidget&;
+    static bwWidget& addWidget(bwLayoutNode& node, std::unique_ptr<bwWidget> widget);
 
     void setActiveLayout(bwLayoutNode&);
 
@@ -47,7 +47,7 @@ public:
      * \brief Add and activate a child node for a layout created in-place.
      */
     template<typename _LayoutType, typename... _Args>
-    auto addLayout(_Args&&... __args) -> bwLayoutNode&
+    bwLayoutNode& addLayout(_Args&&... __args)
     {
         static_assert(std::is_base_of<bwLayoutInterface, _LayoutType>::value,
                       "Should implement bwLayoutInterface");
@@ -65,7 +65,7 @@ public:
      * \a build_func.
      */
     template<typename _LayoutType, typename... _Args>
-    auto buildLayout(BuildFunc<> build_func, _Args&&... __args) -> bwLayoutNode&
+    bwLayoutNode& buildLayout(BuildFunc<> build_func, _Args&&... __args)
     {
         return buildLayout<_LayoutType, bwBuilder>(build_func, std::forward<_Args>(__args)...);
     }
@@ -77,7 +77,7 @@ public:
      * bwBuilder).
      */
     template<typename _LayoutType, typename _BuilderType, typename... _Args>
-    auto buildLayout(BuildFunc<_BuilderType> build_func, _Args&&... __args) -> bwLayoutNode&
+    bwLayoutNode& buildLayout(BuildFunc<_BuilderType> build_func, _Args&&... __args)
     {
         static_assert(std::is_base_of_v<bwLayoutInterface, _LayoutType>,
                       "Should implement bwLayoutInterface");
@@ -91,7 +91,7 @@ public:
     }
 
     template<typename _WidgetType, typename... _Args>
-    auto addWidget(_Args&&... __args) -> _WidgetType&
+    _WidgetType& addWidget(_Args&&... __args)
     {
         static_assert(std::is_base_of<bwWidget, _WidgetType>::value,
                       "Should derrive from bwWidget");
@@ -103,8 +103,7 @@ public:
     }
 
     template<typename _WidgetType, typename... _Args>
-    auto addContainer(std::unique_ptr<bwLayoutInterface> layout, _Args&&... __args)
-        -> bwContainerNode&
+    bwContainerNode& addContainer(std::unique_ptr<bwLayoutInterface> layout, _Args&&... __args)
     {
         static_assert(std::is_base_of<bwWidget, _WidgetType>::value,
                       "Should derrive from bwWidget");
@@ -128,9 +127,9 @@ public:
      * This override passes the default builder type (\ref bwBuilder) to the \a build_func.
      */
     template<typename _WidgetType, typename... _Args>
-    auto buildContainer(BuildFunc<> build_func,
+    bwContainerNode& buildContainer(BuildFunc<> build_func,
                         std::unique_ptr<bwLayoutInterface> layout,
-                        _Args&&... __args) -> bwContainerNode&
+                        _Args&&... __args)
     {
         return buildContainer<_WidgetType, bwBuilder>(
             build_func, std::move(layout), std::forward<_Args>(__args)...);
@@ -152,9 +151,9 @@ public:
      * \param build_func: Callback to create the subtree for this container.
      */
     template<typename _WidgetType, typename _BuilderType, typename... _Args>
-    auto buildContainer(BuildFunc<_BuilderType> build_func,
+    bwContainerNode& buildContainer(BuildFunc<_BuilderType> build_func,
                         std::unique_ptr<bwLayoutInterface> layout,
-                        _Args&&... __args) -> bwContainerNode&
+                        _Args&&... __args)
     {
         static_assert(std::is_base_of<bwWidget, _WidgetType>::value,
                       "Should derrive from bwWidget");
@@ -198,7 +197,7 @@ public:
      * \endcode
      */
     template<typename _WidgetType, typename... _Args>
-    static auto emplaceWidget(bwLayoutNode& node, _Args&&... __args) -> _WidgetType&
+    static _WidgetType& emplaceWidget(bwLayoutNode& node, _Args&&... __args)
     {
         static_assert(std::is_base_of<bwWidget, _WidgetType>::value,
                       "Should derrive from bwWidget");
@@ -210,7 +209,7 @@ public:
     }
 
 private:
-    template<typename _NodeType> static auto addChildNode(bwLayoutNode& parent_node) -> _NodeType&
+    template<typename _NodeType> static _NodeType& addChildNode(bwLayoutNode& parent_node)
     {
         static_assert(std::is_base_of<bwNode, _NodeType>::value,
                       "Should derrive from bwScreenGraph::bwNode");

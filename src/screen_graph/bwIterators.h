@@ -36,9 +36,9 @@ public:
     bwPreOrderIterator(const bwPreOrderIterator&) = delete;
     bwPreOrderIterator(bwPreOrderIterator&&);
 
-    auto operator!=(const bwPreOrderIterator&) const -> bool;
-    auto operator*() -> bwNode&;
-    auto operator++() -> bwPreOrderIterator&;
+    bool operator!=(const bwPreOrderIterator&) const;
+    bwNode& operator*();
+    bwPreOrderIterator& operator++();
 
 private:
     void triggerIterationEnd();
@@ -58,10 +58,10 @@ private:
 
 /* bwPreOrderIterator is the default iterator (implicitly chosen when passing a
  * node as range-expression for range-based foor loops) */
-auto begin(bwNode&) -> bwPreOrderIterator;
-auto end(bwNode&) -> bwPreOrderIterator;
-auto begin(bwScreenGraph& screen_graph) -> bwPreOrderIterator;
-auto end(bwScreenGraph& screen_graph) -> bwPreOrderIterator;
+bwPreOrderIterator begin(bwNode&);
+bwPreOrderIterator end(bwNode&);
+bwPreOrderIterator begin(bwScreenGraph& screen_graph);
+bwPreOrderIterator end(bwScreenGraph& screen_graph);
 
 }  // namespace bwScreenGraph
 }  // namespace bWidgets

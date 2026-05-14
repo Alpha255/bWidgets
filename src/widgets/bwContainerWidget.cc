@@ -4,13 +4,13 @@ namespace bWidgets
 {
 
 bwContainerWidget::bwContainerWidget(const bwScreenGraph::bwContainerNode& node,
-                                     std::optional<unsigned int> width_hint,
-                                     std::optional<unsigned int> height_hint)
+                                     std::optional<uint32_t> width_hint,
+                                     std::optional<uint32_t> height_hint)
     : bwWidget(width_hint, height_hint), node(node)
 {
 }
 
-auto bwContainerWidget::getMaskRectangle() -> bwRectanglePixel
+bwRectanglePixel bwContainerWidget::getMaskRectangle()
 {
     bwRectanglePixel maskrect = rectangle;
 
@@ -24,7 +24,7 @@ auto bwContainerWidget::getMaskRectangle() -> bwRectanglePixel
     return maskrect;
 }
 
-auto bwContainerWidget::childrenVisible() const -> bool
+bool bwContainerWidget::childrenVisible() const
 {
     /* By default, all children are visible, can be overriden if the container
      * widget supports hiding children. */

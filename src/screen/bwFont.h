@@ -59,10 +59,10 @@ public:
     ~bwFont();
 
     static void initFontReading();
-    static auto loadFont(const std::string& name, const std::string& path) -> bwFont*;
+    static bwFont* loadFont(const std::string& name, const std::string& path);
 
-    void render(const std::string& text, const int pos_x, const int pos_y);
-    auto calculateStringWidth(const std::string& text) -> unsigned int;
+    void render(const std::string& text, const int32_t pos_x, const int32_t pos_y);
+    uint32_t calculateStringWidth(const std::string& text);
 
     void setFontAntiAliasingMode(AntiAliasingMode);
     void setTightPositioning(bool value);
@@ -70,9 +70,9 @@ public:
     void setSubPixelPositioning(bool value);
 
     void setSize(const float size);
-    auto getSize() const -> int;
+    int32_t getSize() const;
 
-    auto getActiveColor() const -> const bwColor&;
+    const bwColor& getActiveColor() const;
     void setActiveColor(const bwColor& value);
 
     void setMask(const bwRectanglePixel& value);
@@ -84,7 +84,7 @@ private:
     public:
         void invalidate();
         void ensureUpdated(const bwFont&);
-        auto getCachedGlyph(const bwFont&, const char) const -> const bwFontGlyph&;
+        const bwFontGlyph& getCachedGlyph(const bwFont&, const char) const;
 
         bool is_dirty{ true };
         std::vector<std::unique_ptr<bwFontGlyph>> cached_glyphs;
@@ -97,20 +97,19 @@ private:
 
     void renderGlyph(const bwFontGlyph& glyph,
                      const bwFontGlyph* previous_glyph,
-                     const unsigned int attr_pos,
-                     const unsigned int attr_texcoord,
+                     const uint32_t attr_pos,
+                     const uint32_t attr_texcoord,
                      Pen& pen) const;
 
     void applyPositionBias(FixedNum<F16p16>& value) const;
-    auto calcSubpixelOffset(const Pen& pen, const bwFontGlyph* previous_glyph) const -> float;
-    auto getKerningDistance(const bwFontGlyph& left, const bwFontGlyph& right) const
-        -> FixedNum<F16p16>;
+    float calcSubpixelOffset(const Pen& pen, const bwFontGlyph* previous_glyph) const;
+    FixedNum<F16p16> getKerningDistance(const bwFontGlyph& left, const bwFontGlyph& right) const;
     /* Accesses private members, so make it a member function. Would be better
      * to keep freetype specific stuff out of the general bwFont class, but
      * ignoring for now since this is just the demo app anyway. */
-    auto getFreeTypeLoadFlags() const -> FT_Int32;
-    auto getFreeTypeRenderFlags() const -> FT_Render_Mode;
-    auto useSubpixelPositioning() const -> bool;
+    FT_Int32 getFreeTypeLoadFlags() const;
+    FT_Render_Mode getFreeTypeRenderFlags() const;
+    bool useSubpixelPositioning() const;
 
     // The freetype library handle.
     static FT_Library ft_library;
@@ -118,7 +117,7 @@ private:
     FT_Face face;
 
     // Height in pixels.
-    int size{ 0 };
+    int32_t size{ 0 };
 
     bwColor active_color;
     bwRectanglePixel mask;
@@ -133,21 +132,21 @@ private:
 class bwFontGlyph
 {
 public:
-    bwFontGlyph(const unsigned int index,
+    bwFontGlyph(const uint32_t index,
                 std::unique_ptr<bwPixmap>&& pixmap,
-                const int offset_left,
-                const int offset_top,
+                const int32_t offset_left,
+                const int32_t offset_top,
                 FixedNum<F16p16> advance_width);
     bwFontGlyph() = default;
 
     bool is_valid = false;
 
-    unsigned int index = 0;  // Same as freetype index
+    uint32_t index = 0;  // Same as freetype index
 
     std::unique_ptr<bwPixmap> pixmap;
-    int offset_left = 0, offset_top = 0;  // bitmap_left, bitmap_top
+    int32_t offset_left = 0, offset_top = 0;  // bitmap_left, bitmap_top
     FixedNum<F16p16> advance_width;
-    int pitch = 0;
+    int32_t pitch = 0;
 };
 
 }  // namespace bWidgets

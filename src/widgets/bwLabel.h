@@ -14,18 +14,18 @@ class bwLabel : public bwWidget
 {
 public:
     bwLabel(std::string text = "",
-            std::optional<unsigned int> width_hint = std::nullopt,
-            std::optional<unsigned int> height_hint = std::nullopt);
+            std::optional<uint32_t> width_hint = std::nullopt,
+            std::optional<uint32_t> height_hint = std::nullopt);
 
-    auto getTypeIdentifier() const -> std::string_view override;
+    std::string_view getTypeIdentifier() const override;
 
     void draw(bwStyle& style) override;
     void registerProperties() override;
-    auto createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler> override;
+    std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
-    auto getLabel() const -> const std::string* override;
-    auto setLabel(const std::string&) -> bwLabel&;
-    auto setIcon(const bwIconInterface& icon_interface) -> bwLabel&;
+    const std::string* getLabel() const override;
+    bwLabel& setLabel(const std::string&);
+    bwLabel& setIcon(const bwIconInterface& icon_interface);
 
 private:
     std::string text;

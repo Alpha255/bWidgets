@@ -14,14 +14,14 @@ namespace bWidgets
 class bwStyleManager
 {
 public:
-    using StyleTypeArray = std::array<bwStyle::StyleType, int(bwStyle::TypeID::BUILTIN_TOT)>;
+    using StyleTypeArray = std::array<bwStyle::StyleType, int32_t(bwStyle::TypeID::BUILTIN_TOT)>;
 
-    static auto getStyleManager() -> bwStyleManager&;
-    static auto createStyleFromTypeID(bwStyle::TypeID type_id) -> std::unique_ptr<bwStyle>;
+    static bwStyleManager& getStyleManager();
+    static std::unique_ptr<bwStyle> createStyleFromTypeID(bwStyle::TypeID type_id);
 
     void registerDefaultStyleTypes();
 
-    auto getBuiltinStyleTypes() const -> const StyleTypeArray&;
+    const StyleTypeArray& getBuiltinStyleTypes() const;
 
 private:
     bwStyleManager() = default;

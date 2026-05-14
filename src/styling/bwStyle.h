@@ -35,7 +35,7 @@ public:
     virtual void setWidgetStyle(bwWidget& widget) = 0;
     virtual void polish(bwWidget&);
 
-    static unsigned int s_default_widget_size_hint;
+    static uint32_t s_default_widget_size_hint;
 
     TypeID type_id;
     float dpi_fac{ 1.0f };

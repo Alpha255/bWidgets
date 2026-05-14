@@ -11,20 +11,20 @@ class bwTextBox : public bwWidget
     friend class bwTextBoxHandler;
 
 public:
-    bwTextBox(std::optional<unsigned int> width_hint = std::nullopt,
-              std::optional<unsigned int> height_hint = std::nullopt);
+    bwTextBox(std::optional<uint32_t> width_hint = std::nullopt,
+              std::optional<uint32_t> height_hint = std::nullopt);
 
-    auto getTypeIdentifier() const -> std::string_view override;
+    std::string_view getTypeIdentifier() const override;
 
     void draw(class bwStyle& style) override;
     void registerProperties() override;
 
-    auto setText(const std::string& value) -> bwTextBox&;
-    auto getLabel() const -> const std::string* override;
+    bwTextBox& setText(const std::string& value);
+    const std::string* getLabel() const override;
 
     bool canAlign() const override;
 
-    auto createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler> override;
+    std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
     bwRectanglePixel selection_rectangle;
 

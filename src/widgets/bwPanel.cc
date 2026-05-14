@@ -12,14 +12,14 @@ namespace bWidgets
 
 bwPanel::bwPanel(const bwScreenGraph::bwContainerNode& node,
                  std::string label,
-                 std::optional<unsigned int> header_height_hint)
+                 std::optional<uint32_t> header_height_hint)
     : bwContainerWidget(node, 0, header_height_hint),
       header_height(header_height_hint.value_or(height_hint)), label(std::move(label))
 {
     initialize();
 }
 
-auto bwPanel::getTypeIdentifier() const -> std::string_view
+std::string_view bwPanel::getTypeIdentifier() const
 {
     return "bwPanel";
 }
@@ -43,23 +43,23 @@ void bwPanel::registerProperties()
     style_properties.addBool("draw-separator", draw_separator);
 }
 
-auto bwPanel::getLabel() const -> const std::string*
+const std::string* bwPanel::getLabel() const
 {
     return &label;
 }
 
-auto bwPanel::childrenVisible() const -> bool
+bool bwPanel::childrenVisible() const
 {
     return panel_state == State::OPEN;
 }
 
-auto bwPanel::isCoordinateInsideHeader(const bwPoint& point) const -> bool
+bool bwPanel::isCoordinateInsideHeader(const bwPoint& point) const
 {
     const bwRectanglePixel header_rect = getHeaderRectangle();
     return header_rect.isCoordinateInside(point.x, point.y);
 }
 
-auto bwPanel::getHeaderHeightHint() const -> unsigned int
+uint32_t bwPanel::getHeaderHeightHint() const
 {
     return height_hint;
 }
@@ -69,13 +69,13 @@ static void panel_draw_drag_dots(bwPainter& painter,
                                  const bwRectanglePixel& rectangle,
                                  const bwWidgetBaseStyle& base_style)
 {
-    const int px = 1.0f;  // TODO Equivalent to U.pixelsize.
-    const int px_zoom = std::max((int)std::round(rectangle.height() / 22.0f), 1);
+    const int32_t px = 1.0f;  // TODO Equivalent to U.pixelsize.
+    const int32_t px_zoom = std::max((int32_t)std::round(rectangle.height() / 22.0f), 1);
     const float tint = 84.0f / 255.0f;
 
-    const int padding = std::max((int)std::round(rectangle.height() / 3.0f), px);
-    const int dot_margin = std::max((int)std::round(px_zoom * 2.0f), px);
-    const int dot_size = std::max((int)std::round((rectangle.height() / 8.0f) - px), px);
+    const int32_t padding = std::max((int32_t)std::round(rectangle.height() / 3.0f), px);
+    const int32_t dot_margin = std::max((int32_t)std::round(px_zoom * 2.0f), px);
+    const int32_t dot_size = std::max((int32_t)std::round((rectangle.height() / 8.0f) - px), px);
 
     bwColor dot_color = base_style.backgroundColor();
     bwColor shadow_color = base_style.backgroundColor();
@@ -84,15 +84,15 @@ static void panel_draw_drag_dots(bwPainter& painter,
     shadow_color.shade(-tint);
 
     painter.active_drawtype = bwPainter::DrawType::FILLED;
-    for (int col = 0; col < 4; col++)
+    for (int32_t col = 0; col < 4; col++)
     {
-        for (int row = 0; row < 2; row++)
+        for (int32_t row = 0; row < 2; row++)
         {
             const bwPoint pos{ ((float)rectangle.xmin + padding) + (col * (dot_size + dot_margin)),
                                ((float)rectangle.ymin + padding) +
                                    (row * (dot_size + dot_margin)) };
             bwRectanglePixel dot_rect{
-                (int)pos.x - dot_size, (int)pos.x, (int)pos.y, (int)pos.y + dot_size
+                (int32_t)pos.x - dot_size, (int32_t)pos.x, (int32_t)pos.y, (int32_t)pos.y + dot_size
             };
             bwRectanglePixel shadow_rect{ dot_rect };
 
@@ -150,7 +150,7 @@ void bwPanel::drawHeader(bwStyle& style) const
                          (panel_state == State::OPEN) ? Direction::DOWN : Direction::RIGHT);
 }
 
-auto bwPanel::getHeaderRectangle() const -> bwRectanglePixel
+bwRectanglePixel bwPanel::getHeaderRectangle() const
 {
     bwRectanglePixel header_rect{ rectangle };
     header_rect.ymin = header_rect.ymax - header_height;
@@ -175,7 +175,7 @@ bwPanelHandler::bwPanelHandler(bwPanel& panel) : panel(panel)
 {
 }
 
-auto bwPanel::createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler>
+std::unique_ptr<bwScreenGraph::bwEventHandler> bwPanel::createHandler()
 {
     return std::make_unique<bwPanelHandler>(*this);
 }

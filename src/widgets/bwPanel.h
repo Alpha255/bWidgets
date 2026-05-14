@@ -18,28 +18,28 @@ public:
 
     bwPanel(const bwScreenGraph::bwContainerNode& node,
             std::string label,
-            std::optional<unsigned int> header_height_hint = std::nullopt);
+            std::optional<uint32_t> header_height_hint = std::nullopt);
 
-    auto getTypeIdentifier() const -> std::string_view override;
+    std::string_view getTypeIdentifier() const override;
 
     void draw(class bwStyle& style) override;
 
     void registerProperties() override;
 
-    auto getLabel() const -> const std::string* override;
-    auto childrenVisible() const -> bool override;
+    const std::string* getLabel() const override;
+    bool childrenVisible() const override;
 
-    auto createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler> override;
+    std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
-    unsigned int getHeaderHeightHint() const;
+    uint32_t getHeaderHeightHint() const;
 
-    unsigned int header_height;
+    uint32_t header_height;
     State panel_state{ State::OPEN };
 
 private:
     void drawHeader(class bwStyle& style) const;
-    auto getHeaderRectangle() const -> bwRectanglePixel;
-    auto isCoordinateInsideHeader(const bwPoint& point) const -> bool;
+    bwRectanglePixel getHeaderRectangle() const;
+    bool isCoordinateInsideHeader(const bwPoint& point) const;
 
     std::string label;
 

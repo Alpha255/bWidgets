@@ -64,14 +64,14 @@ public:
     }
 
     void setActiveColor(const bwColor& color);
-    auto getActiveColor() const -> const bwColor&;
-    auto getVertexColor(const size_t vertex_index) const -> const bwColor&;
+    const bwColor& getActiveColor() const;
+    const bwColor& getVertexColor(const size_t vertex_index) const;
 
     void setContentMask(const bwRectanglePixel& value);
-    auto getContentMask() const -> const bwRectanglePixel&;
+    const bwRectanglePixel& getContentMask() const;
 
     void enableGradient(const bwGradient& gradient);
-    auto isGradientEnabled() const -> bool;
+    bool isGradientEnabled() const;
 
     void drawTextAndIcon(const std::string& text,
                          const bwIconInterface* icon,
@@ -90,7 +90,7 @@ public:
     }
 
     // Primitives
-    void drawRoundbox(const bwRectanglePixel& rect, unsigned int corners, const float radius);
+    void drawRoundbox(const bwRectanglePixel& rect, uint32_t corners, const float radius);
     void drawRectangle(const bwRectanglePixel& rect);
     void drawRoundboxWidgetBase(const bwWidgetBaseStyle& base_style,
                                 const bwStyle& style,

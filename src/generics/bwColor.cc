@@ -18,7 +18,7 @@ bwColor::bwColor(float rgb, float alpha)
 {
     setColor(rgb, alpha);
 }
-bwColor::bwColor(unsigned int red, unsigned int green, unsigned int blue, unsigned int alpha)
+bwColor::bwColor(uint32_t red, uint32_t green, uint32_t blue, uint32_t alpha)
 {
     assert(red < 256);
     assert(green < 256);
@@ -27,7 +27,7 @@ bwColor::bwColor(unsigned int red, unsigned int green, unsigned int blue, unsign
 
     setColor(red / 255.0f, green / 255.0f, blue / 255.0f, alpha / 255.0f);
 }
-bwColor::bwColor(unsigned int rgb, unsigned int alpha)
+bwColor::bwColor(uint32_t rgb, uint32_t alpha)
 {
     assert(rgb < 256);
     assert(alpha < 256);
@@ -40,7 +40,7 @@ bwColor::bwColor(const bwColor& other)
     setColor(other.rgba);
 }
 
-auto bwColor::shade(const float rgb_shade, float alpha_shade) -> bwColor&
+bwColor& bwColor::shade(const float rgb_shade, float alpha_shade)
 {
     (*this)[Component::RED] += rgb_shade;
     clamp(Component::RED);
@@ -52,7 +52,7 @@ auto bwColor::shade(const float rgb_shade, float alpha_shade) -> bwColor&
 
     return *this;
 }
-auto bwColor::shade(unsigned int rgb_shade, unsigned int alpha_shade) -> bwColor&
+bwColor& bwColor::shade(uint32_t rgb_shade, uint32_t alpha_shade)
 {
     (*this)[Component::RED] += rgb_shade / 255.0f;
     clamp(Component::RED);
@@ -86,17 +86,17 @@ void bwColor::setColor(const float _rgba[4])
     rgba[3] = _rgba[3];
 }
 
-auto bwColor::getColor() const -> const float*
+const float* bwColor::getColor() const
 {
     return &rgba[0];
 }
 
-auto bwColor::operator=(const float* rgb) -> bwColor&
+bwColor& bwColor::operator=(const float* rgb)
 {
     setColor(rgb);
     return *this;
 }
-auto bwColor::operator=(const bwColor& other_color) -> bwColor&
+bwColor& bwColor::operator=(const bwColor& other_color)
 {
     setColor(other_color.rgba);
     return *this;
@@ -108,7 +108,7 @@ auto bwColor::operator==(const bwColor& compare_color) const -> bool
             (rgba[2] == compare_color[2]) && (rgba[3] == compare_color[3]));
 }
 
-auto bwColor::operator[](const int index) -> float&
+float& bwColor::operator[](const int32_t index)
 {
     assert((index >= 0) && (index < 4));
     return rgba[index];

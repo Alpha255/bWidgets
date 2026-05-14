@@ -71,7 +71,7 @@ void bwBooleanPropertyParser::parseIntoProperty(bwStyleProperty& dest_property,
 void bwIntegerPropertyParser::parseIntoProperty(bwStyleProperty& dest_property,
                                                 const KatanaValue& value) const
 {
-    dest_property.setValue((int)value.fValue);  // iValue is not valid
+    dest_property.setValue((int32_t)value.fValue);  // iValue is not valid
 }
 
 void bwFloatPropertyParser::parseIntoProperty(bwStyleProperty& dest_property,
@@ -95,7 +95,7 @@ bwColor bwColorPropertyParser::parseFromFunction(const KatanaValue& value) const
     {
         bwColor color;
 
-        for (unsigned int i = 0, color_index = 0; i < value.function->args->length; i++)
+        for (uint32_t i = 0, color_index = 0; i < value.function->args->length; i++)
         {
             auto* arg_value = (KatanaValue*)value.function->args->data[i];
 

@@ -38,7 +38,7 @@ private:
 class bwStyleSheetNode
 {
 public:
-    class bwStateProperties state_properties[int(bwWidget::State::STATE_TOT)];
+    class bwStateProperties state_properties[int32_t(bwWidget::State::STATE_TOT)];
 };
 
 bwStyleSheetNode* bwStyleSheetTree::lookupNode(const std::string_view& name) const
@@ -85,7 +85,7 @@ bwStyleProperty& bwStyleSheetTree::ensureNodeWithProperty(const std::string_view
                                                           const bwStyleProperty::Type type)
 {
     bwStyleSheetNode& node = ensureNode(class_name);
-    bwStateProperties& state_properties = node.state_properties[int(pseudo_state)];
+    bwStateProperties& state_properties = node.state_properties[int32_t(pseudo_state)];
 
     return state_properties.ensureProperty(identifier, type);
 }
@@ -103,13 +103,13 @@ const bwStyleProperty* bwStyleSheetTree::resolveProperty(const std::string_view&
     if (bwStyleSheetNode* node = lookupNode(class_name))
     {
         const bwStyleProperty* property = state_properties_lookup_property(
-            property_name, node->state_properties[int(state)]);
+            property_name, node->state_properties[int32_t(state)]);
 
         if (!property && (state != bwWidget::State::NORMAL))
         {
             // Property for this state not set, check for STATE_NORMAL.
             property = state_properties_lookup_property(
-                property_name, node->state_properties[int(bwWidget::State::NORMAL)]);
+                property_name, node->state_properties[int32_t(bwWidget::State::NORMAL)]);
         }
 
         return property;

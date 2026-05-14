@@ -78,8 +78,8 @@ static const float jit[WIDGET_AA_JITTER][2] = {
     { -0.272855f, 0.269918f },  { 0.095909f, 0.388710f }
 };
 
-static auto stage_polygon_drawtype_convert(const bwPainter::DrawType& drawtype,
-                                           bool use_antialiasing) -> Gwn_PrimType
+static Gwn_PrimType stage_polygon_drawtype_convert(const bwPainter::DrawType& drawtype,
+                                           bool use_antialiasing)
 {
     switch (drawtype)
     {
@@ -97,7 +97,7 @@ static auto stage_polygon_drawtype_convert(const bwPainter::DrawType& drawtype,
 static void stage_polygon_draw_uniform_color(const bwPolygon& poly,
                                              const bwColor& color,
                                              const Gwn_PrimType type,
-                                             const unsigned int attr_pos,
+                                             const uint32_t attr_pos,
                                              float scale_x,
                                              float scale_y)
 {
@@ -105,7 +105,7 @@ static void stage_polygon_draw_uniform_color(const bwPolygon& poly,
 
     immUniformColor4fv(color);
 
-    immBegin(type, (unsigned int)vertices.size());
+    immBegin(type, (uint32_t)vertices.size());
     for (const bwPoint& vertex : vertices)
     {
         immVertex2f(attr_pos, vertex.x * scale_x, vertex.y * scale_y);
@@ -115,15 +115,15 @@ static void stage_polygon_draw_uniform_color(const bwPolygon& poly,
 static void stage_polygon_draw_shaded(const bwPainter& painter,
                                       const bwPolygon& poly,
                                       const Gwn_PrimType type,
-                                      const unsigned int attr_pos,
-                                      const unsigned int attr_color,
+                                      const uint32_t attr_pos,
+                                      const uint32_t attr_color,
                                       float scale_x,
                                       float scale_y)
 {
     const bwPointVec& vertices = poly.getVertices();
 
-    immBegin(type, (unsigned int)vertices.size());
-    for (int i = 0; i < vertices.size(); i++)
+    immBegin(type, (uint32_t)vertices.size());
+    for (int32_t i = 0; i < vertices.size(); i++)
     {
         immAttrib4fv(attr_color, painter.getVertexColor(i));
         immVertex2f(attr_pos, vertices[i].x * scale_x, vertices[i].y * scale_y);
@@ -134,8 +134,8 @@ static void stage_polygon_draw(const bwPainter& painter,
                                const bwPolygon& poly,
                                const bwColor& color,
                                const Gwn_PrimType type,
-                               const unsigned int attr_pos,
-                               const unsigned int attr_color,
+                               const uint32_t attr_pos,
+                               const uint32_t attr_color,
                                float scale_x,
                                float scale_y)
 {
@@ -156,9 +156,9 @@ void GawainPaintEngine::drawPolygon(const bwPainter& painter, const bwPolygon& p
     Gwn_PrimType prim_type = stage_polygon_drawtype_convert(painter.active_drawtype,
                                                             painter.use_antialiasing);
     Gwn_VertFormat* format = immVertexFormat();
-    unsigned int attr_pos = GWN_vertformat_attr_add(
+    uint32_t attr_pos = GWN_vertformat_attr_add(
         format, "pos", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
-    unsigned int attr_color = is_shaded ? GWN_vertformat_attr_add(
+    uint32_t attr_color = is_shaded ? GWN_vertformat_attr_add(
                                               format, "color", GWN_COMP_F32, 4, GWN_FETCH_FLOAT) :
                                           0;
 
@@ -194,13 +194,13 @@ void GawainPaintEngine::drawPolygon(const bwPainter& painter, const bwPolygon& p
 // --------------------------------------------------------------------
 // Text Drawing
 
-static auto stage_text_xpos_calc(bwFont& font,
+static float stage_text_xpos_calc(bwFont& font,
                                  const std::string& text,
                                  const bwRectanglePixel& rectangle,
                                  const TextAlignment alignment,
-                                 float scale_x) -> float
+                                 float scale_x)
 {
-    int value = 0;
+    int32_t value = 0;
 
     switch (alignment)
     {
@@ -245,8 +245,8 @@ void GawainPaintEngine::drawText(const bwPainter& painter,
 static void engine_icon_texture_draw(const bwRectanglePixel& icon_rect, const bwColor& color)
 {
     Gwn_VertFormat* format = immVertexFormat();
-    unsigned int pos = GWN_vertformat_attr_add(format, "pos", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
-    unsigned int texcoord = GWN_vertformat_attr_add(
+    uint32_t pos = GWN_vertformat_attr_add(format, "pos", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
+    uint32_t texcoord = GWN_vertformat_attr_add(
         format, "texCoord", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
 
     GPUShader::immBind(GPUShader::ID_TEXTURE_RECT);
@@ -316,8 +316,8 @@ static void engine_icon_rectangle_adjust(bwRectanglePixel& icon_rect,
                                          float scale_x,
                                          float scale_y)
 {
-    const int xmin = std::max(bounds.centerX() - (pixmap.width() / 2) + 4, bounds.xmin);
-    const int ymin = std::max(bounds.centerY() - (pixmap.height() / 2) + 1, bounds.ymin);
+    const int32_t xmin = std::max(bounds.centerX() - (pixmap.width() / 2) + 4, bounds.xmin);
+    const int32_t ymin = std::max(bounds.centerY() - (pixmap.height() / 2) + 1, bounds.ymin);
 
     icon_rect.set(xmin * scale_x,
                   std::min(pixmap.width(), bounds.width()) * scale_x,

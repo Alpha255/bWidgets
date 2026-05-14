@@ -27,20 +27,20 @@
 namespace bWidgets
 {
 
-static unsigned int get_num_row_bytes_impl(int width,
-                                           unsigned int num_channels,
-                                           unsigned int bits_per_channel,
-                                           unsigned int row_padding)
+static uint32_t get_num_row_bytes_impl(int32_t width,
+                                           uint32_t num_channels,
+                                           uint32_t bits_per_channel,
+                                           uint32_t row_padding)
 {
     assert((bits_per_channel % 8) == 0);
     return width * (bits_per_channel / 8) * num_channels + row_padding;
 }
 
-bwPixmap::bwPixmap(const int width,
-                   const int height,
-                   const unsigned int num_channels,
-                   const unsigned int bits_per_channel,
-                   const unsigned int row_padding,
+bwPixmap::bwPixmap(const int32_t width,
+                   const int32_t height,
+                   const uint32_t num_channels,
+                   const uint32_t bits_per_channel,
+                   const uint32_t row_padding,
                    unsigned char* data)
     : _bytes(data),
       _width(width)
@@ -65,21 +65,21 @@ void bwPixmap::fill(const unsigned char* bytes)
     }
 }
 
-int bwPixmap::width() const
+int32_t bwPixmap::width() const
 {
     return _width;
 }
-int bwPixmap::height() const
+int32_t bwPixmap::height() const
 {
     return _height;
 }
 
-unsigned int bwPixmap::getBitDepth() const
+uint32_t bwPixmap::getBitDepth() const
 {
     return _bits_per_channel;
 }
 
-unsigned int bwPixmap::getNumChannels() const
+uint32_t bwPixmap::getNumChannels() const
 {
     return _num_channels;
 }

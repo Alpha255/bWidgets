@@ -7,14 +7,14 @@
 namespace bWidgets
 {
 
-bwTextBox::bwTextBox(std::optional<unsigned int> width_hint,
-                     std::optional<unsigned int> height_hint)
+bwTextBox::bwTextBox(std::optional<uint32_t> width_hint,
+                     std::optional<uint32_t> height_hint)
     : bwWidget(width_hint, height_hint), selection_rectangle(bwRectanglePixel())
 {
     initialize();
 }
 
-auto bwTextBox::getTypeIdentifier() const -> std::string_view
+std::string_view bwTextBox::getTypeIdentifier() const
 {
     return "bwTextBox";
 }
@@ -47,13 +47,13 @@ void bwTextBox::registerProperties()
     base_style.registerProperties(style_properties);
 }
 
-auto bwTextBox::setText(const std::string& value) -> bwTextBox&
+bwTextBox& bwTextBox::setText(const std::string& value)
 {
     text = value;
     return *this;
 }
 
-auto bwTextBox::getLabel() const -> const std::string*
+const std::string* bwTextBox::getLabel() const
 {
     return &text;
 }

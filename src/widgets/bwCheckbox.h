@@ -10,22 +10,22 @@ class bwCheckbox : public bwAbstractButton
 public:
     bwCheckbox(const std::string& text = "",
                bool useIcon = false,
-               std::optional<unsigned int> width_hint = std::nullopt,
-               std::optional<unsigned int> height_hint = std::nullopt);
+               std::optional<uint32_t> width_hint = std::nullopt,
+               std::optional<uint32_t> height_hint = std::nullopt);
 
-    auto getTypeIdentifier() const -> std::string_view override;
+    std::string_view getTypeIdentifier() const override;
 
     void draw(class bwStyle& style) override;
 
-    auto createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler> override;
+    std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
-    auto isChecked() const -> bool;
+    bool isChecked() const;
 
 private:
-    auto isInsideCheckbox(const bwPoint& point) const -> bool;
+    bool isInsideCheckbox(const bwPoint& point) const;
 
-    auto getCheckboxRectangle() const -> bwRectanglePixel;
-    auto getTextRectangle(const bwRectanglePixel& checkbox_rectangle) const -> bwRectanglePixel;
+    bwRectanglePixel getCheckboxRectangle() const;
+    bwRectanglePixel getTextRectangle(const bwRectanglePixel& checkbox_rectangle) const;
 
     bool use_icon;
 };

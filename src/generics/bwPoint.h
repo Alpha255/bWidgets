@@ -10,16 +10,16 @@ class bwPoint
 public:
     bwPoint(float x = 0, float y = 0);
 
-    auto operator==(const bwPoint& rhs) const -> bool;
+    bool operator==(const bwPoint& rhs) const;
 
     float x, y;
 };
 
-auto operator*(const bwPoint&, float) -> bwPoint;
-auto operator*(float, const bwPoint&) -> bwPoint;
-auto operator+(const bwPoint&, const bwPoint&) -> bwPoint;
-auto operator-(const bwPoint&, const bwPoint&) -> bwPoint;
+bwPoint operator*(const bwPoint&, float);
+bwPoint operator*(float, const bwPoint&);
+bwPoint operator+(const bwPoint&, const bwPoint&);
+bwPoint operator-(const bwPoint&, const bwPoint&);
 
-auto distance(bwPoint a, bwPoint b) -> float;
+float distance(bwPoint a, bwPoint b);
 
 }  // namespace bWidgets

@@ -22,7 +22,7 @@ bwPainter::bwPainter() : active_drawtype(DrawType::FILLED), active_gradient(null
 {
 }
 
-static auto painter_check_paint_engine() -> bool
+static bool painter_check_paint_engine()
 {
     if (bwPainter::s_paint_engine == nullptr)
     {
@@ -86,12 +86,12 @@ void bwPainter::setActiveColor(const bwColor& color)
     active_gradient = nullptr;
 }
 
-auto bwPainter::getActiveColor() const -> const bwColor&
+const bwColor& bwPainter::getActiveColor() const
 {
     return active_color;
 }
 
-auto bwPainter::getVertexColor(const size_t vertex_index) const -> const bwColor&
+const bwColor& bwPainter::getVertexColor(const size_t vertex_index) const
 {
     return vert_colors[vertex_index];
 }
@@ -101,7 +101,7 @@ void bwPainter::setContentMask(const bwRectanglePixel& value)
     content_mask = value;
 }
 
-auto bwPainter::getContentMask() const -> const bwRectanglePixel&
+const bwRectanglePixel& bwPainter::getContentMask() const
 {
     return content_mask;
 }
@@ -134,8 +134,8 @@ void bwPainter::drawTextAndIcon(const std::string& text,
     if (icon)
     {
         const float icon_size = std::round(bwIconInterface::ICON_DEFAULT_SIZE * dpi_fac);
-        icon_rect.xmax = int(icon_rect.xmin + icon_size);
-        icon_rect.ymax = int(icon_rect.ymin + icon_size);
+        icon_rect.xmax = int32_t(icon_rect.xmin + icon_size);
+        icon_rect.ymax = int32_t(icon_rect.ymin + icon_size);
         drawIcon(*icon, icon_rect, color);
         text_rect.xmin = icon_rect.xmax;
     }
@@ -178,22 +178,22 @@ void bwPainter::drawTriangle(const bwRectanglePixel& rect, Direction direction)
     {
     case Direction::UP:
         polygon.addVertex(rect.xmin, rect.ymin);
-        polygon.addVertex(int(rect.xmin + (rect.width() * 0.5f)), rect.ymax);
+        polygon.addVertex(int32_t(rect.xmin + (rect.width() * 0.5f)), rect.ymax);
         polygon.addVertex(rect.xmax, rect.ymin);
         break;
     case Direction::DOWN:
         polygon.addVertex(rect.xmin, rect.ymax);
-        polygon.addVertex(int(rect.xmin + (rect.width() * 0.5f)), rect.ymin);
+        polygon.addVertex(int32_t(rect.xmin + (rect.width() * 0.5f)), rect.ymin);
         polygon.addVertex(rect.xmax, rect.ymax);
         break;
     case Direction::LEFT:
         polygon.addVertex(rect.xmax, rect.ymax);
-        polygon.addVertex(rect.xmin, int(rect.ymin + (rect.height() * 0.5f)));
+        polygon.addVertex(rect.xmin, int32_t(rect.ymin + (rect.height() * 0.5f)));
         polygon.addVertex(rect.xmax, rect.ymin);
         break;
     case Direction::RIGHT:
         polygon.addVertex(rect.xmin, rect.ymax);
-        polygon.addVertex(rect.xmax, int(rect.ymin + (rect.height() * 0.5f)));
+        polygon.addVertex(rect.xmax, int32_t(rect.ymin + (rect.height() * 0.5f)));
         polygon.addVertex(rect.xmin, rect.ymin);
         break;
     }
@@ -221,7 +221,7 @@ class PolygonRoundboxCreator
 {
 public:
     PolygonRoundboxCreator(const bwRectanglePixel& rect,
-                           unsigned int corners,
+                           uint32_t corners,
                            float _radius,
                            bool is_outline);
 
@@ -235,7 +235,7 @@ private:
     void addVertsTopRight(bwPolygon& polygon) const;
     void addVertsTopLeft(bwPolygon& polygon) const;
 
-    static const int ROUNDCORNER_RESOLUTION = 9;
+    static const int32_t ROUNDCORNER_RESOLUTION = 9;
     static constexpr float cornervec[ROUNDCORNER_RESOLUTION][2] = {
         { 0.0f, 0.0f },     { 0.195f, 0.02f },  { 0.383f, 0.067f },
         { 0.55f, 0.169f },  { 0.707f, 0.293f }, { 0.831f, 0.45f },
@@ -248,8 +248,8 @@ private:
     float vec_outer[ROUNDCORNER_RESOLUTION][2] = {};
     float vec_inner[ROUNDCORNER_RESOLUTION][2] = {};
 
-    int start_vertex_count = 0;
-    unsigned int corners = 0;
+    int32_t start_vertex_count = 0;
+    uint32_t corners = 0;
     float radius = 0.0f;
     float radius_inner = 0.0f;
     bool is_outline = false;
@@ -260,7 +260,7 @@ void PolygonRoundboxCreator::addVertsBottomLeft(bwPolygon& polygon) const
 {
     if (corners & BOTTOM_LEFT)
     {
-        for (int i = 0; i < ROUNDCORNER_RESOLUTION; i++)
+        for (int32_t i = 0; i < ROUNDCORNER_RESOLUTION; i++)
         {
             polygon.addVertex(rect.xmin + vec_outer[i][1], rect.ymin + radius - vec_outer[i][0]);
 
@@ -285,7 +285,7 @@ void PolygonRoundboxCreator::addVertsBottomRight(bwPolygon& polygon) const
 {
     if (corners & BOTTOM_RIGHT)
     {
-        for (int i = 0; i < ROUNDCORNER_RESOLUTION; i++)
+        for (int32_t i = 0; i < ROUNDCORNER_RESOLUTION; i++)
         {
             polygon.addVertex(rect.xmax - radius + vec_outer[i][0], rect.ymin + vec_outer[i][1]);
             if (is_outline)
@@ -309,7 +309,7 @@ void PolygonRoundboxCreator::addVertsTopRight(bwPolygon& polygon) const
 {
     if (corners & TOP_RIGHT)
     {
-        for (int i = 0; i < ROUNDCORNER_RESOLUTION; i++)
+        for (int32_t i = 0; i < ROUNDCORNER_RESOLUTION; i++)
         {
             polygon.addVertex(rect.xmax - vec_outer[i][1], rect.ymax - radius + vec_outer[i][0]);
             if (is_outline)
@@ -333,7 +333,7 @@ void PolygonRoundboxCreator::addVertsTopLeft(bwPolygon& polygon) const
 {
     if (corners & TOP_LEFT)
     {
-        for (int i = 0; i < ROUNDCORNER_RESOLUTION; i++)
+        for (int32_t i = 0; i < ROUNDCORNER_RESOLUTION; i++)
         {
             polygon.addVertex(rect.xmin + radius - vec_outer[i][0], rect.ymax - vec_outer[i][1]);
             if (is_outline)
@@ -354,13 +354,13 @@ void PolygonRoundboxCreator::addVertsTopLeft(bwPolygon& polygon) const
 }
 
 PolygonRoundboxCreator::PolygonRoundboxCreator(const bwRectanglePixel& rect,
-                                               unsigned int corners,
+                                               uint32_t corners,
                                                float _radius,
                                                bool is_outline)
     : rect(rect), rect_inner(rect), corners(corners), radius(_radius),
       radius_inner(_radius - 1.0f), is_outline(is_outline)
 {
-    for (int i = 0; i < ROUNDCORNER_RESOLUTION; i++)
+    for (int32_t i = 0; i < ROUNDCORNER_RESOLUTION; i++)
     {
         vec_outer[i][0] = radius * cornervec[i][0];
         vec_outer[i][1] = radius * cornervec[i][1];
@@ -373,12 +373,12 @@ PolygonRoundboxCreator::PolygonRoundboxCreator(const bwRectanglePixel& rect,
 
 void PolygonRoundboxCreator::startRoundbox(const bwPolygon& polygon)
 {
-    start_vertex_count = int(polygon.getVertices().size());
+    start_vertex_count = int32_t(polygon.getVertices().size());
 }
 
 void PolygonRoundboxCreator::endRoundbox(bwPolygon& polygon) const
 {
-    unsigned int first_vert_index = std::max(0, start_vertex_count - 1);
+    uint32_t first_vert_index = std::max(0, start_vertex_count - 1);
     // Back to start
     polygon.addVertex(polygon[first_vert_index]);
     if (is_outline)
@@ -402,13 +402,13 @@ void PolygonRoundboxCreator::addVerts(bwPolygon& polygon)
     endRoundbox(polygon);
 }
 
-static auto getRoundboxMinsize(const bwRectanglePixel& rect, unsigned int corners) -> unsigned int
+static uint32_t getRoundboxMinsize(const bwRectanglePixel& rect, uint32_t corners)
 {
-    const int hnum = ((corners & (TOP_LEFT | TOP_RIGHT)) == (TOP_LEFT | TOP_RIGHT) ||
+    const int32_t hnum = ((corners & (TOP_LEFT | TOP_RIGHT)) == (TOP_LEFT | TOP_RIGHT) ||
                       (corners & (BOTTOM_RIGHT | BOTTOM_LEFT)) == (BOTTOM_RIGHT | BOTTOM_LEFT)) ?
                          1 :
                          2;
-    const int vnum = ((corners & (TOP_LEFT | BOTTOM_LEFT)) == (TOP_LEFT | BOTTOM_LEFT) ||
+    const int32_t vnum = ((corners & (TOP_LEFT | BOTTOM_LEFT)) == (TOP_LEFT | BOTTOM_LEFT) ||
                       (corners & (TOP_RIGHT | BOTTOM_RIGHT)) == (TOP_RIGHT | BOTTOM_RIGHT)) ?
                          1 :
                          2;
@@ -417,11 +417,11 @@ static auto getRoundboxMinsize(const bwRectanglePixel& rect, unsigned int corner
 }
 
 void bwPainter::drawRoundbox(const bwRectanglePixel& rect,
-                             unsigned int corners,
+                             uint32_t corners,
                              const float radius)
 {
     bwPolygon polygon;
-    const unsigned int minsize = getRoundboxMinsize(rect, corners);
+    const uint32_t minsize = getRoundboxMinsize(rect, corners);
     float validated_radius = radius;
 
     bwRange<float>::clampValue(validated_radius, 0.0f, minsize * 0.5f);
@@ -494,8 +494,8 @@ void bwPainter::drawRoundboxWidgetBase(const bwWidgetBaseStyle& base_style,
     bwRectanglePixel inner_rect = rectangle;
     const float radius_pixel = radius * style.dpi_fac;
 
-    assert(bwRange<int>::isInside(base_style.shade_top, -255, 255, true));
-    assert(bwRange<int>::isInside(base_style.shade_bottom, -255, 255, true));
+    assert(bwRange<int32_t>::isInside(base_style.shade_top, -255, 255, true));
+    assert(bwRange<int32_t>::isInside(base_style.shade_bottom, -255, 255, true));
 
     // Inner - "inside" of outline, so scale down
     inner_rect.resize(-1);

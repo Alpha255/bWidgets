@@ -32,7 +32,7 @@ class DefaultStage : public Stage
     friend class StyleSetter;
 
 public:
-    DefaultStage(unsigned int mask_width, unsigned int mask_height);
+    DefaultStage(uint32_t mask_width, uint32_t mask_height);
 
 private:
     void registerProperties(RNAProperties<DefaultStage>& properties);
@@ -43,11 +43,11 @@ private:
 
     void useStyleCSSVersionSet(const bool use_css_version);
     void updateStyleButtons();
-    auto updateStyleButton(bWidgets::bwWidget& widget_iter) -> bool;
+    bool updateStyleButton(bWidgets::bwWidget& widget_iter);
 
     RNAProperties<DefaultStage> properties;
 
-    const unsigned int padding = 10;
+    const uint32_t padding = 10;
 };
 
 }  // namespace bWidgetsDemo

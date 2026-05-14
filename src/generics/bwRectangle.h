@@ -121,6 +121,6 @@ public:
 };
 
 // useful aliases
-using bwRectanglePixel = bwRectangle<int>;
+using bwRectanglePixel = bwRectangle<int32_t>;
 
 }  // namespace bWidgets

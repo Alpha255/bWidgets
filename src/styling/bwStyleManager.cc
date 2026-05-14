@@ -16,7 +16,7 @@ bwStyleManager& bwStyleManager::getStyleManager()
     return instance;
 }
 
-auto bwStyleManager::createStyleFromTypeID(bwStyle::TypeID type) -> std::unique_ptr<bwStyle>
+std::unique_ptr<bwStyle> bwStyleManager::createStyleFromTypeID(bwStyle::TypeID type)
 {
     using std::make_unique;
 
@@ -40,23 +40,23 @@ auto bwStyleManager::createStyleFromTypeID(bwStyle::TypeID type) -> std::unique_
 
 void bwStyleManager::registerDefaultStyleTypes()
 {
-    builtin_style_types[int(bwStyle::TypeID::CLASSIC)].type_id = bwStyle::TypeID::CLASSIC;
-    builtin_style_types[int(bwStyle::TypeID::CLASSIC)].name = "Classic";
+    builtin_style_types[int32_t(bwStyle::TypeID::CLASSIC)].type_id = bwStyle::TypeID::CLASSIC;
+    builtin_style_types[int32_t(bwStyle::TypeID::CLASSIC)].name = "Classic";
 
-    builtin_style_types[int(bwStyle::TypeID::CLASSIC_CSS)].type_id = bwStyle::TypeID::CLASSIC_CSS;
-    builtin_style_types[int(bwStyle::TypeID::CLASSIC_CSS)].name = "Classic (CSS)";
+    builtin_style_types[int32_t(bwStyle::TypeID::CLASSIC_CSS)].type_id = bwStyle::TypeID::CLASSIC_CSS;
+    builtin_style_types[int32_t(bwStyle::TypeID::CLASSIC_CSS)].name = "Classic (CSS)";
 
-    builtin_style_types[int(bwStyle::TypeID::FLAT_GREY)].type_id = bwStyle::TypeID::FLAT_GREY;
-    builtin_style_types[int(bwStyle::TypeID::FLAT_GREY)].name = "Flat Grey";
+    builtin_style_types[int32_t(bwStyle::TypeID::FLAT_GREY)].type_id = bwStyle::TypeID::FLAT_GREY;
+    builtin_style_types[int32_t(bwStyle::TypeID::FLAT_GREY)].name = "Flat Grey";
 
-    builtin_style_types[int(bwStyle::TypeID::FLAT_DARK)].type_id = bwStyle::TypeID::FLAT_DARK;
-    builtin_style_types[int(bwStyle::TypeID::FLAT_DARK)].name = "Flat Dark (CSS)";
+    builtin_style_types[int32_t(bwStyle::TypeID::FLAT_DARK)].type_id = bwStyle::TypeID::FLAT_DARK;
+    builtin_style_types[int32_t(bwStyle::TypeID::FLAT_DARK)].name = "Flat Dark (CSS)";
 
-    builtin_style_types[int(bwStyle::TypeID::FLAT_LIGHT)].type_id = bwStyle::TypeID::FLAT_LIGHT;
-    builtin_style_types[int(bwStyle::TypeID::FLAT_LIGHT)].name = "Flat Light (CSS)";
+    builtin_style_types[int32_t(bwStyle::TypeID::FLAT_LIGHT)].type_id = bwStyle::TypeID::FLAT_LIGHT;
+    builtin_style_types[int32_t(bwStyle::TypeID::FLAT_LIGHT)].name = "Flat Light (CSS)";
 }
 
-auto bwStyleManager::getBuiltinStyleTypes() const -> const bwStyleManager::StyleTypeArray&
+const bwStyleManager::StyleTypeArray& bwStyleManager::getBuiltinStyleTypes() const
 {
     return builtin_style_types;
 }

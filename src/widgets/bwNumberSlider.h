@@ -13,25 +13,25 @@ class bwNumberSlider : public bwTextBox
 public:
     friend class bwNumberSliderHandler;
 
-    bwNumberSlider(std::optional<unsigned int> width_hint = std::nullopt,
-                   std::optional<unsigned int> height_hint = std::nullopt);
+    bwNumberSlider(std::optional<uint32_t> width_hint = std::nullopt,
+                   std::optional<uint32_t> height_hint = std::nullopt);
 
-    auto getTypeIdentifier() const -> std::string_view override;
+    std::string_view getTypeIdentifier() const override;
 
     void draw(bwStyle& style) override;
 
-    auto createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler> override;
+    std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
-    auto setValue(float value) -> bwNumberSlider&;
-    auto getValue() const -> float;
-    auto setMinMax(float min, float max) -> bwNumberSlider&;
+    bwNumberSlider& setValue(float value);
+    float getValue() const;
+    bwNumberSlider& setMinMax(float min, float max);
 
     std::unique_ptr<bwFunctorInterface> apply_functor{ nullptr };
 
 private:
-    auto valueToString(unsigned int precision) const -> std::string;
+    std::string valueToString(uint32_t precision) const;
     void drawValueIndicator(bwPainter& painter, bwStyle& style) const;
-    auto calcValueIndicatorWidth(class bwStyle& style) const -> float;
+    float calcValueIndicatorWidth(class bwStyle& style) const;
 
     /**
      * Support multiple numeric types. bwNumberSlider could be made
@@ -44,9 +44,9 @@ private:
         {
             float value;
             float min, max;
-            unsigned int precision;
+            uint32_t precision;
         };
-        // struct { int value; ...}
+        // struct { int32_t value; ...}
         // struct { char value; ...}
         // ...
     };

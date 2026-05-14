@@ -22,11 +22,11 @@ public:
     void onMousePress(bwMouseButtonEvent& event) override;
 
 private:
-    auto itemIndexAt(float x, float y_coord) const -> int;
+    int32_t itemIndexAt(float x, float y_coord) const;
     bwMenu& menu;
 };
 
-auto bwMenuHandler::itemIndexAt(float x, float y_coord) const -> int
+int32_t bwMenuHandler::itemIndexAt(float x, float y_coord) const
 {
     if (!menu.is_open)
     {
@@ -40,12 +40,12 @@ auto bwMenuHandler::itemIndexAt(float x, float y_coord) const -> int
     }
 
     /* Items are drawn from ymax downward (top to bottom). */
-    int y = dropdown_rect.ymax - (int)menu.item_padding;
-    for (int i = 0; i < (int)menu.items.size(); i++)
+    int32_t y = dropdown_rect.ymax - (int32_t)menu.item_padding;
+    for (int32_t i = 0; i < (int32_t)menu.items.size(); i++)
     {
-        y -= (int)menu.item_height;
+        y -= (int32_t)menu.item_height;
         bwRectanglePixel item_rect{
-            dropdown_rect.xmin, dropdown_rect.xmax, y, y + (int)menu.item_height
+            dropdown_rect.xmin, dropdown_rect.xmax, y, y + (int32_t)menu.item_height
         };
         if (item_rect.isCoordinateInside(x, y_coord))
         {
@@ -93,7 +93,7 @@ void bwMenuHandler::onMousePress(bwMouseButtonEvent& event)
     /* Click in open dropdown → select item or close. */
     if (menu.is_open)
     {
-        const int idx = itemIndexAt(pos.x, pos.y);
+        const int32_t idx = itemIndexAt(pos.x, pos.y);
         if (idx >= 0)
         {
             const auto& item = menu.items[idx];
@@ -114,22 +114,22 @@ void bwMenuHandler::onMousePress(bwMouseButtonEvent& event)
 }
 
 bwMenu::bwMenu(const bwScreenGraph::bwContainerNode& node, 
-    std::optional<unsigned int> width_hint,
-    std::optional<unsigned int> height_hint)
+    std::optional<uint32_t> width_hint,
+    std::optional<uint32_t> height_hint)
     : bwContainerWidget(node, width_hint, height_hint)
 {
 }
 
-auto bwMenu::getTypeIdentifier() const -> std::string_view
+std::string_view bwMenu::getTypeIdentifier() const
 {
     return "bwMenu";
 }
 
 /** Returns dropdown panel rect (below the title bar). Uses title_rect for
  * positioning. */
-auto bwMenu::getDropdownRect() const -> bwRectanglePixel
+bwRectanglePixel bwMenu::getDropdownRect() const
 {
-    const int dropdown_height = 2 * (int)item_padding + (int)items.size() * (int)item_height;
+    const int32_t dropdown_height = 2 * (int32_t)item_padding + (int32_t)items.size() * (int32_t)item_height;
     return { title_rect.xmin,
              title_rect.xmin + preferred_dropdown_width,
              title_rect.ymin - dropdown_height,
@@ -157,8 +157,8 @@ void bwMenu::draw(bwStyle& style)
 
     /* Draw the menu label text. */
     bwRectanglePixel text_rect = btn_rect;
-    text_rect.xmin += (int)item_padding + 4;
-    text_rect.xmax -= (int)item_padding;
+    text_rect.xmin += (int32_t)item_padding + 4;
+    text_rect.xmax -= (int32_t)item_padding;
     const bwColor text_col = is_open ? item_hover_style.textColor() : item_style.textColor();
     painter.setActiveColor(text_col);
     painter.drawText(label, text_rect, TextAlignment::LEFT);
@@ -180,14 +180,14 @@ void bwMenu::drawDropdown(bwStyle& style)
 
     /* Draw items from top (ymax) downward so the first item appears nearest the
      * menu bar. */
-    int y = dropdown_rect.ymax - (int)item_padding;
-    int item_index = 0;
+    int32_t y = dropdown_rect.ymax - (int32_t)item_padding;
+    int32_t item_index = 0;
 
     for (const auto& item : items)
     {
-        y -= (int)item_height;
+        y -= (int32_t)item_height;
         bwRectanglePixel item_rect{
-            dropdown_rect.xmin, dropdown_rect.xmax, y, y + (int)item_height
+            dropdown_rect.xmin, dropdown_rect.xmax, y, y + (int32_t)item_height
         };
 
         switch (item->type)
@@ -218,8 +218,8 @@ void bwMenu::drawItem(bwStyle& style,
     {
         const float side_padding = item_height * 0.125f;
         bwRectanglePixel highlight_rect = item_rect;
-        highlight_rect.xmin += static_cast<int>(side_padding);
-        highlight_rect.xmax -= static_cast<int>(side_padding);
+        highlight_rect.xmin += static_cast<int32_t>(side_padding);
+        highlight_rect.xmax -= static_cast<int32_t>(side_padding);
 
         const bwGradient hover_gradient{ item_hover_style.backgroundColor(), 0.0f, 0.0f };
         painter.drawRoundboxWidgetBase(item_hover_style,
@@ -232,10 +232,10 @@ void bwMenu::drawItem(bwStyle& style,
     /* Draw submenu arrow (right-aligned). */
     if (item.type == bwMenuItem::Type::SUBMENU)
     {
-        const int arrow_size = item_rect.height() * 2 / 3;
-        const int arrow_margin = (item_rect.height() - arrow_size) / 2;
-        bwRectanglePixel arrow_rect{ item_rect.xmax - static_cast<int>(item_padding) - arrow_size,
-                                     item_rect.xmax - static_cast<int>(item_padding),
+        const int32_t arrow_size = item_rect.height() * 2 / 3;
+        const int32_t arrow_margin = (item_rect.height() - arrow_size) / 2;
+        bwRectanglePixel arrow_rect{ item_rect.xmax - static_cast<int32_t>(item_padding) - arrow_size,
+                                     item_rect.xmax - static_cast<int32_t>(item_padding),
                                      item_rect.ymin + arrow_margin,
                                      item_rect.ymax - arrow_margin };
 
@@ -247,8 +247,8 @@ void bwMenu::drawItem(bwStyle& style,
 
     /* Text rectangle. */
     bwRectanglePixel text_rect = item_rect;
-    text_rect.xmin += static_cast<int>(item_padding) + 5;
-    text_rect.xmax -= static_cast<int>(item_padding) +
+    text_rect.xmin += static_cast<int32_t>(item_padding) + 5;
+    text_rect.xmax -= static_cast<int32_t>(item_padding) +
                       (item.type == bwMenuItem::Type::SUBMENU ? item_rect.height() : 0);
 
     /* Text color. */
@@ -288,7 +288,7 @@ void bwMenu::drawSeparator(const bwRectanglePixel& item_rect)
 {
     bwPainter painter;
 
-    const int sep_y = item_rect.ymin + (item_rect.height() / 2);
+    const int32_t sep_y = item_rect.ymin + (item_rect.height() / 2);
     const float* tc = item_style.textColor().getColor();
     painter.setActiveColor(bwColor(tc[0], tc[1], tc[2], 0.12f));
     painter.drawLine(bwPoint(item_rect.xmin + item_padding, sep_y),
@@ -300,37 +300,37 @@ void bwMenu::registerProperties()
     bwContainerWidget::registerProperties();
 }
 
-auto bwMenu::createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler>
+std::unique_ptr<bwScreenGraph::bwEventHandler> bwMenu::createHandler()
 {
     return std::make_unique<bwMenuHandler>(*this);
 }
 
-auto bwMenu::addItem(std::string label) -> bwMenuItem&
+bwMenuItem& bwMenu::addItem(std::string label)
 {
     items.emplace_back(std::make_unique<bwMenuItem>(std::move(label), bwMenuItem::Type::ACTION));
     return *items.back();
 }
 
-auto bwMenu::addSubmenu(std::string label) -> bwMenuItem&
+bwMenuItem& bwMenu::addSubmenu(std::string label)
 {
     items.emplace_back(std::make_unique<bwMenuItem>(std::move(label), bwMenuItem::Type::SUBMENU));
     return *items.back();
 }
 
-auto bwMenu::addSeparator() -> bwMenuItem&
+bwMenuItem& bwMenu::addSeparator()
 {
     items.emplace_back(std::make_unique<bwMenuItem>("", bwMenuItem::Type::SEPARATOR));
     return *items.back();
 }
 
-auto bwMenu::addItemToSubmenu(bwMenuItem& submenu, std::string label) -> bwMenuItem&
+bwMenuItem& bwMenu::addItemToSubmenu(bwMenuItem& submenu, std::string label)
 {
     submenu.submenu_items.emplace_back(
         std::make_unique<bwMenuItem>(std::move(label), bwMenuItem::Type::ACTION));
     return *submenu.submenu_items.back();
 }
 
-auto bwMenu::getItems() const -> const std::vector<std::unique_ptr<bwMenuItem>>&
+const std::vector<std::unique_ptr<bwMenuItem>>& bwMenu::getItems() const
 {
     return items;
 }

@@ -7,17 +7,17 @@
 namespace bWidgets
 {
 
-bwScrollBar::bwScrollBar(unsigned int width_hint, unsigned int height_hint)
+bwScrollBar::bwScrollBar(uint32_t width_hint, uint32_t height_hint)
     : bwAbstractButton("", width_hint, height_hint)
 {
 }
 
-auto bwScrollBar::getTypeIdentifier() const -> std::string_view
+std::string_view bwScrollBar::getTypeIdentifier() const
 {
     return "bwScrollBar";
 }
 
-static auto getInnerRect(bwScrollBar& scrollbar) -> bwRectanglePixel
+static bwRectanglePixel getInnerRect(bwScrollBar& scrollbar)
 {
     bwRectanglePixel rect_inner{ scrollbar.rectangle };
 
@@ -85,9 +85,9 @@ private:
 
     constexpr static float SCROLL_JUMP_FAC = 0.8f;
 
-    int mouse_press_scroll_offset = 0;  // scroll_offset from last onMousePress() call
+    int32_t mouse_press_scroll_offset = 0;  // scroll_offset from last onMousePress() call
 
-    void setScrollOffset(int);
+    void setScrollOffset(int32_t);
 };
 
 bwScrollBarHandler::bwScrollBarHandler(bwScrollBar& scrollbar)
@@ -95,7 +95,7 @@ bwScrollBarHandler::bwScrollBarHandler(bwScrollBar& scrollbar)
 {
 }
 
-auto bwScrollBar::createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler>
+std::unique_ptr<bwScreenGraph::bwEventHandler> bwScrollBar::createHandler()
 {
     return std::make_unique<bwScrollBarHandler>(*this);
 }
@@ -137,7 +137,7 @@ void bwScrollBarHandler::onMouseDrag(bwMouseButtonDragEvent& event)
     }
 }
 
-void bwScrollBarHandler::setScrollOffset(int value)
+void bwScrollBarHandler::setScrollOffset(int32_t value)
 {
     scrollbar.scroll_offset = value;
     apply();

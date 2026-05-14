@@ -45,7 +45,7 @@ namespace bWidgets
 class bwWindow
 {
 public:
-    bwWindow(const std::string& name, unsigned int size_x = 600, unsigned int size_y = 350);
+    bwWindow(const std::string& name, uint32_t size_x = 600, uint32_t size_y = 350);
 
     ~bwWindow();
 
@@ -54,17 +54,17 @@ public:
         WINDOW_ACTION_CONTINUE,
         WINDOW_ACTION_CLOSE,
     };
-    auto processEvents() -> WindowAction;
+    WindowAction processEvents();
     void draw();
 
-    auto getCursorPosition() const -> bwPoint;
-    void handleResizeEvent(const int new_win_x, const int new_win_y);
+    bwPoint getCursorPosition() const;
+    void handleResizeEvent(const int32_t new_win_x, const int32_t new_win_y);
     void handleContentScaleEvent(const float new_scale_x, const float new_scale_y);
 
-    auto getGlfwWindow() const -> GLFWwindow&;
+    GLFWwindow& getGlfwWindow() const;
 
-    auto getWidth() const -> int;
-    auto getHeight() const -> int;
+    int32_t getWidth() const;
+    int32_t getHeight() const;
 
     bWidgetsDemo::Stage* getStage() const
     {
@@ -77,7 +77,7 @@ public:
         setupStage();
     }
 
-    friend auto operator==(const bwWindow& lhs, const bwWindow& rhs) -> bool
+    friend bool operator==(const bwWindow& lhs, const bwWindow& rhs)
     {
         if (lhs.glfw_window == rhs.glfw_window)
         {
@@ -96,9 +96,9 @@ private:
 
     GLFWwindow* glfw_window;
     Gwn_Context* gwn_context;
-    unsigned int VertexArrayID = 0;
+    uint32_t VertexArrayID = 0;
 
-    int width, height;
+    int32_t width, height;
 };
 
 }  // namespace bWidgets

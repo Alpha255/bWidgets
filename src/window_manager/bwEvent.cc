@@ -45,7 +45,7 @@ bwMouseEvent::bwMouseEvent(Type type, Button _button, const bwPoint& _location) 
     button = _button;
 }
 
-auto bwMouseEvent::isClick() const -> bool
+bool bwMouseEvent::isClick() const
 {
     if ((type == Type::RELEASE) && (button == last_down_button))
     {
@@ -60,17 +60,17 @@ auto bwMouseEvent::isClick() const -> bool
     return false;
 }
 
-auto bwMouseEvent::getButton() const -> Button
+bwMouseEvent::Button bwMouseEvent::getButton() const
 {
     return button;
 }
 
-auto bwMouseEvent::getType() const -> Type
+bwMouseEvent::Type bwMouseEvent::getType() const
 {
     return type;
 }
 
-auto bwMouseEvent::getMouseLocation() -> const bwPoint&
+const bwPoint& bwMouseEvent::getMouseLocation()
 {
     return location;
 }

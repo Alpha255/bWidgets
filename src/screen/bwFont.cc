@@ -70,7 +70,7 @@ void bwFont::initFontReading()
     }
 }
 
-auto bwFont::loadFont(const std::string& name, const std::string& path) -> bwFont*
+bwFont* bwFont::loadFont(const std::string& name, const std::string& path)
 {
     std::string file_path(path + "/" + name);
     auto* font = new bwFont();
@@ -88,7 +88,7 @@ auto bwFont::loadFont(const std::string& name, const std::string& path) -> bwFon
     return font;
 }
 
-static auto getNumChannelsFromFreeTypePixelMode(FT_Pixel_Mode pixel_mode) -> unsigned int
+static uint32_t getNumChannelsFromFreeTypePixelMode(FT_Pixel_Mode pixel_mode)
 {
     switch (pixel_mode)
     {
@@ -102,7 +102,7 @@ static auto getNumChannelsFromFreeTypePixelMode(FT_Pixel_Mode pixel_mode) -> uns
     }
 }
 
-static auto getGLFormatFromNumChannels(unsigned int num_channels) -> unsigned int
+static uint32_t getGLFormatFromNumChannels(uint32_t num_channels)
 {
     switch (num_channels)
     {
@@ -116,15 +116,15 @@ static auto getGLFormatFromNumChannels(unsigned int num_channels) -> unsigned in
     }
 }
 
-void bwFont::render(const std::string& text, const int pos_x, const int pos_y)
+void bwFont::render(const std::string& text, const int32_t pos_x, const int32_t pos_y)
 {
     Gwn_VertFormat* format = immVertexFormat();
-    unsigned int pos = GWN_vertformat_attr_add(format, "pos", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
-    unsigned int texcoord = GWN_vertformat_attr_add(
+    uint32_t pos = GWN_vertformat_attr_add(format, "pos", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
+    uint32_t texcoord = GWN_vertformat_attr_add(
         format, "texCoord", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
     const bwFontGlyph* previous_glyph = nullptr;
     Pen pen(FixedNum<F16p16>::fromInt(pos_x), FixedNum<F16p16>::fromInt(pos_y));
-    int old_scissor[4];
+    int32_t old_scissor[4];
     GLuint tex;
 
     cache.ensureUpdated(*this);
@@ -197,12 +197,12 @@ void bwFont::render(const std::string& text, const int pos_x, const int pos_y)
 
 static void render_glyph_texture(const bwPixmap& pixmap,
                                  const bwPoint& draw_pos,
-                                 const unsigned int attr_pos,
-                                 const unsigned int attr_texcoord)
+                                 const uint32_t attr_pos,
+                                 const uint32_t attr_texcoord)
 {
-    const unsigned int gl_format = getGLFormatFromNumChannels(pixmap.getNumChannels());
-    const int w = pixmap.width();
-    const int h = pixmap.height();
+    const uint32_t gl_format = getGLFormatFromNumChannels(pixmap.getNumChannels());
+    const int32_t w = pixmap.width();
+    const int32_t h = pixmap.height();
 
     // Could reduce this to one call per text render.
     if (pixmap.getNumChannels() == 1)
@@ -227,7 +227,7 @@ static void render_glyph_texture(const bwPixmap& pixmap,
     immEnd();
 }
 
-auto bwFont::calcSubpixelOffset(const Pen& pen, const bwFontGlyph* previous_glyph) const -> float
+float bwFont::calcSubpixelOffset(const Pen& pen, const bwFontGlyph* previous_glyph) const
 {
     if (use_tight_positioning)
     {
@@ -253,8 +253,8 @@ void bwFont::applyPositionBias(FixedNum<F16p16>& value) const
 
 void bwFont::renderGlyph(const bwFontGlyph& glyph,
                          const bwFontGlyph* previous_glyph,
-                         const unsigned int attr_pos,
-                         const unsigned int attr_texcoord,
+                         const uint32_t attr_pos,
+                         const uint32_t attr_texcoord,
                          Pen& pen) const
 {
     const bwPixmap& pixmap = *glyph.pixmap;
@@ -332,12 +332,12 @@ void bwFont::setSize(const float _size)
     }
 }
 
-auto bwFont::getSize() const -> int
+int32_t bwFont::getSize() const
 {
     return size;
 }
 
-auto bwFont::getActiveColor() const -> const bwColor&
+const bwColor& bwFont::getActiveColor() const
 {
     return active_color;
 }
@@ -362,7 +362,7 @@ auto bwFont::getKerningDistance(const bwFontGlyph& left, const bwFontGlyph& righ
     return kerning_dist_fp;
 }
 
-auto bwFont::calculateStringWidth(const std::string& text) -> unsigned int
+uint32_t bwFont::calculateStringWidth(const std::string& text)
 {
     FixedNum<F16p16> width;
 
@@ -396,7 +396,7 @@ void bwFont::FontGlyphCache::invalidate()
 /**
  * \return The flags that should be used for the FT_Load_Glyph call.
  */
-auto bwFont::getFreeTypeLoadFlags() const -> FT_Int32
+FT_Int32 bwFont::getFreeTypeLoadFlags() const
 {
     FT_Int32 load_flags = FT_LOAD_DEFAULT;
 
@@ -411,7 +411,7 @@ auto bwFont::getFreeTypeLoadFlags() const -> FT_Int32
     return load_flags;
 }
 
-auto bwFont::getFreeTypeRenderFlags() const -> FT_Render_Mode
+FT_Render_Mode bwFont::getFreeTypeRenderFlags() const
 {
     // Subpixel rendering
     switch (render_mode)
@@ -424,20 +424,19 @@ auto bwFont::getFreeTypeRenderFlags() const -> FT_Render_Mode
     }
 }
 
-auto bwFont::useSubpixelPositioning() const -> bool
+bool bwFont::useSubpixelPositioning() const
 {
     return (render_mode == bwFont::SUBPIXEL_LCD_RGB_COVERAGE) && use_subpixel_pos;
 }
 
-static auto createGlyphPixmap(FT_GlyphSlot freetype_glyph, const bool use_subpixel_postioning)
-    -> std::unique_ptr<bwPixmap>
+static std::unique_ptr<bwPixmap> createGlyphPixmap(FT_GlyphSlot freetype_glyph, const bool use_subpixel_postioning)
 {
-    const unsigned int num_channels = getNumChannelsFromFreeTypePixelMode(
+    const uint32_t num_channels = getNumChannelsFromFreeTypePixelMode(
         (FT_Pixel_Mode)freetype_glyph->bitmap.pixel_mode);
-    const unsigned int width = (freetype_glyph->bitmap.width / num_channels) +
+    const uint32_t width = (freetype_glyph->bitmap.width / num_channels) +
                                (use_subpixel_postioning ? 1 : 0);
-    const unsigned int height = freetype_glyph->bitmap.rows;
-    const unsigned int row_padding = (4 + abs(freetype_glyph->bitmap.pitch) -
+    const uint32_t height = freetype_glyph->bitmap.rows;
+    const uint32_t row_padding = (4 + abs(freetype_glyph->bitmap.pitch) -
                                       (width * num_channels)) %
                                      4;
     bwPixmap pixmap(width, height, num_channels, 8, row_padding);
@@ -451,7 +450,7 @@ static auto createGlyphPixmap(FT_GlyphSlot freetype_glyph, const bool use_subpix
             const unsigned char* src_p = freetype_glyph->bitmap.buffer;
             unsigned char* dst_p = pixmap.getBytes();
 
-            for (unsigned int row = 0; row < height; row++)
+            for (uint32_t row = 0; row < height; row++)
             {
                 std::copy_n(src_p, freetype_glyph->bitmap.width, dst_p);
                 dst_p += (width * num_channels) + row_padding;
@@ -515,7 +514,7 @@ void bwFont::FontGlyphCache::ensureUpdated(const bwFont& font)
     cached_glyphs.clear();
     cached_glyphs.reserve(font.face->num_glyphs);
     /* make sure vector size matches num_glyphs and fill all entries with nullptr */
-    for (int i = 0; i < font.face->num_glyphs; i++)
+    for (int32_t i = 0; i < font.face->num_glyphs; i++)
     {
         cached_glyphs.push_back(nullptr);
     }
@@ -543,10 +542,10 @@ auto bwFont::FontGlyphCache::getCachedGlyph(const bwFont& font, const char chara
     return *cached_glyphs[FT_Get_Char_Index(font.face, static_cast<unsigned char>(character))];
 }
 
-bwFontGlyph::bwFontGlyph(const unsigned int index,
+bwFontGlyph::bwFontGlyph(const uint32_t index,
                           std::unique_ptr<bwPixmap>&& pixmap,
-                          const int offset_left,
-                          const int offset_top,
+                          const int32_t offset_left,
+                          const int32_t offset_top,
                           FixedNum<F16p16> advance_width)
     : is_valid(true), index(index), pixmap(std::move(pixmap)), offset_left(offset_left),
       offset_top(offset_top), advance_width(advance_width)

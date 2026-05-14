@@ -4,29 +4,29 @@ namespace bWidgets
 {
 
 bwPushButton::bwPushButton(const std::string& text,
-                           std::optional<unsigned int> width_hint,
-                           std::optional<unsigned int> height_hint)
+                           std::optional<uint32_t> width_hint,
+                           std::optional<uint32_t> height_hint)
     : bwAbstractButton(text, width_hint, height_hint)
 {
 }
 
-auto bwPushButton::getTypeIdentifier() const -> std::string_view
+std::string_view bwPushButton::getTypeIdentifier() const
 {
     return "bwPushButton";
 }
 
-auto bwPushButton::getIcon() const -> const bwIconInterface*
+const bwIconInterface* bwPushButton::getIcon() const
 {
     return icon;
 }
 
-auto bwPushButton::setIcon(const bwIconInterface& icon_interface) -> bwPushButton&
+bwPushButton& bwPushButton::setIcon(const bwIconInterface& icon_interface)
 {
     icon = &icon_interface;
     return *this;
 }
 
-auto bwPushButton::canAlign() const -> bool
+bool bwPushButton::canAlign() const
 {
     return true;
 }

@@ -9,29 +9,29 @@ bwPoint::bwPoint(float x, float y) : x(x), y(y)
 {
 }
 
-auto bwPoint::operator==(const bwPoint& rhs) const -> bool
+bool bwPoint::operator==(const bwPoint& rhs) const
 {
     return (x == rhs.x) && (y == rhs.y);
 }
 
-auto operator*(const bwPoint& lhs, float factor) -> bwPoint
+bwPoint operator*(const bwPoint& lhs, float factor)
 {
     return { lhs.x * factor, lhs.y * factor };
 }
-auto operator*(float factor, const bwPoint& rhs) -> bwPoint
+bwPoint operator*(float factor, const bwPoint& rhs)
 {
     return { rhs.x * factor, rhs.y * factor };
 }
-auto operator+(const bwPoint& lhs, const bwPoint& rhs) -> bwPoint
+bwPoint operator+(const bwPoint& lhs, const bwPoint& rhs)
 {
     return { lhs.x + rhs.x, lhs.y + rhs.y };
 }
-auto operator-(const bwPoint& lhs, const bwPoint& rhs) -> bwPoint
+bwPoint operator-(const bwPoint& lhs, const bwPoint& rhs)
 {
     return { lhs.x - rhs.x, lhs.y - rhs.y };
 }
 
-auto distance(bwPoint a, bwPoint b) -> float
+float distance(bwPoint a, bwPoint b)
 {
     return std::sqrt(std::pow(a.x - b.x, 2.0f) + std::pow(a.y - b.y, 2.0f));
 }

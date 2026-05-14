@@ -8,8 +8,8 @@ namespace bWidgets
 {
 
 bwAbstractButton::bwAbstractButton(const std::string& text,
-                                   std::optional<unsigned int> width_hint,
-                                   std::optional<unsigned int> height_hint)
+                                   std::optional<uint32_t> width_hint,
+                                   std::optional<uint32_t> height_hint)
     : bwWidget(width_hint, height_hint), rounded_corners(RoundboxCorner::ALL),
       text(std::move(text))
 {
@@ -37,22 +37,23 @@ void bwAbstractButton::registerProperties()
     base_style.registerProperties(style_properties);
 }
 
-auto bwAbstractButton::getLabel() const -> const std::string*
+const std::string* bwAbstractButton::getLabel() const
 {
     return &text;
 }
-auto bwAbstractButton::setLabel(const std::string& label) -> bwAbstractButton&
+
+bwAbstractButton& bwAbstractButton::setLabel(const std::string& label)
 {
     text = label;
     return *this;
 }
 
-auto bwAbstractButton::getIcon() const -> const bwIconInterface*
+const bwIconInterface* bwAbstractButton::getIcon() const
 {
     return nullptr;
 }
 
-auto bwAbstractButton::createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler>
+std::unique_ptr<bwScreenGraph::bwEventHandler> bwAbstractButton::createHandler()
 {
     return std::make_unique<bwAbstractButtonHandler>(*this);
 }

@@ -39,15 +39,15 @@ struct IconReadData;
 class bwIcon : public bwIconInterface
 {
 public:
-    bwIcon(const unsigned int size,
-           const unsigned int num_channels,
-           const unsigned int bits_per_channel,
+    bwIcon(const uint32_t size,
+           const uint32_t num_channels,
+           const uint32_t bits_per_channel,
            unsigned char* pixelData = nullptr);
 
-    auto isValid() const -> bool override;
+    bool isValid() const override;
 
-    auto getPixmap() -> bwPixmap&;
-    auto getPixmap() const -> const bwPixmap&;
+    bwPixmap& getPixmap();
+    const bwPixmap& getPixmap() const;
 
 private:
     bwPixmap _pixmap;
@@ -60,14 +60,14 @@ class bwIconMap
 public:
     ~bwIconMap() = default;
 
-    auto getIcon(unsigned int index) -> bwIcon&;
+    bwIcon& getIcon(uint32_t index);
 
     constexpr static uint32_t defaultNumChannel = 4u;
     constexpr static uint32_t defaultBitsPerChannel = 8u;
 private:
     bwIconMap();
 
-    auto getPixelData(uint32_t index) -> unsigned char*
+    unsigned char* getPixelData(uint32_t index)
     {
         assert(index < numIcons);
         return &iconPixelStorage[index * iconPixelStride];
@@ -88,10 +88,10 @@ public:
     ~bwIconMapReader();
 
 public:
-    auto readIconMap(class File& file) -> std::unique_ptr<bwIconMap>;
+    std::unique_ptr<bwIconMap> readIconMap(class File& file);
 protected:
-    auto readIconMapFromPNGFile(class File&) -> std::unique_ptr<bwIconMap>;
-    auto readIconMapFromSVGFiles(class File&) -> std::unique_ptr<bwIconMap>;
+    std::unique_ptr<bwIconMap> readIconMapFromPNGFile(class File&);
+    std::unique_ptr<bwIconMap> readIconMapFromSVGFiles(class File&);
 
 private:
     std::unique_ptr<IconReadData> read_data;

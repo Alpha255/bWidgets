@@ -9,8 +9,8 @@ namespace bWidgets
 
 bwCheckbox::bwCheckbox(const std::string& text,
                        bool useIcon,
-                       std::optional<unsigned int> width_hint,
-                       std::optional<unsigned int> height_hint)
+                       std::optional<uint32_t> width_hint,
+                       std::optional<uint32_t> height_hint)
     : bwAbstractButton(text,
                        width_hint.value_or(bwStyle::s_default_widget_size_hint),
                        height_hint.value_or(bwStyle::s_default_widget_size_hint))
@@ -18,7 +18,7 @@ bwCheckbox::bwCheckbox(const std::string& text,
 {
 }
 
-auto bwCheckbox::getTypeIdentifier() const -> std::string_view
+std::string_view bwCheckbox::getTypeIdentifier() const
 {
     return "bwCheckbox";
 }
@@ -47,15 +47,15 @@ void bwCheckbox::draw(bwStyle& style)
     painter.drawText(text, text_rect, base_style.text_alignment);
 }
 
-auto bwCheckbox::isChecked() const -> bool
+bool bwCheckbox::isChecked() const
 {
     return getState() == State::SUNKEN;
 }
 
-auto bwCheckbox::getCheckboxRectangle() const -> bwRectanglePixel
+bwRectanglePixel bwCheckbox::getCheckboxRectangle() const
 {
     bwRectanglePixel checkbox_rect{ rectangle };
-    const int delta = 1 + checkbox_rect.height() / 8;
+    const int32_t delta = 1 + checkbox_rect.height() / 8;
 
     checkbox_rect.xmax = checkbox_rect.xmin + checkbox_rect.height();
     checkbox_rect.resize(-delta);
@@ -85,7 +85,7 @@ public:
     bwCheckbox& checkbox;
 };
 
-auto bwCheckbox::createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler>
+std::unique_ptr<bwScreenGraph::bwEventHandler> bwCheckbox::createHandler()
 {
     return std::make_unique<bwCheckboxHandler>(*this);
 }

@@ -54,12 +54,12 @@ public:
 
     bwMouseEvent(Type type, Button button, const bwPoint& location);
 
-    auto isClick() const -> bool;
+    bool isClick() const;
 
-    auto getButton() const -> Button;
-    auto getType() const -> Type;
+    Button getButton() const;
+    Type getType() const;
 
-    static auto getMouseLocation() -> const bwPoint&;
+    static const bwPoint& getMouseLocation();
 
 private:
     Type type;

@@ -118,12 +118,12 @@ static void stylesheet_tree_node_fill_from_katana(bwStyleSheetTree& tree,
                                                   const KatanaStyleRule& rule,
                                                   const KatanaSelector& selector)
 {
-    for (unsigned int declaration_idx = 0; declaration_idx < rule.declarations->length;
+    for (uint32_t declaration_idx = 0; declaration_idx < rule.declarations->length;
          declaration_idx++)
     {
         auto* declaration = (KatanaDeclaration*)rule.declarations->data[declaration_idx];
 
-        for (unsigned int value_idx = 0; value_idx < declaration->values->length; value_idx++)
+        for (uint32_t value_idx = 0; value_idx < declaration->values->length; value_idx++)
         {
             auto* value = (KatanaValue*)declaration->values->data[value_idx];
             stylesheet_tree_property_ensure_from_katana(tree, selector, *declaration, *value);
@@ -134,11 +134,11 @@ static void stylesheet_tree_node_fill_from_katana(bwStyleSheetTree& tree,
 static void stylesheet_tree_fill_from_katana(bwStyleSheetTree& tree,
                                              const KatanaOutput& katana_output)
 {
-    for (unsigned int rule_idx = 0; rule_idx < katana_output.stylesheet->rules.length; rule_idx++)
+    for (uint32_t rule_idx = 0; rule_idx < katana_output.stylesheet->rules.length; rule_idx++)
     {
         const auto* rule = (KatanaStyleRule*)katana_output.stylesheet->rules.data[rule_idx];
 
-        for (unsigned int selector_idx = 0; selector_idx < rule->selectors->length; selector_idx++)
+        for (uint32_t selector_idx = 0; selector_idx < rule->selectors->length; selector_idx++)
         {
             auto* selector = (KatanaSelector*)rule->selectors->data[selector_idx];
             stylesheet_tree_node_fill_from_katana(tree, *rule, *selector);

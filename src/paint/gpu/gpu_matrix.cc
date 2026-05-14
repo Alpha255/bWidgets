@@ -47,7 +47,7 @@ public:
     }
 
     glm::mat4 stack[MATRIX_STACK_DEPTH];
-    unsigned int top{ 0 };
+    uint32_t top{ 0 };
 };
 
 class MatrixState

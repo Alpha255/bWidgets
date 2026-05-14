@@ -24,7 +24,7 @@ class bwIconInterface
 {
 public:
     constexpr static float ICON_DEFAULT_SIZE = 16;
-    virtual auto isValid() const -> bool = 0;
+    virtual bool isValid() const = 0;
 };
 
 }  // namespace bWidgets

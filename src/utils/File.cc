@@ -49,7 +49,7 @@ std::string File::readIntoString()
     return string;
 }
 
-bool File::readBytes(char* bytes, const unsigned int num_bytes, bool reset_cursor)
+bool File::readBytes(char* bytes, const uint32_t num_bytes, bool reset_cursor)
 {
     if (!_file_stream.is_open())
     {

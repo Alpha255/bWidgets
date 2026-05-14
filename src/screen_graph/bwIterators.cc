@@ -43,13 +43,13 @@ bwPreOrderIterator::bwPreOrderIterator(bwPreOrderIterator&& other)
     other.root = nullptr;
 }
 
-auto bwPreOrderIterator::operator!=(const bwPreOrderIterator& other) const -> bool
+bool bwPreOrderIterator::operator!=(const bwPreOrderIterator& other) const
 {
     return (is_root != other.is_root) ||
            (is_root ? (node != other.node) : (node_iter != other.node_iter));
 }
 
-auto bwPreOrderIterator::operator*() -> bwNode&
+bwNode& bwPreOrderIterator::operator*()
 {
     return is_root ? *node : **node_iter;
 }
@@ -61,7 +61,7 @@ void bwPreOrderIterator::triggerIterationEnd()
     node = nullptr;
 }
 
-auto bwPreOrderIterator::hasExceededLastSibling() -> bool
+bool bwPreOrderIterator::hasExceededLastSibling()
 {
     assert(is_root == false);
     // Check if node_iter points at the parents children.end()
@@ -76,7 +76,7 @@ auto bwPreOrderIterator::hasExceededLastSibling() -> bool
     }
 }
 
-auto bwPreOrderIterator::operator++() -> bwPreOrderIterator&
+bwPreOrderIterator& bwPreOrderIterator::operator++()
 {
     bwNode::ChildList* childs = is_root ? node->Children() : (*node_iter)->Children();
 
@@ -132,19 +132,19 @@ auto bwPreOrderIterator::operator++() -> bwPreOrderIterator&
     return *this;
 }
 
-auto begin(bwNode& node) -> bwPreOrderIterator
+bwPreOrderIterator begin(bwNode& node)
 {
     return bwPreOrderIterator(node);
 }
-auto end(bwNode&) -> bwPreOrderIterator
+bwPreOrderIterator end(bwNode&)
 {
     return {};
 }
-auto begin(bwScreenGraph& screen_graph) -> bwPreOrderIterator
+bwPreOrderIterator begin(bwScreenGraph& screen_graph)
 {
     return begin(screen_graph.Root());
 }
-auto end(bwScreenGraph& screen_graph) -> bwPreOrderIterator
+bwPreOrderIterator end(bwScreenGraph& screen_graph)
 {
     return end(screen_graph.Root());
 }

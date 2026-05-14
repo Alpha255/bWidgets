@@ -33,7 +33,7 @@ extern "C" {
 namespace bWidgets
 {
 
-bwWindow::bwWindow(const std::string& name, unsigned int size_x, unsigned int size_y)
+bwWindow::bwWindow(const std::string& name, uint32_t size_x, uint32_t size_y)
     : width(size_x), height(size_y)
 {
     //	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
@@ -104,7 +104,7 @@ void bwWindow::draw()
     glfwSwapBuffers(glfw_window);
 }
 
-auto bwWindow::processEvents() -> bwWindow::WindowAction
+bwWindow::WindowAction bwWindow::processEvents()
 {
     if (glfwWindowShouldClose(glfw_window))
     {
@@ -114,9 +114,9 @@ auto bwWindow::processEvents() -> bwWindow::WindowAction
     return WINDOW_ACTION_CONTINUE;
 }
 
-auto bwWindow::getCursorPosition() const -> bwPoint
+bwPoint bwWindow::getCursorPosition() const
 {
-    int win_size_y;
+    int32_t win_size_y;
     double x, y;
 
     glfwGetCursorPos(glfw_window, &x, &y);
@@ -136,7 +136,7 @@ auto bwWindow::getCursorPosition() const -> bwPoint
     return position;
 }
 
-void bwWindow::handleResizeEvent(const int new_win_x, const int new_win_y)
+void bwWindow::handleResizeEvent(const int32_t new_win_x, const int32_t new_win_y)
 {
     width = new_win_x;
     height = new_win_y;
@@ -148,17 +148,17 @@ void bwWindow::handleContentScaleEvent(const float new_scale_x, const float new_
     stage->setContentScale(new_scale_x, new_scale_y);
 }
 
-auto bwWindow::getGlfwWindow() const -> GLFWwindow&
+GLFWwindow& bwWindow::getGlfwWindow() const
 {
     return *glfw_window;
 }
 
-auto bwWindow::getWidth() const -> int
+int32_t bwWindow::getWidth() const
 {
     return width;
 }
 
-auto bwWindow::getHeight() const -> int
+int32_t bwWindow::getHeight() const
 {
     return height;
 }

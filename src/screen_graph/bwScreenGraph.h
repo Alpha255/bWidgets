@@ -20,7 +20,7 @@ public:
     {
     }
 
-    auto Root() const -> bwLayoutNode&
+    bwLayoutNode& Root() const
     {
         return *root_node;
     }

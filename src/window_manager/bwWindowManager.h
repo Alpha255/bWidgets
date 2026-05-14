@@ -36,14 +36,14 @@ class bwWindowManager
 {
 public:
     // Constructor is private (singleton!)
-    static auto getWindowManager() -> bwWindowManager&;
+    static bwWindowManager& getWindowManager();
     ~bwWindowManager();
 
     void mainLoop();
-    auto addWindow(std::string name) -> bwWindow&;
-    auto isMainWindow(const bwWindow& win) const -> bool;
+    bwWindow& addWindow(std::string name);
+    bool isMainWindow(const bwWindow& win) const;
 
-    template<class T> auto addWindowWithStage(std::string name) -> bwWindow&
+    template<class T> bwWindow& addWindowWithStage(std::string name)
     {
         auto& win = windows.emplace_back(name);
         if (windows.size() == 1)
@@ -70,7 +70,7 @@ private:
         WM_ACTION_CONTINUE,
         WM_ACTION_CLOSE,
     };
-    auto processEvents() -> WindowManagerAction;
+    WindowManagerAction processEvents();
     void drawWindows();
 
     class bwEventManager& event_manager;

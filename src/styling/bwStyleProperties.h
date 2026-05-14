@@ -26,7 +26,7 @@ class bwColor;
  * usage looks like this:
  * \code
  * bwStyleProperties properties;
- * int some_int = 0;
+ * int32_t some_int = 0;
  *
  * bwStyleProperty& property = properties.addInteger("int_name", some_int);
  * property.setValue(42);
@@ -47,19 +47,19 @@ public:
     };
 
     void setValue(bool);
-    void setValue(int);
+    void setValue(int32_t);
     void setValue(float);
     void setValue(const bwColor&);
     void setValue(const bwStyleProperty&);
     void setValueToDefault();
 
     void setDefaultValue(bool);
-    void setDefaultValue(int);
+    void setDefaultValue(int32_t);
     void setDefaultValue(float);
     void setDefaultValue(const bwColor&);
 
-    auto getIdentifier() const -> std::string_view;
-    auto getType() const -> Type;
+    std::string_view getIdentifier() const;
+    Type getType() const;
 
 private:
     bwStyleProperty(std::string_view identifier, enum Type type);
@@ -85,23 +85,22 @@ public:
     using iterator = PropertyList::iterator;
     using const_iterator = PropertyList::const_iterator;
 
-    auto addBool(const std::string_view& name, bool& reference) -> bwStyleProperty&;
-    auto addBool(const std::string_view& name) -> bwStyleProperty&;
-    auto addInteger(const std::string_view& name, int& reference) -> bwStyleProperty&;
-    auto addInteger(const std::string_view& name) -> bwStyleProperty&;
-    auto addFloat(const std::string_view& name, float& reference) -> bwStyleProperty&;
-    auto addFloat(const std::string_view& name) -> bwStyleProperty&;
-    auto addColor(const std::string_view& name, class bwColor& reference) -> bwStyleProperty&;
-    auto addColor(const std::string_view& name) -> bwStyleProperty&;
-    auto addProperty(const std::string_view& name, const bwStyleProperty::Type prop_type)
-        -> bwStyleProperty&;
+    bwStyleProperty& addBool(const std::string_view& name, bool& reference);
+    bwStyleProperty& addBool(const std::string_view& name);
+    bwStyleProperty& addInteger(const std::string_view& name, int32_t& reference);
+    bwStyleProperty& addInteger(const std::string_view& name);
+    bwStyleProperty& addFloat(const std::string_view& name, float& reference);
+    bwStyleProperty& addFloat(const std::string_view& name);
+    bwStyleProperty& addColor(const std::string_view& name, class bwColor& reference);
+    bwStyleProperty& addColor(const std::string_view& name);
+    bwStyleProperty& addProperty(const std::string_view& name, const bwStyleProperty::Type prop_type);
 
-    auto lookup(const std::string_view& name) const -> const bwStyleProperty*;
+    const bwStyleProperty* lookup(const std::string_view& name) const;
 
-    auto begin() -> iterator;
-    auto end() -> iterator;
-    auto begin() const -> const_iterator;
-    auto end() const -> const_iterator;
+    iterator begin();
+    iterator end();
+    const_iterator begin() const;
+    const_iterator end() const;
 
 private:
     PropertyList properties{};

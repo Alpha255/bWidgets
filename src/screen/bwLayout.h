@@ -79,11 +79,11 @@ public:
 
     virtual void resolve(bWidgets::bwScreenGraph::bwNode& node,
                          const bWidgets::bwPoint& layout_pos,
-                         const unsigned int item_margin,
+                         const uint32_t item_margin,
                          const float scale_fac);
 
-    auto getRectangle() -> bWidgets::bwRectanglePixel override;
-    auto getHeight() const -> unsigned int;
+    bWidgets::bwRectanglePixel getRectangle() override;
+    uint32_t getHeight() const;
 
     inline bwLayoutItem& setPadding(uint32_t inPadding)
     {
@@ -93,7 +93,7 @@ public:
 
     const Type type;
     const FlowDirection flow_direction;
-    unsigned int padding = 0;
+    uint32_t padding = 0;
     const bool align;
 
 protected:
@@ -107,18 +107,16 @@ protected:
 
     static void resolvePanelContents(bWidgets::bwScreenGraph::bwNode& panel_node,
                                      const bWidgets::bwPoint& panel_pos,
-                                     const unsigned int padding,
-                                     const unsigned int item_margin,
+                                     const uint32_t padding,
+                                     const uint32_t item_margin,
                                      const float scale_fac);
 
-    int width{ 0 }, height{ 0 };
+    int32_t width{ 0 }, height{ 0 };
     bWidgets::bwPoint location;
 
 private:
-    auto countRowColumns(const bWidgets::bwScreenGraph::bwNode::ChildList& children) const
-        -> unsigned int;
-    auto countNeededMargins(const bWidgets::bwScreenGraph::bwNode::ChildList& children) const
-        -> unsigned int;
+    uint32_t countRowColumns(const bWidgets::bwScreenGraph::bwNode::ChildList& children) const;
+    uint32_t countNeededMargins(const bWidgets::bwScreenGraph::bwNode::ChildList& children) const;
 };
 
 class bwColumnLayout : public bwLayoutItem
@@ -146,7 +144,7 @@ public:
 
     void resolve(bWidgets::bwScreenGraph::bwNode& node,
                  const bWidgets::bwPoint& layout_pos,
-                 const unsigned int item_margin,
+                 const uint32_t item_margin,
                  const float scale_fac) override;
 
     inline bwScrollViewLayout& setItemMargin(uint32_t margin)
@@ -155,7 +153,7 @@ public:
         return *this;
     }
 
-    unsigned int item_margin = 0;
+    uint32_t item_margin = 0;
 };
 
 }  // namespace bWidgets

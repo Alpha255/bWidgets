@@ -19,32 +19,32 @@ class bwScrollView : public bwContainerWidget
 
 public:
     bwScrollView(bwScreenGraph::bwContainerNode& node,
-                 unsigned int width = 0,
-                 unsigned int height = 0);
+                 uint32_t width = 0,
+                 uint32_t height = 0);
 
-    auto getTypeIdentifier() const -> std::string_view override;
+    std::string_view getTypeIdentifier() const override;
 
     void draw(bwStyle& style) override;
 
-    auto createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler> override;
+    std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
-    auto getScrollOffsetY() const -> int;
-    auto getContentBounds(float interface_scale) const -> bwRectanglePixel;
+    int32_t getScrollOffsetY() const;
+    bwRectanglePixel getContentBounds(float interface_scale) const;
 
 private:
-    auto getVerticalScrollBar() const -> bwScrollBar&;
-    auto getVerticalScrollbarRect(const bwStyle& style) const -> bwRectanglePixel;
+    bwScrollBar& getVerticalScrollBar() const;
+    bwRectanglePixel getVerticalScrollbarRect(const bwStyle& style) const;
     void drawScrollBars(bwStyle& style);
-    auto isScrollable() const -> bool;
+    bool isScrollable() const;
     void validizeScrollValues();
 
-    static auto getScrollbarWidth(float interface_scale) -> int;
+    static int32_t getScrollbarWidth(float interface_scale);
 
-    constexpr static int SCROLL_BAR_SIZE = 17;
+    constexpr static int32_t SCROLL_BAR_SIZE = 17;
 
     std::unique_ptr<bwScreenGraph::bwWidgetNode> scrollbar_node;
 
-    int vert_scroll{ 0 };
+    int32_t vert_scroll{ 0 };
 };
 
 }  // namespace bWidgets

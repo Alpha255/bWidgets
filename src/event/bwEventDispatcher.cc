@@ -34,8 +34,7 @@ static void bubbleEvent(const bwEvent& event,
     }
 }
 
-static auto findHoveredNode(const bwEvent& event, bwScreenGraph::bwNode& node)
-    -> bwScreenGraph::bwNode*
+static bwScreenGraph::bwNode* findHoveredNode(const bwEvent& event, bwScreenGraph::bwNode& node)
 {
     const bool is_hovered = node.isVisible() && node.Rectangle().isCoordinateInside(
                                                     event.location.x, event.location.y);
@@ -131,7 +130,7 @@ void bwEventDispatcher::dispatchMouseWheelScroll(bwMouseWheelEvent& event)
     }
 }
 
-auto bwEventDispatcher::isDragging() -> bool
+bool bwEventDispatcher::isDragging()
 {
     return drag_event && (drag_event->drag_state == bwMouseButtonDragEvent::DRAGGING);
 }

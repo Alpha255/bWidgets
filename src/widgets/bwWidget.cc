@@ -5,41 +5,41 @@
 namespace bWidgets
 {
 
-bwWidget::bwWidget(std::optional<unsigned int> width_hint, std::optional<unsigned int> height_hint)
+bwWidget::bwWidget(std::optional<uint32_t> width_hint, std::optional<uint32_t> height_hint)
     : state(State::NORMAL), rectangle(0, 0, 0, 0),
       width_hint(width_hint.value_or(bwStyle::s_default_widget_size_hint)),
       height_hint(height_hint.value_or(bwStyle::s_default_widget_size_hint))
 {
 }
 
-auto bwWidget::getState() const -> State
+bwWidget::State bwWidget::getState() const
 {
     return state;
 }
 
-auto bwWidget::setState(State value) -> bwWidget&
+bwWidget& bwWidget::setState(State value)
 {
     state = value;
     return *this;
 }
 
-auto bwWidget::hide(bool _hidden) -> bwWidget&
+bwWidget& bwWidget::hide(bool _hidden)
 {
     hidden = _hidden;
     return *this;
 }
 
-auto bwWidget::isHidden() -> bool
+bool bwWidget::isHidden()
 {
     return hidden;
 }
 
-auto bwWidget::getLabel() const -> const std::string*
+const std::string* bwWidget::getLabel() const
 {
     return nullptr;
 }
 
-auto bwWidget::canAlign() const -> bool
+bool bwWidget::canAlign() const
 {
     return false;
 }

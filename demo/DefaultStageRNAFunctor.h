@@ -48,19 +48,19 @@ public:
                            DefaultStage& stage,
                            const std::string& prop_name,
                            const bWidgets::bwWidget& widget,
-                           int enum_value);
+                           int32_t enum_value);
 
     void operator()() override;
 
-    auto getPropName() const -> const std::string&;
-    auto getEnumValue() const -> std::optional<int>;
+    const std::string& getPropName() const;
+    std::optional<int32_t> getEnumValue() const;
 
 private:
     RNAProperties<DefaultStage>& m_props;
     DefaultStage& m_stage;
     std::string m_prop_name;
     const bWidgets::bwWidget& m_widget;
-    std::optional<int> m_enum_value;
+    std::optional<int32_t> m_enum_value;
 };
 
 }  // namespace bWidgetsDemo

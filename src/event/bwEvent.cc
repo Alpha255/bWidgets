@@ -17,7 +17,7 @@ void bwEvent::unswallow()
     is_swallowed = false;
 }
 
-auto bwEvent::isSwallowed() const -> bool
+bool bwEvent::isSwallowed() const
 {
     return is_swallowed;
 }
@@ -48,7 +48,7 @@ bwMouseWheelEvent::bwMouseWheelEvent(Direction _direction, bwPoint _location)
 {
 }
 
-auto bwMouseWheelEvent::getDirection() const -> Direction
+bwMouseWheelEvent::Direction bwMouseWheelEvent::getDirection() const
 {
     return direction;
 }

@@ -49,7 +49,7 @@ class Stage
     friend class UseFontSubPixelsToggleSetter;
 
 public:
-    Stage(const unsigned int mask_width, const unsigned int mask_height);
+    Stage(const uint32_t mask_width, const uint32_t mask_height);
     virtual ~Stage();
 
     void draw();
@@ -80,7 +80,7 @@ protected:
     static std::unique_ptr<bWidgets::bwStyleSheet> style_sheet;
     static float interface_scale;
 
-    unsigned int mask_width, mask_height;
+    uint32_t mask_width, mask_height;
 
 private:
     static void StyleSheetPolish(bWidgets::bwWidget& widget);

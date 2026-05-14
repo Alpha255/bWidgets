@@ -27,7 +27,7 @@ public:
     std::string shortcut;
     Type type;
     bool enabled{ true };
-    int icon_id{ 0 };
+    int32_t icon_id{ 0 };
 
     std::vector<std::unique_ptr<bwMenuItem>> submenu_items;
 };
@@ -38,34 +38,34 @@ class bwMenu : public bwContainerWidget
 
 public:
     bwMenu(const bwScreenGraph::bwContainerNode& node,
-        std::optional<unsigned int> width_hint = std::nullopt,
-        std::optional<unsigned int> height_hint = std::nullopt);
+        std::optional<uint32_t> width_hint = std::nullopt,
+        std::optional<uint32_t> height_hint = std::nullopt);
 
-    auto getTypeIdentifier() const -> std::string_view override;
+    std::string_view getTypeIdentifier() const override;
 
     void draw(bwStyle& style) override;
     void registerProperties() override;
-    auto createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler> override;
+    std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
-    auto addItem(std::string label) -> bwMenuItem&;
-    auto addSubmenu(std::string label) -> bwMenuItem&;
-    auto addSeparator() -> bwMenuItem&;
-    auto addItemToSubmenu(bwMenuItem& submenu, std::string label) -> bwMenuItem&;
+    bwMenuItem& addItem(std::string label);
+    bwMenuItem& addSubmenu(std::string label);
+    bwMenuItem& addSeparator();
+    bwMenuItem& addItemToSubmenu(bwMenuItem& submenu, std::string label);
 
-    auto getItems() const -> const std::vector<std::unique_ptr<bwMenuItem>>&;
+    const std::vector<std::unique_ptr<bwMenuItem>>& getItems() const;
 
-    unsigned int getItemHeight() const
+    uint32_t getItemHeight() const
     {
         return item_height;
     }
 
     /** Returns the height of the collapsed title bar button only. */
-    unsigned int getPreferredHeight() const
+    uint32_t getPreferredHeight() const
     {
         return item_height;
     }
 
-    auto getDropdownRect() const -> bwRectanglePixel;
+    bwRectanglePixel getDropdownRect() const;
     void drawDropdown(bwStyle& style);
 
     /** Style for normal (non-hovered) menu items. Set by the active style. */
@@ -81,10 +81,10 @@ public:
     bwRectanglePixel title_rect{};
     /** Preferred dropdown width in pixels, computed by Stage from item text
      * widths. */
-    int preferred_dropdown_width{ 160 };
+    int32_t preferred_dropdown_width{ 160 };
     /** Width of the title bar button, computed by Stage from the label text
      * width. */
-    int preferred_label_width{ 60 };
+    int32_t preferred_label_width{ 60 };
 
 private:
     void drawItem(bwStyle& style,
@@ -94,9 +94,9 @@ private:
     void drawSeparator(const bwRectanglePixel& item_rect);
 
     std::vector<std::unique_ptr<bwMenuItem>> items;
-    unsigned int item_height{ 20 };
-    unsigned int item_padding{ 5 };
-    int hovered_item{ -1 };
+    uint32_t item_height{ 20 };
+    uint32_t item_padding{ 5 };
+    int32_t hovered_item{ -1 };
 };
 
 }  // namespace bWidgets

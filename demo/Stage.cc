@@ -56,8 +56,7 @@ std::unique_ptr<bwFont> Stage::font = nullptr;
 std::unique_ptr<bwIconMap> Stage::icon_map = nullptr;
 float Stage::interface_scale = 1.0f;
 
-auto createScreenGraph(const unsigned int width, const unsigned int height)
-    -> bwScreenGraph::bwScreenGraph
+bwScreenGraph::bwScreenGraph createScreenGraph(const uint32_t width, const uint32_t height)
 {
     auto container = std::make_unique<bwScreenGraph::bwContainerNode>();
     container->createLayout<bwScrollViewLayout>()
@@ -68,7 +67,7 @@ auto createScreenGraph(const unsigned int width, const unsigned int height)
     return bwScreenGraph::bwScreenGraph(std::move(container));
 }
 
-Stage::Stage(const unsigned int width, const unsigned int height)
+Stage::Stage(const uint32_t width, const uint32_t height)
     : screen_graph(createScreenGraph(width, height)), mask_width(width), mask_height(height)
 {
     initFonts();
@@ -121,7 +120,7 @@ void Stage::activateStyleID(bwStyle::TypeID type_id)
 
 void Stage::draw()
 {
-    bwRectanglePixel stage_rect{ 0, int(mask_width) - 1, 0, int(mask_height - 1) };
+    bwRectanglePixel stage_rect{ 0, int32_t(mask_width) - 1, 0, int32_t(mask_height - 1) };
     bwStyleProperties properties;
     bwColor clear_color{ 114u };
 

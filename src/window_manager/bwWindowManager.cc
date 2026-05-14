@@ -30,7 +30,7 @@
 namespace bWidgets
 {
 
-static void wm_glfw_error_callback(int /* error */, const char* description)
+static void wm_glfw_error_callback(int32_t /* error */, const char* description)
 {
     std::cout << "Error: " << description << std::endl;
 }

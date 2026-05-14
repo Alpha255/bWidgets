@@ -24,14 +24,14 @@
 #include <utility>
 
 struct F26p6 {
-  using value_type = int;
-  static const int bits_number = 26;
-  static const int bits_fraction = 6;
+  using value_type = int32_t;
+  static const int32_t bits_number = 26;
+  static const int32_t bits_fraction = 6;
 };
 struct F16p16 {
-  using value_type = int;
-  static const int bits_number = 16;
-  static const int bits_fraction = 16;
+  using value_type = int32_t;
+  static const int32_t bits_number = 16;
+  static const int32_t bits_fraction = 16;
 };
 
 /**
@@ -56,7 +56,7 @@ template<typename _Type> class FixedNum {
                 "store its number and fractional part.");
 
   static FixedNum fromInt(typename _Type::value_type _value);
-  int toInt() const;
+  int32_t toInt() const;
   double toReal() const;
   double getFractionAsReal() const;
   FixedNum& round();
@@ -82,7 +82,7 @@ template<typename _Type> class FixedNum {
   typename _Type::value_type value{0};
 };
 
-template<typename _Type> constexpr unsigned int getScaleFactor()
+template<typename _Type> constexpr uint32_t getScaleFactor()
 {
   // Simple, type safe bitshift, e.g. `1 << 16` for 16.16, `1L << 32` for
   // 32.32 fixed number. Note that this gets evaluated at compile time
@@ -95,7 +95,7 @@ FixedNum<_Type> FixedNum<_Type>::fromInt(typename _Type::value_type _value)
 {
   return FixedNum(_value * getScaleFactor<_Type>());
 }
-template<typename _Type> int FixedNum<_Type>::toInt() const
+template<typename _Type> int32_t FixedNum<_Type>::toInt() const
 {
   return value / typename _Type::value_type(getScaleFactor<_Type>());
 }

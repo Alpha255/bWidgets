@@ -32,11 +32,11 @@ public:
     ~File() = default;
 
     std::string readIntoString();
-    bool readBytes(char*, const unsigned int, bool reset_cursor);
+    bool readBytes(char*, const uint32_t, bool reset_cursor);
 
     friend std::ostream& operator<<(std::ostream&, const File&);
 
-    inline auto getPath() const -> const std::string&
+    inline const std::string& getPath() const
     {
         return _path;
     }

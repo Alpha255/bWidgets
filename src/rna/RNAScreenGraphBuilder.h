@@ -63,7 +63,7 @@ public:
     }
 
     template<typename _WidgetType, typename... _Args>
-    _WidgetType& addRNAWidget(int enum_value, const std::string& propname, _Args&&... __args)
+    _WidgetType& addRNAWidget(int32_t enum_value, const std::string& propname, _Args&&... __args)
     {
         _WidgetType& widget = bWidgets::bwScreenGraph::bwBuilder::addWidget<_WidgetType>(
             std::forward<_Args>(__args)...);

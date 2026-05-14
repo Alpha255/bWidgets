@@ -5,18 +5,18 @@ namespace bWidgets
 {
 
 bwRadioButton::bwRadioButton(const std::string& text,
-                             std::optional<unsigned int> width_hint,
-                             std::optional<unsigned int> height_hint)
+                             std::optional<uint32_t> width_hint,
+                             std::optional<uint32_t> height_hint)
     : bwAbstractButton(text, width_hint, height_hint)
 {
 }
 
-auto bwRadioButton::getTypeIdentifier() const -> std::string_view
+std::string_view bwRadioButton::getTypeIdentifier() const
 {
     return "bwRadioButton";
 }
 
-auto bwRadioButton::canAlign() const -> bool
+bool bwRadioButton::canAlign() const
 {
     return true;
 }
@@ -37,7 +37,7 @@ bwRadioButtonHandler::bwRadioButtonHandler(bwRadioButton& button) : bwAbstractBu
 {
 }
 
-auto bwRadioButton::createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler>
+std::unique_ptr<bwScreenGraph::bwEventHandler> bwRadioButton::createHandler()
 {
     return std::make_unique<bwRadioButtonHandler>(*this);
 }

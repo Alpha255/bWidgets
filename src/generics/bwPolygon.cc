@@ -12,7 +12,7 @@ bwPolygon::bwPolygon(const bwPointVec& vertices) : vertices(vertices), vert_coun
 {
 }
 
-bwPolygon::bwPolygon(const unsigned int reserve_vertex_count)
+bwPolygon::bwPolygon(const uint32_t reserve_vertex_count)
 {
     vertices.reserve(reserve_vertex_count);
 }
@@ -28,27 +28,27 @@ void bwPolygon::addVertex(const float x, const float y)
     addVertex(bwPoint(x, y));
 }
 
-void bwPolygon::addVertex(const int x, const int y)
+void bwPolygon::addVertex(const int32_t x, const int32_t y)
 {
     addVertex({ std::roundf(x), std::roundf(y) });
 }
 
-void bwPolygon::reserve(const unsigned int count)
+void bwPolygon::reserve(const uint32_t count)
 {
     vertices.reserve(count);
 }
 
-auto bwPolygon::getVertices() const -> const bwPointVec&
+const bwPointVec& bwPolygon::getVertices() const
 {
     return vertices;
 }
 
-auto bwPolygon::operator[](const unsigned int index) -> bwPoint&
+bwPoint& bwPolygon::operator[](const uint32_t index)
 {
     return vertices[index];
 }
 
-auto bwPolygon::isDrawable() const -> bool
+bool bwPolygon::isDrawable() const
 {
     return (vert_count > 0);
 }

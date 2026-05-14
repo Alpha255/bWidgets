@@ -32,7 +32,7 @@ public:
         STATE_TOT
     };
 
-    bwWidget(std::optional<unsigned int> width_hint, std::optional<unsigned int> height_hint);
+    bwWidget(std::optional<uint32_t> width_hint, std::optional<uint32_t> height_hint);
     virtual ~bwWidget() = default;
 
     /* Disable these constructors/operators. Not really needed and would add
@@ -43,17 +43,17 @@ public:
     auto operator=(const bwWidget&) = delete;
     auto operator=(bwWidget&&) = delete;
 
-    auto getState() const -> State;
-    auto setState(State) -> bwWidget&;
-    auto hide(bool _hidden = true) -> bwWidget&;
-    auto isHidden() -> bool;
+    State getState() const;
+    bwWidget& setState(State);
+    bwWidget& hide(bool _hidden = true);
+    bool isHidden();
 
-    virtual auto getTypeIdentifier() const -> std::string_view = 0;
+    virtual std::string_view getTypeIdentifier() const = 0;
 
     virtual void draw(bwStyle& style) = 0;
-    virtual auto getLabel() const -> const std::string*;
-    virtual auto canAlign() const -> bool;
-    virtual auto createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler> = 0;
+    virtual const std::string* getLabel() const;
+    virtual bool canAlign() const;
+    virtual std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() = 0;
 
     /**
      * Final rectangle defining the widget bounding-box.
@@ -68,7 +68,7 @@ public:
      * simply ignore it. For bWidgets all that matters is the final \a
      * rectangle. Like the name suggests it's really just a hint.
      */
-    unsigned int width_hint, height_hint;
+    uint32_t width_hint, height_hint;
 
     bwStyleProperties style_properties;
 
@@ -127,7 +127,7 @@ private:
  * valid (whereby T is the "raw" type requested, without pointer).
  */
 template<class T, class _RawT = typename std::remove_pointer<T>::type>
-inline auto widget_cast(bwWidget& widget) -> _RawT*
+inline _RawT* widget_cast(bwWidget& widget)
 {
     static_assert(std::is_base_of<bwWidget, _RawT>::value, "Type is not a widget");
 
@@ -142,7 +142,7 @@ inline auto widget_cast(bwWidget& widget) -> _RawT*
  */
 template<class T,
          class _RawT = typename std::remove_pointer<typename std::remove_const<T>::type>::type>
-inline auto widget_cast(const bwWidget& widget) -> const _RawT*
+inline const _RawT* widget_cast(const bwWidget& widget)
 {
     static_assert(std::is_base_of<bwWidget, _RawT>::value, "Type is not a widget");
 
@@ -155,7 +155,7 @@ inline auto widget_cast(const bwWidget& widget) -> const _RawT*
  * valid (whereby T is the "raw" type requested, without pointer).
  */
 template<class T, class _RawT = typename std::remove_pointer<T>::type>
-inline auto widget_cast(bwWidget* widget) -> _RawT*
+inline _RawT* widget_cast(bwWidget* widget)
 {
     static_assert(std::is_base_of<bwWidget, _RawT>::value, "Type is not a widget");
 
@@ -170,7 +170,7 @@ inline auto widget_cast(bwWidget* widget) -> _RawT*
  */
 template<class T,
          class _RawT = typename std::remove_pointer<typename std::remove_const<T>::type>::type>
-inline auto widget_cast(const bwWidget* widget) -> const _RawT*
+inline const _RawT* widget_cast(const bwWidget* widget)
 {
     static_assert(std::is_base_of<bwWidget, _RawT>::value, "Type is not a widget");
 

@@ -8,19 +8,19 @@ namespace bWidgets
 class bwScrollBar : public bwAbstractButton
 {
 public:
-    bwScrollBar(unsigned int width_hint = 0, unsigned int height_hint = 0);
+    bwScrollBar(uint32_t width_hint = 0, uint32_t height_hint = 0);
 
-    auto getTypeIdentifier() const -> std::string_view override;
+    std::string_view getTypeIdentifier() const override;
 
     void draw(bwStyle& style) override;
 
-    auto createHandler() -> std::unique_ptr<bwScreenGraph::bwEventHandler> override;
+    std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
     float ratio = 0.0f;  // Ration between content and area height (max 1.0f).
-    int scroll_offset = 0;
+    int32_t scroll_offset = 0;
 
 private:
-    void setScrollOffset(int value);
+    void setScrollOffset(int32_t value);
 };
 
 }  // namespace bWidgets
