@@ -1,4 +1,4 @@
-#include "bwMenu.h"
+#include "bwPopupMenu.h"
 #include "event/bwEvent.h"
 #include "paint/bwPainter.h"
 #include "bwStyle.h"

@@ -6,7 +6,7 @@
 
 #include "bwCheckbox.h"
 #include "bwLabel.h"
-#include "bwMenu.h"
+#include "bwPopupMenu.h"
 #include "bwNumberSlider.h"
 #include "bwPanel.h"
 #include "bwPushButton.h"

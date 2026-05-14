@@ -122,7 +122,7 @@ set(SRC
 	widgets/bwCheckbox.cc
 	widgets/bwContainerWidget.cc
 	widgets/bwLabel.cc
-	widgets/bwMenu.cc
+	widgets/bwPopupMenu.cc
 	widgets/bwNumberSlider.cc
 	widgets/bwPanel.cc
 	widgets/bwPushButton.cc
@@ -131,12 +131,13 @@ set(SRC
 	widgets/bwScrollView.cc
 	widgets/bwTextBox.cc
 	widgets/bwWidget.cc
+	widgets/bwSplitView.cc
 	widgets/builtin_widgets.h
 	widgets/bwAbstractButton.h
 	widgets/bwCheckbox.h
 	widgets/bwContainerWidget.h
 	widgets/bwLabel.h
-	widgets/bwMenu.h
+	widgets/bwPopupMenu.h
 	widgets/bwNumberSlider.h
 	widgets/bwPanel.h
 	widgets/bwPushButton.h
@@ -145,6 +146,7 @@ set(SRC
 	widgets/bwScrollView.h
 	widgets/bwTextBox.h
 	widgets/bwWidget.h
+	widgets/bwSplitView.h
 
 	# window_manager
 	window_manager/bwEvent.cc
