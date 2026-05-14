@@ -10,11 +10,11 @@ endif()
 
 set(INC
 	..
-	../../bwidgets
-	../../bwidgets/generics
-	../../bwidgets/styling
-	../../bwidgets/utils
-	../../bwidgets/widgets
+	../../src
+	../../src/generics
+	../../src/styling
+	../../src/utils
+	../../src/widgets
 	../gtest/include
 )
 

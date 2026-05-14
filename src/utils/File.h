@@ -19,37 +19,30 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
-#include <cassert>
+#pragma once
 
-#include "window_manager/bwWindowManager.h"
+#include <fstream>
+#include <iostream>
+#include <string>
 
-#include "Application.h"
-
-#include "DefaultStage.h"
-
-namespace bWidgetsDemo
+class File
 {
+public:
+    explicit File(const std::string& path, std::ios::openmode mode = std::ios::in);
+    ~File() = default;
 
-Application& Application::ensureApplication()
-{
-    static Application app;
-    return app;
-}
+    std::string readIntoString();
+    bool readBytes(char*, const unsigned int, bool reset_cursor);
 
-void Application::setup()
-{
-    bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
-    wm.addWindowWithStage<DefaultStage>("bWidgets Demo");
-}
+    friend std::ostream& operator<<(std::ostream&, const File&);
 
-void Application::mainLoop()
-{
-    bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
-    wm.mainLoop();
-}
+    inline auto getPath() const -> const std::string&
+    {
+        return _path;
+    }
 
-void Application::exit()
-{
-}
-
-}  // namespace bWidgetsDemo
+private:
+    const std::string _path;
+    std::ifstream _file_stream;
+    std::ios::openmode _open_mode;
+};

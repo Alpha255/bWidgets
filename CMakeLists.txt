@@ -119,7 +119,8 @@ endif()
 # Sub-directories
 
 add_subdirectory(CMake/Submodules)
-add_subdirectory(bwidgets)
+add_subdirectory(demo/extern)
+add_subdirectory(src)
 
 if(WITH_BWIDGETS_DEMO)
 	add_subdirectory(demo)

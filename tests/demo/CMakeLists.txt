@@ -9,11 +9,11 @@ if(CMAKE_COMPILER_IS_GNUCC)
 endif()
 
 set(INC
-	../../bwidgets
-	../../bwidgets/generics
-	../../bwidgets/utils
-	../../bwidgets/widgets
-	../../demo/screen
+	../../src
+	../../src/generics
+	../../src/utils
+	../../src/widgets
+	../../src/screen
 	../gtest/include
 )
 
@@ -21,7 +21,7 @@ set(SRC
 )
 
 set(LIB
-	bwd_screen
+	bWidgets
 	testing
 	testing_gtest
 )

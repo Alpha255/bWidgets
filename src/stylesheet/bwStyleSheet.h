@@ -19,37 +19,34 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
-#include <cassert>
+#pragma once
 
-#include "window_manager/bwWindowManager.h"
+#include "bwUtil.h"
+#include "bwWidget.h"
 
-#include "Application.h"
-
-#include "DefaultStage.h"
-
-namespace bWidgetsDemo
+namespace bWidgets
 {
 
-Application& Application::ensureApplication()
+class bwStyleSheet
 {
-    static Application app;
-    return app;
-}
+public:
+    bwStyleSheet(std::string filepath);
+    ~bwStyleSheet();
 
-void Application::setup()
-{
-    bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
-    wm.addWindowWithStage<DefaultStage>("bWidgets Demo");
-}
+    void reload();
 
-void Application::mainLoop()
-{
-    bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
-    wm.mainLoop();
-}
+    void resolveValue(const std::string_view& class_name,
+                      bwWidget::State state,
+                      bwStyleProperty& property);
 
-void Application::exit()
-{
-}
+    const std::string& getFilepath() const;
 
-}  // namespace bWidgetsDemo
+private:
+    void load();
+    void unload();
+
+    std::string filepath;
+    std::unique_ptr<class bwStyleSheetTree> tree;
+};
+
+}  // namespace bWidgets

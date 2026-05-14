@@ -14,42 +14,44 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * Original work Copyright (c) 2018 Julian Eisel
+ * Original work Copyright (c) 2018 Jason Wilkins, Julian Eisel, Mike Erwin
  *
  * ***** END GPL LICENSE BLOCK *****
  */
 
 #include <cassert>
+#include <iostream>
 
-#include "window_manager/bwWindowManager.h"
-
-#include "Application.h"
-
-#include "DefaultStage.h"
-
-namespace bWidgetsDemo
-{
-
-Application& Application::ensureApplication()
-{
-    static Application app;
-    return app;
+extern "C" {
+#include "gawain/gwn_immediate.h"
 }
 
-void Application::setup()
+#include "paint/gpu/GPU.h"
+
+static bool initialized = false;
+
+/**
+ * \return true if successful.
+ */
+void GPU_init()
 {
-    bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
-    wm.addWindowWithStage<DefaultStage>("bWidgets Demo");
+    if (initialized)
+    {
+        assert(0);
+        return;
+    }
+    initialized = true;
+
+    GLenum glew_ret = glewInit();
+    if (glew_ret != GLEW_OK)
+    {
+        std::cout << "Error: " << glewGetErrorString(glew_ret) << std::endl;
+        assert(0);
+    }
+    immInit();
 }
 
-void Application::mainLoop()
+void GPU_exit()
 {
-    bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
-    wm.mainLoop();
+    immDestroy();
 }
-
-void Application::exit()
-{
-}
-
-}  // namespace bWidgetsDemo

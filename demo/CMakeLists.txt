@@ -18,63 +18,46 @@
 # ***** END GPL LICENSE BLOCK *****
 
 set(INC
-	../bwidgets
-	../bwidgets/generics
-	../bwidgets/styling
-	../bwidgets/utils
-	../bwidgets/widgets
-	./utils
-	screen
-	window_manager
+	../src
+	../src/generics
+	../src/styling
+	../src/utils
+	../src/widgets
+	${CMAKE_SOURCE_DIR}/demo/extern/glew/include
+	resources
 )
 
 set(SRC
-	Application.cc
-	Pixmap.cc
 	bwidgets_demo.cc
-	File.cc
+	Application.cc
+	DefaultStage.cc
+	DefaultStageRNAFunctor.cc
+	Stage.cc
 
 	Application.h
-	Pixmap.h
-	File.h
-	RNAProperty.h
-	RNAScreenGraphBuilder.h
+	DefaultStage.h
+	DefaultStageRNAFunctor.h
+	Stage.h
 	resources/blender_icon_defines.h
 )
 
 set(LIB
-	bwd_gpu
-	bwd_window_manager
-	bwd_screen
+	bWidgets
 )
 
-set(GPU_INC
-	../extern/glew/include
-	../extern/glm
-)
-
-if (UNIX)
-  set(OpenGL_GL_PREFERENCE GLVND)
-endif()
-
-find_package(OpenGL REQUIRED)
-
-list(APPEND LIB ${OPENGL_LIBRARIES})
-
-add_definitions(-DGLEW_STATIC)
-
-add_executable(bWidgetsDemo)
-target_sources(bWidgetsDemo PRIVATE ${SRC})
+add_executable(demo)
+target_sources(demo PRIVATE ${SRC})
 include_directories(${INC})
-target_link_libraries(bWidgetsDemo LINK_PRIVATE ${LIB})
+target_link_libraries(demo LINK_PRIVATE ${LIB})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SRC})
 
 if(WIN32)
-    add_custom_command(
-        TARGET bWidgetsDemo POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                $<TARGET_FILE:zlib>
-                $<TARGET_FILE_DIR:bWidgetsDemo>
-    )
+	add_custom_command(
+		TARGET demo POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+				$<TARGET_FILE:zlib>
+				$<TARGET_FILE_DIR:demo>
+	)
 endif()
 
 # --- Resource files ---
@@ -92,9 +75,8 @@ if (NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
 
 	set(RESOURCES_PATH ${CMAKE_CURRENT_BINARY_DIR}/resources)
 	foreach(RES ${RESOURCES})
-		# copy resource files to build
 		add_custom_command(
-			TARGET bWidgetsDemo PRE_BUILD
+			TARGET demo PRE_BUILD
 			COMMAND ${CMAKE_COMMAND} -E copy
 					${CMAKE_CURRENT_SOURCE_DIR}/resources/${RES}
 					${RESOURCES_PATH}/${RES}
@@ -102,29 +84,20 @@ if (NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
 	endforeach()
 
 	add_custom_command(
-		TARGET bWidgetsDemo PRE_BUILD
+		TARGET demo PRE_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 				${CMAKE_CURRENT_SOURCE_DIR}/resources/icons_svg
 				${RESOURCES_PATH}/icons_svg
 	)
 
 	add_custom_command(
-		TARGET bWidgetsDemo PRE_BUILD
+		TARGET demo PRE_BUILD
 		COMMAND ${CMAKE_COMMAND}
 				-DICONS_SVG_DIR=${CMAKE_CURRENT_SOURCE_DIR}/resources/icons_svg
 				-DOUTPUT_HEADER=${CMAKE_CURRENT_SOURCE_DIR}/resources/blender_icons_svg.h
-				-P ${CMAKE_CURRENT_SOURCE_DIR}/GenerateIconsHeader.cmake
+				-P ${CMAKE_SOURCE_DIR}/src/GenerateIconsHeader.cmake
 	)
 else()
 	set(RESOURCES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/resources)
 endif()
 add_definitions(-DRESOURCES_PATH_STR="${RESOURCES_PATH}")
-
-# --- subdirectories ---
-
-add_subdirectory(extern)
-add_subdirectory(gpu)
-add_subdirectory(screen)
-add_subdirectory(stylesheet)
-add_subdirectory(utils)
-add_subdirectory(window_manager)

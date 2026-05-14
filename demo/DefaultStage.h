@@ -19,37 +19,35 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
-#include <cassert>
+#pragma once
 
-#include "window_manager/bwWindowManager.h"
-
-#include "Application.h"
-
-#include "DefaultStage.h"
+#include "Stage.h"
 
 namespace bWidgetsDemo
 {
 
-Application& Application::ensureApplication()
+class DefaultStage : public Stage
 {
-    static Application app;
-    return app;
-}
+    friend class ScaleSetter;
+    friend class StyleSetter;
 
-void Application::setup()
-{
-    bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
-    wm.addWindowWithStage<DefaultStage>("bWidgets Demo");
-}
+public:
+    DefaultStage(unsigned int mask_width, unsigned int mask_height);
 
-void Application::mainLoop()
-{
-    bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
-    wm.mainLoop();
-}
+private:
+    void registerProperties(RNAProperties<DefaultStage>& properties);
 
-void Application::exit()
-{
-}
+    void activateStyleID(bWidgets::bwStyle::TypeID) override;
+    void addStyleSelector(bWidgets::bwScreenGraph::bwLayoutNode& parent_node);
+    void updateFontAAMode(bool value);
+
+    void useStyleCSSVersionSet(const bool use_css_version);
+    void updateStyleButtons();
+    auto updateStyleButton(bWidgets::bwWidget& widget_iter) -> bool;
+
+    RNAProperties<DefaultStage> properties;
+
+    const unsigned int padding = 10;
+};
 
 }  // namespace bWidgetsDemo
