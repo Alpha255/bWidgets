@@ -30,18 +30,18 @@ namespace bWidgets
 	class bwRadioButton;
 
 	template<typename _Obj, typename _Func>
-	class RNAScreenGraphBuilder : public bWidgets::bwScreenGraph::bwBuilder
+	class RNAScreenGraphBuilder : public bwScreenGraph::bwBuilder
 	{
 	public:
-		RNAScreenGraphBuilder(bWidgets::bwScreenGraph::bwLayoutNode& node,
+		RNAScreenGraphBuilder(bwScreenGraph::bwLayoutNode& node,
 			_Obj& obj,
 			RNAProperties<_Obj>& properties)
-			: bWidgets::bwScreenGraph::bwBuilder(node)
+			: bwScreenGraph::bwBuilder(node)
 			, m_obj(obj)
 			, m_props(properties)
 		{
 		}
-		RNAScreenGraphBuilder(bWidgets::bwScreenGraph::bwScreenGraph& screen_graph,
+		RNAScreenGraphBuilder(bwScreenGraph::bwScreenGraph& screen_graph,
 			_Obj& obj,
 			RNAProperties<_Obj>& properties)
 			: RNAScreenGraphBuilder(screen_graph.Root(), obj, properties)
@@ -51,8 +51,8 @@ namespace bWidgets
 		template<typename _WidgetType, typename... _Args>
 		_WidgetType& addRNAWidget(const std::string& propname, _Args&&... __args)
 		{
-			_WidgetType& widget = bWidgets::bwScreenGraph::bwBuilder::addWidget<_WidgetType>(std::forward<_Args>(__args)...);
-			static_assert(!std::is_same<_WidgetType, bWidgets::bwRadioButton>::value,
+			_WidgetType& widget = bwScreenGraph::bwBuilder::addWidget<_WidgetType>(std::forward<_Args>(__args)...);
+			static_assert(!std::is_same<_WidgetType, bwRadioButton>::value,
 				"RNAScreenGraphBuilder: For bwRadioButton, addRNAWidget overload with enum "
 				"value should be called.");
 			widget.apply_functor = std::make_unique<_Func>(m_props, m_obj, propname, widget);
@@ -62,7 +62,7 @@ namespace bWidgets
 		template<typename _WidgetType, typename... _Args>
 		_WidgetType& addRNAWidget(int32_t enum_value, const std::string& propname, _Args&&... __args)
 		{
-			_WidgetType& widget = bWidgets::bwScreenGraph::bwBuilder::addWidget<_WidgetType>(std::forward<_Args>(__args)...);
+			_WidgetType& widget = bwScreenGraph::bwBuilder::addWidget<_WidgetType>(std::forward<_Args>(__args)...);
 			widget.apply_functor = std::make_unique<_Func>(m_props, m_obj, propname, widget, enum_value);
 			return widget;
 		}

@@ -54,7 +54,8 @@ namespace bWidgets
 			} m_callbacks;
 			std::reference_wrapper<_T> m_ref;
 
-			Value(_T& ref) : m_ref(ref)
+			Value(_T& ref) 
+				: m_ref(ref)
 			{
 			}
 			Value(Callbacks callbacks) : m_callbacks(callbacks)

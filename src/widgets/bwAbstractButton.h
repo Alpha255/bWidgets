@@ -26,6 +26,23 @@ namespace bWidgets
 
 		std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
+		template<class _Func, class... _Args>
+		void createApplyFunctor(_Args&&... args)
+		{
+			apply_functor = std::make_unique<_Func>(std::forward<_Args>(args)...);
+		}
+
+		template<class _Func, class... _Args>
+		void createApplyFunctor2(_Args&&... args)
+		{
+			apply_functor = std::make_unique<_Func>(static_cast<_Func::OwnerType&>(*this), std::forward<_Args>(args)...);
+		}
+
+		template<class _Func, class... _Args>
+		void createApplyFunctor3(_Args&&... args)
+		{
+			apply_functor = std::make_unique<_Func>(std::forward<_Args>(args)...);
+		};
 		/**
 		 * Function object called when applying changes to widget.
 		 */

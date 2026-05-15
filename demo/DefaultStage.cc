@@ -76,6 +76,29 @@ namespace bWidgetsDemo
 				.hide();
 			});
 
+#if 0
+		bwBuilder testBuilder(screen_graph);
+		testBuilder.buildLayout<bwRowLayout>([](bwBuilder& builder) {
+			auto& use_subpixel = builder.addWidget<bwCheckbox>();
+			auto& use_subpixel_positioning = builder.addWidget<bwCheckbox>()
+				.setLabel("Subpixel Positioning")
+				.hide();
+
+			use_subpixel.createApplyFunctor<bwFunctorLambda>([&use_subpixel, &use_subpixel_positioning]() {
+				use_subpixel_positioning.hide(!use_subpixel.isChecked());
+			});
+
+			use_subpixel.createApplyFunctor2<bwFunctorLambda2<bwCheckbox>>([&use_subpixel_positioning](bwCheckbox& checkbox) {
+				use_subpixel_positioning.hide(!checkbox.isChecked());
+			});
+
+			use_subpixel.createApplyFunctor3<bwFunctorLambda3<bool>>(
+				[&use_subpixel]() { return use_subpixel.isChecked(); },
+				[&use_subpixel_positioning](bool isChecked) { use_subpixel_positioning.hide(!isChecked); }
+			);
+		});
+#endif
+
 		builder.buildContainer<bwPanel, RNABuilder>(
 			[](RNABuilder& builder) {
 				builder.buildLayout<bwColumnLayout>(
@@ -188,8 +211,7 @@ namespace bWidgetsDemo
 		{
 			if (radio_iter->apply_functor)
 			{
-				auto* rna_functor = dynamic_cast<DefaultStageRNAFunctor*>(
-					radio_iter->apply_functor.get());
+				auto* rna_functor = dynamic_cast<DefaultStageRNAFunctor*>(radio_iter->apply_functor.get());
 
 				if (rna_functor && rna_functor->getPropName() == "style_type")
 				{
@@ -209,8 +231,7 @@ namespace bWidgetsDemo
 		{
 			if (checkbox_iter->apply_functor)
 			{
-				auto* rna_functor = dynamic_cast<DefaultStageRNAFunctor*>(
-					checkbox_iter->apply_functor.get());
+				auto* rna_functor = dynamic_cast<DefaultStageRNAFunctor*>(checkbox_iter->apply_functor.get());
 				if (rna_functor && rna_functor->getPropName() == "style_use_css_version")
 				{
 					if (active_type_id == bwStyle::TypeID::CLASSIC ||
@@ -256,8 +277,7 @@ namespace bWidgetsDemo
 			const auto* checkbox = widget_cast<bwCheckbox>(widget);
 			if (checkbox && checkbox->apply_functor)
 			{
-				const auto* rna_functor = dynamic_cast<DefaultStageRNAFunctor*>(
-					checkbox->apply_functor.get());
+				const auto* rna_functor = dynamic_cast<DefaultStageRNAFunctor*>(checkbox->apply_functor.get());
 				if (rna_functor && (rna_functor->getPropName() == "style_use_css_version"))
 				{
 					widget->hide(isUseCSSVersionToggleHidden(*Stage::style));
