@@ -23,15 +23,18 @@
 
 #include <utility>
 
-struct F26p6 {
-  using value_type = int32_t;
-  static const int32_t bits_number = 26;
-  static const int32_t bits_fraction = 6;
+struct F26p6 
+{
+	using value_type = int32_t;
+	static const int32_t bits_number = 26;
+	static const int32_t bits_fraction = 6;
 };
-struct F16p16 {
-  using value_type = int32_t;
-  static const int32_t bits_number = 16;
-  static const int32_t bits_fraction = 16;
+
+struct F16p16 
+{
+	using value_type = int32_t;
+	static const int32_t bits_number = 16;
+	static const int32_t bits_fraction = 16;
 };
 
 /**
@@ -43,95 +46,99 @@ struct F16p16 {
  * (i.e. doing `val >> 16` instead of `val >> 6`). But using this type, such
  * mistakes either lead to compile errors or invoke proper conversion.
  */
-template<typename _Type> class FixedNum {
- public:
-  FixedNum() = default;
-  FixedNum(typename _Type::value_type _value) : value(_value)
-  {
-  }
 
-  static_assert((_Type::bits_number + _Type::bits_fraction) <=
-                    (sizeof(typename _Type::value_type) * 8),
-                "value_type of given fixed point type does not provide enough bits to "
-                "store its number and fractional part.");
+template<typename _Type> class FixedNum 
+{
+public:
+	FixedNum() = default;
+	FixedNum(typename _Type::value_type _value) 
+		: value(_value)
+	{
+	}
 
-  static FixedNum fromInt(typename _Type::value_type _value);
-  int32_t toInt() const;
-  double toReal() const;
-  double getFractionAsReal() const;
-  FixedNum& round();
-  FixedNum& floor();
+	static_assert((_Type::bits_number + _Type::bits_fraction) <=
+		(sizeof(typename _Type::value_type) * 8),
+		"value_type of given fixed point type does not provide enough bits to "
+		"store its number and fractional part.");
 
-  FixedNum& operator+=(const FixedNum&);
-  template<typename _OtherType> operator FixedNum<_OtherType>() const;
+	static FixedNum fromInt(typename _Type::value_type _value);
+	int32_t toInt() const;
+	double toReal() const;
+	double getFractionAsReal() const;
+	FixedNum& round();
+	FixedNum& floor();
 
-  friend FixedNum operator+(const FixedNum& lhs, const FixedNum& rhs)
-  {
-    return lhs.value + rhs.value;
-  }
-  friend FixedNum operator-(const FixedNum& lhs, const FixedNum& rhs)
-  {
-    return lhs.value - rhs.value;
-  }
-  friend bool operator>(const FixedNum& lhs, const FixedNum& rhs)
-  {
-    return lhs.value > rhs.value;
-  }
+	FixedNum& operator+=(const FixedNum&);
+	template<typename _OtherType> operator FixedNum<_OtherType>() const;
 
- private:
-  typename _Type::value_type value{0};
+	friend FixedNum operator+(const FixedNum& lhs, const FixedNum& rhs)
+	{
+		return lhs.value + rhs.value;
+	}
+	friend FixedNum operator-(const FixedNum& lhs, const FixedNum& rhs)
+	{
+		return lhs.value - rhs.value;
+	}
+	friend bool operator>(const FixedNum& lhs, const FixedNum& rhs)
+	{
+		return lhs.value > rhs.value;
+	}
+
+private:
+	typename _Type::value_type value{ 0 };
 };
 
 template<typename _Type> constexpr uint32_t getScaleFactor()
 {
-  // Simple, type safe bitshift, e.g. `1 << 16` for 16.16, `1L << 32` for
-  // 32.32 fixed number. Note that this gets evaluated at compile time
-  // (constexpr).
-  return (typename _Type::value_type(1) << _Type::bits_fraction);
+	// Simple, type safe bitshift, e.g. `1 << 16` for 16.16, `1L << 32` for
+	// 32.32 fixed number. Note that this gets evaluated at compile time
+	// (constexpr).
+	return (typename _Type::value_type(1) << _Type::bits_fraction);
 }
 
 template<typename _Type>
 FixedNum<_Type> FixedNum<_Type>::fromInt(typename _Type::value_type _value)
 {
-  return FixedNum(_value * getScaleFactor<_Type>());
+	return FixedNum(_value * getScaleFactor<_Type>());
 }
+
 template<typename _Type> int32_t FixedNum<_Type>::toInt() const
 {
-  return value / typename _Type::value_type(getScaleFactor<_Type>());
+	return value / typename _Type::value_type(getScaleFactor<_Type>());
 }
 
 template<typename _Type> double FixedNum<_Type>::toReal() const
 {
-  return double(value) / getScaleFactor<_Type>();
+	return double(value) / getScaleFactor<_Type>();
 }
 
 template<typename _Type> double FixedNum<_Type>::getFractionAsReal() const
 {
-  return toReal() - toInt();
+	return toReal() - toInt();
 }
 
 template<typename _Type> FixedNum<_Type>& FixedNum<_Type>::round()
 {
-  value += getScaleFactor<_Type>() / 2;
-  return floor();
+	value += getScaleFactor<_Type>() / 2;
+	return floor();
 }
 
 template<typename _Type> FixedNum<_Type>& FixedNum<_Type>::floor()
 {
-  value &= ~(getScaleFactor<_Type>() - 1);
-  return *this;
+	value &= ~(getScaleFactor<_Type>() - 1);
+	return *this;
 }
 
 template<typename _Type> FixedNum<_Type>& FixedNum<_Type>::operator+=(const FixedNum& other)
 {
-  value += other.value;
-  return *this;
+	value += other.value;
+	return *this;
 }
 
 template<typename _Type>
 template<typename _OtherType>
 FixedNum<_Type>::operator FixedNum<_OtherType>() const
 {
-  return FixedNum<_OtherType>(value *
-                              (double(getScaleFactor<_OtherType>()) / getScaleFactor<_Type>()));
+	return FixedNum<_OtherType>(value *
+		(double(getScaleFactor<_OtherType>()) / getScaleFactor<_Type>()));
 }

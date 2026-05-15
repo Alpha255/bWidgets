@@ -29,81 +29,82 @@
 
 namespace bWidgets
 {
+	static void wm_glfw_error_callback(int32_t /* error */, const char* description)
+	{
+		std::cout << "Error: " << description << std::endl;
+	}
 
-static void wm_glfw_error_callback(int32_t /* error */, const char* description)
-{
-    std::cout << "Error: " << description << std::endl;
-}
+	bwWindowManager::bwWindowManager() 
+		: event_manager(bwEventManager::ensureEventManager())
+		, main_win(nullptr)
+	{
+		if (!glfwInit())
+		{
+			assert(0);
+		}
+		glfwSetErrorCallback(wm_glfw_error_callback);
 
-bwWindowManager::bwWindowManager() : event_manager(bwEventManager::ensureEventManager())
-{
-    if (!glfwInit())
-    {
-        assert(0);
-    }
-    glfwSetErrorCallback(wm_glfw_error_callback);
+		//	GPU_init(); // needs context, so delay until window creation
+	}
 
-    //	GPU_init(); // needs context, so delay until window creation
-}
+	bwWindowManager& bwWindowManager::getWindowManager()
+	{
+		static bwWindowManager instance;
+		return instance;
+	}
 
-bwWindowManager& bwWindowManager::getWindowManager()
-{
-    static bwWindowManager instance;
-    return instance;
-}
+	bwWindowManager::~bwWindowManager()
+	{
+		windows.clear();  // Destroy windows before calling glfwTerminate().
+		glfwTerminate();
+	}
 
-bwWindowManager::~bwWindowManager()
-{
-    windows.clear();  // Destroy windows before calling glfwTerminate().
-    glfwTerminate();
-}
+	bwWindowManager::WindowManagerAction bwWindowManager::processEvents()
+	{
+		event_manager.waitEvents();
+		if (!event_manager.processEvents(windows))
+		{
+			return WM_ACTION_CLOSE;
+		}
 
-bwWindowManager::WindowManagerAction bwWindowManager::processEvents()
-{
-    event_manager.waitEvents();
-    if (!event_manager.processEvents(windows))
-    {
-        return WM_ACTION_CLOSE;
-    }
+		return WM_ACTION_CONTINUE;
+	}
 
-    return WM_ACTION_CONTINUE;
-}
+	void bwWindowManager::drawWindows()
+	{
+		for (bwWindow& win : windows)
+		{
+			win.draw();
+		}
+	}
 
-void bwWindowManager::drawWindows()
-{
-    for (bwWindow& win : windows)
-    {
-        win.draw();
-    }
-}
+	void bwWindowManager::mainLoop()
+	{
+		while (processEvents() == WM_ACTION_CONTINUE)
+		{
+			drawWindows();
+		}
+	}
 
-void bwWindowManager::mainLoop()
-{
-    while (processEvents() == WM_ACTION_CONTINUE)
-    {
-        drawWindows();
-    }
-}
+	bwWindow& bwWindowManager::addWindow(std::string name)
+	{
+		windows.emplace_back(name);
+		if (windows.size() == 1)
+		{
+			main_win = &windows.back();
+		}
 
-bwWindow& bwWindowManager::addWindow(std::string name)
-{
-    windows.emplace_back(name);
-    if (windows.size() == 1)
-    {
-        main_win = &windows.back();
-    }
+		return windows.back();
+	}
 
-    return windows.back();
-}
+	void bwWindowManager::removeWindow(bwWindow& win)
+	{
+		windows.remove(win);
+	}
 
-void bwWindowManager::removeWindow(bwWindow& win)
-{
-    windows.remove(win);
-}
-
-bool bwWindowManager::isMainWindow(const bwWindow& win) const
-{
-    return &win == main_win;
-}
+	bool bwWindowManager::isMainWindow(const bwWindow& win) const
+	{
+		return &win == main_win;
+	}
 
 }  // namespace bWidgets

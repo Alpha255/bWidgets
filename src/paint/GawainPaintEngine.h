@@ -25,31 +25,30 @@
 
 namespace bWidgets
 {
+	class GawainPaintEngine : public bwPaintEngine
+	{
+	public:
+		GawainPaintEngine(class bwFont&, class bwIconMap&);
 
-class GawainPaintEngine : public bwPaintEngine
-{
-public:
-    GawainPaintEngine(class bwFont&, class bwIconMap&);
+		void setupViewport(const bwRectanglePixel&, const bwColor&) override;
+		void enableMask(const bwRectanglePixel&) override;
 
-    void setupViewport(const bwRectanglePixel&, const bwColor&) override;
-    void enableMask(const bwRectanglePixel&) override;
+		void drawPolygon(const class bwPainter&, const class bwPolygon&) override;
+		void drawText(const class bwPainter&,
+			const std::string&,
+			const bwRectanglePixel&,
+			const TextAlignment) override;
+		void drawIcon(const class bwPainter&,
+			const bwIconInterface&,
+			const bwRectanglePixel&,
+			const bwColor& color = bwColor::White) override;
 
-    void drawPolygon(const class bwPainter&, const class bwPolygon&) override;
-    void drawText(const class bwPainter&,
-                  const std::string&,
-                  const bwRectanglePixel&,
-                  const TextAlignment) override;
-    void drawIcon(const class bwPainter&,
-                  const bwIconInterface&,
-                  const bwRectanglePixel&,
-                  const bwColor& color = bwColor::White) override;
+		float m_scale_x{ 1.0f };
+		float m_scale_y{ 1.0f };
 
-    float m_scale_x{ 1.0f };
-    float m_scale_y{ 1.0f };
-
-private:
-    bwFont& font;
-    bwIconMap& icon_map;
-};
+	private:
+		bwFont& font;
+		bwIconMap& icon_map;
+	};
 
 }  // namespace bWidgets

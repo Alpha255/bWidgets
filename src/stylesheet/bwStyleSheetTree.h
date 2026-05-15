@@ -27,27 +27,26 @@
 
 namespace bWidgets
 {
+	class bwStyleSheetTree
+	{
+	public:
+		~bwStyleSheetTree();
 
-class bwStyleSheetTree
-{
-public:
-    ~bwStyleSheetTree();
+		bwStyleProperty& ensureNodeWithProperty(const std::string_view& class_name,
+			const bwWidget::State state,
+			const std::string_view& identifier,
+			const bwStyleProperty::Type type);
 
-    bwStyleProperty& ensureNodeWithProperty(const std::string_view& class_name,
-                                            const bwWidget::State state,
-                                            const std::string_view& identifier,
-                                            const bwStyleProperty::Type type);
+		class bwStyleSheetNode& ensureNode(const std::string_view& class_name);
 
-    class bwStyleSheetNode& ensureNode(const std::string_view& class_name);
+		const bwStyleProperty* resolveProperty(const std::string_view& class_name,
+			const std::string_view& property_name,
+			const bwWidget::State state);
 
-    const bwStyleProperty* resolveProperty(const std::string_view& class_name,
-                                           const std::string_view& property_name,
-                                           const bwWidget::State state);
+	private:
+		class bwStyleSheetNode* lookupNode(const std::string_view& name) const;
 
-private:
-    class bwStyleSheetNode* lookupNode(const std::string_view& name) const;
-
-    std::unordered_map<std::string, class bwStyleSheetNode*> nodes{ 0 };
-};
+		std::unordered_map<std::string, class bwStyleSheetNode*> nodes{ 0 };
+	};
 
 }  // namespace bWidgets

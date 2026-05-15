@@ -31,97 +31,97 @@
 namespace bWidgets
 {
 
-std::unique_ptr<bwPropertyParser> bwPropertyParser::newFromPropertyType(
-    bwStyleProperty::Type type)
-{
-    switch (type)
-    {
-    case bwStyleProperty::Type::BOOL:
-        return std::make_unique<bwBooleanPropertyParser>();
-    case bwStyleProperty::Type::INTEGER:
-        return std::make_unique<bwIntegerPropertyParser>();
-    case bwStyleProperty::Type::FLOAT:
-        return std::make_unique<bwFloatPropertyParser>();
-    case bwStyleProperty::Type::COLOR:
-        return std::make_unique<bwColorPropertyParser>();
-    default:
-        return (assert(0), nullptr);
-    }
-}
+	std::unique_ptr<bwPropertyParser> bwPropertyParser::newFromPropertyType(
+		bwStyleProperty::Type type)
+	{
+		switch (type)
+		{
+		case bwStyleProperty::Type::BOOL:
+			return std::make_unique<bwBooleanPropertyParser>();
+		case bwStyleProperty::Type::INTEGER:
+			return std::make_unique<bwIntegerPropertyParser>();
+		case bwStyleProperty::Type::FLOAT:
+			return std::make_unique<bwFloatPropertyParser>();
+		case bwStyleProperty::Type::COLOR:
+			return std::make_unique<bwColorPropertyParser>();
+		default:
+			return (assert(0), nullptr);
+		}
+	}
 
-void bwBooleanPropertyParser::parseIntoProperty(bwStyleProperty& dest_property,
-                                                const KatanaValue& value) const
-{
-    const std::string ident_value{ value.string };
+	void bwBooleanPropertyParser::parseIntoProperty(bwStyleProperty& dest_property,
+		const KatanaValue& value) const
+	{
+		const std::string ident_value{ value.string };
 
-    if (ident_value == "true")
-    {
-        dest_property.setValue(true);
-    }
-    else if (ident_value == "false")
-    {
-        dest_property.setValue(false);
-    }
-    else
-    {
-        throw bwPropertyParsingFailure();
-    }
-}
+		if (ident_value == "true")
+		{
+			dest_property.setValue(true);
+		}
+		else if (ident_value == "false")
+		{
+			dest_property.setValue(false);
+		}
+		else
+		{
+			throw bwPropertyParsingFailure();
+		}
+	}
 
-void bwIntegerPropertyParser::parseIntoProperty(bwStyleProperty& dest_property,
-                                                const KatanaValue& value) const
-{
-    dest_property.setValue((int32_t)value.fValue);  // iValue is not valid
-}
+	void bwIntegerPropertyParser::parseIntoProperty(bwStyleProperty& dest_property,
+		const KatanaValue& value) const
+	{
+		dest_property.setValue((int32_t)value.fValue);  // iValue is not valid
+	}
 
-void bwFloatPropertyParser::parseIntoProperty(bwStyleProperty& dest_property,
-                                              const KatanaValue& value) const
-{
-    dest_property.setValue((float)value.fValue);
-}
+	void bwFloatPropertyParser::parseIntoProperty(bwStyleProperty& dest_property,
+		const KatanaValue& value) const
+	{
+		dest_property.setValue((float)value.fValue);
+	}
 
-bool bwColorPropertyParser::canParseFunction(const std::string& function_name) const
-{
-    return (function_name == "rgb(") || (function_name == "rgba(");
-}
+	bool bwColorPropertyParser::canParseFunction(const std::string& function_name) const
+	{
+		return (function_name == "rgb(") || (function_name == "rgba(");
+	}
 
-bwColor bwColorPropertyParser::parseFromFunction(const KatanaValue& value) const
-{
-    if (!canParseFunction(value.function->name))
-    {
-        throw bwPropertyParsingFailure();
-    }
+	bwColor bwColorPropertyParser::parseFromFunction(const KatanaValue& value) const
+	{
+		if (!canParseFunction(value.function->name))
+		{
+			throw bwPropertyParsingFailure();
+		}
 
-    {
-        bwColor color;
+		{
+			bwColor color;
 
-        for (uint32_t i = 0, color_index = 0; i < value.function->args->length; i++)
-        {
-            auto* arg_value = (KatanaValue*)value.function->args->data[i];
+			for (uint32_t i = 0, color_index = 0; i < value.function->args->length; i++)
+			{
+				auto* arg_value = (KatanaValue*)value.function->args->data[i];
 
-            if (arg_value->unit == KATANA_VALUE_PARSER_OPERATOR)
-            {
-                continue;
-            }
-            assert(arg_value->unit == KATANA_VALUE_NUMBER);
-            color[color_index++] = float(arg_value->fValue / 255.0f);
-        }
+				if (arg_value->unit == KATANA_VALUE_PARSER_OPERATOR)
+				{
+					continue;
+				}
+				assert(arg_value->unit == KATANA_VALUE_NUMBER);
+				color[color_index++] = float(arg_value->fValue / 255.0f);
+			}
 
-        return color;
-    }
-}
+			return color;
+		}
+	}
 
-void bwColorPropertyParser::parseIntoProperty(bwStyleProperty& dest_property,
-                                              const KatanaValue& value) const
-{
-    switch (value.unit)
-    {
-    case KATANA_VALUE_PARSER_FUNCTION:
-        dest_property.setValue(parseFromFunction(value));
-        break;
-    default:
-        throw bwPropertyParsingFailure();
-    }
-}
+	void bwColorPropertyParser::parseIntoProperty(bwStyleProperty& dest_property,
+		const KatanaValue& value) const
+	{
+		switch (value.unit)
+		{
+		case KATANA_VALUE_PARSER_FUNCTION:
+			dest_property.setValue(parseFromFunction(value));
+			break;
+		default:
+			throw bwPropertyParsingFailure();
+		}
+	}
 
 }  // namespace bWidgets

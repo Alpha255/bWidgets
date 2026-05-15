@@ -9,111 +9,110 @@
 
 namespace bWidgets
 {
+	class bwPaintEngine;
+	class bwPolygon;
+	class bwStyle;
+	class bwWidgetBaseStyle;
 
-class bwPaintEngine;
-class bwPolygon;
-class bwStyle;
-class bwWidgetBaseStyle;
+	enum RoundboxCorner
+	{
+		NONE = 0,
+		BOTTOM_LEFT = (1 << 0),
+		BOTTOM_RIGHT = (1 << 1),
+		TOP_LEFT = (1 << 2),
+		TOP_RIGHT = (1 << 3),
+		/* Convenience */
+		ALL = (BOTTOM_LEFT | BOTTOM_RIGHT | TOP_LEFT | TOP_RIGHT),
+	};
 
-enum RoundboxCorner
-{
-    NONE = 0,
-    BOTTOM_LEFT = (1 << 0),
-    BOTTOM_RIGHT = (1 << 1),
-    TOP_LEFT = (1 << 2),
-    TOP_RIGHT = (1 << 3),
-    /* Convenience */
-    ALL = (BOTTOM_LEFT | BOTTOM_RIGHT | TOP_LEFT | TOP_RIGHT),
-};
+	enum class TextAlignment
+	{
+		LEFT,
+		CENTER,
+		RIGHT,
+	};
 
-enum class TextAlignment
-{
-    LEFT,
-    CENTER,
-    RIGHT,
-};
+	enum class Direction
+	{
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT,
+	};
 
-enum class Direction
-{
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-};
+	class bwPainter
+	{
+	public:
+		enum class DrawType
+		{
+			FILLED,
+			OUTLINE,
+			LINE,
+		};
 
-class bwPainter
-{
-public:
-    enum class DrawType
-    {
-        FILLED,
-        OUTLINE,
-        LINE,
-    };
+		bwPainter();
 
-    bwPainter();
+		void drawPolygon(const bwPolygon& poly);
+		void drawText(const std::string& text,
+			const bwRectanglePixel& rectangle,
+			const TextAlignment align) const;
+		void drawIcon(const bwIconInterface&, const bwRectanglePixel&, const bwColor& color) const;
+		void drawIcon(const bwIconInterface& interface, const bwRectanglePixel& rect) const
+		{
+			drawIcon(interface, rect, bwColor::White);
+		}
 
-    void drawPolygon(const bwPolygon& poly);
-    void drawText(const std::string& text,
-                  const bwRectanglePixel& rectangle,
-                  const TextAlignment align) const;
-    void drawIcon(const bwIconInterface&, const bwRectanglePixel&, const bwColor& color) const;
-    void drawIcon(const bwIconInterface& interface, const bwRectanglePixel& rect) const
-    {
-        drawIcon(interface, rect, bwColor::White);
-    }
+		void setActiveColor(const bwColor& color);
+		const bwColor& getActiveColor() const;
+		const bwColor& getVertexColor(const size_t vertex_index) const;
 
-    void setActiveColor(const bwColor& color);
-    const bwColor& getActiveColor() const;
-    const bwColor& getVertexColor(const size_t vertex_index) const;
+		void setContentMask(const bwRectanglePixel& value);
+		const bwRectanglePixel& getContentMask() const;
 
-    void setContentMask(const bwRectanglePixel& value);
-    const bwRectanglePixel& getContentMask() const;
+		void enableGradient(const bwGradient& gradient);
+		bool isGradientEnabled() const;
 
-    void enableGradient(const bwGradient& gradient);
-    bool isGradientEnabled() const;
+		void drawTextAndIcon(const std::string& text,
+			const bwIconInterface* icon,
+			const bwRectanglePixel& rectangle,
+			const TextAlignment alignment,
+			float dpi_fac,
+			const bwColor& color) const;
+		void drawTextAndIcon(
+			const std::string& text,
+			const bwIconInterface* icon,
+			const bwRectanglePixel& rectangle,
+			const TextAlignment alignment,
+			float dpi_fac) const
+		{
+			drawTextAndIcon(text, icon, rectangle, alignment, dpi_fac, bwColor::White);
+		}
 
-    void drawTextAndIcon(const std::string& text,
-                         const bwIconInterface* icon,
-                         const bwRectanglePixel& rectangle,
-                         const TextAlignment alignment,
-                         float dpi_fac,
-                         const bwColor& color) const;
-    void drawTextAndIcon(
-        const std::string& text,
-        const bwIconInterface* icon,
-        const bwRectanglePixel& rectangle,
-        const TextAlignment alignment,
-        float dpi_fac) const
-    {
-        drawTextAndIcon(text, icon, rectangle, alignment, dpi_fac, bwColor::White);
-    }
+		// Primitives
+		void drawRoundbox(const bwRectanglePixel& rect, uint32_t corners, const float radius);
+		void drawRectangle(const bwRectanglePixel& rect);
+		void drawRoundboxWidgetBase(const bwWidgetBaseStyle& base_style,
+			const bwStyle& style,
+			const bwRectanglePixel& rectangle,
+			const bwGradient& gradient,
+			const float radius);
+		void drawCheckMark(const bwRectanglePixel& rect);
+		void drawTriangle(const bwRectanglePixel& rect, Direction direction);
+		void drawLine(const bwPoint& from, const bwPoint& to);
 
-    // Primitives
-    void drawRoundbox(const bwRectanglePixel& rect, uint32_t corners, const float radius);
-    void drawRectangle(const bwRectanglePixel& rect);
-    void drawRoundboxWidgetBase(const bwWidgetBaseStyle& base_style,
-                                const bwStyle& style,
-                                const bwRectanglePixel& rectangle,
-                                const bwGradient& gradient,
-                                const float radius);
-    void drawCheckMark(const bwRectanglePixel& rect);
-    void drawTriangle(const bwRectanglePixel& rect, Direction direction);
-    void drawLine(const bwPoint& from, const bwPoint& to);
+		static std::unique_ptr<bwPaintEngine> s_paint_engine;
 
-    static std::unique_ptr<bwPaintEngine> s_paint_engine;
+		bool use_antialiasing{ false };
+		DrawType active_drawtype;
 
-    bool use_antialiasing{ false };
-    DrawType active_drawtype;
+	private:
+		void fillVertexColorsWithGradient(const bwPolygon& polygon,
+			const bwRectanglePixel& bounding_box);
 
-private:
-    void fillVertexColorsWithGradient(const bwPolygon& polygon,
-                                      const bwRectanglePixel& bounding_box);
-
-    bwColor active_color;
-    std::vector<bwColor> vert_colors;
-    std::unique_ptr<bwGradient> active_gradient;
-    bwRectanglePixel content_mask;
-};
+		bwColor active_color;
+		std::vector<bwColor> vert_colors;
+		std::unique_ptr<bwGradient> active_gradient;
+		bwRectanglePixel content_mask;
+	};
 
 }  // namespace bWidgets

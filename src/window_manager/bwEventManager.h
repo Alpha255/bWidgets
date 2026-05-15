@@ -31,38 +31,32 @@ struct GLFWwindow;
 
 namespace bWidgets
 {
+	class bwEventManager
+	{
+	public:
+		// Constructor is private (singleton!)
+		static bwEventManager& ensureEventManager();
+		static void setupWindowHandlers(bwWindow& window);
 
-class bwEventManager
-{
-public:
-    // Constructor is private (singleton!)
-    static bwEventManager& ensureEventManager();
-    static void setupWindowHandlers(bwWindow& window);
+		void waitEvents();
+		bool processEvents(bwWindowManager::WindowList& windows);
 
-    void waitEvents();
-    bool processEvents(bwWindowManager::WindowList& windows);
+		bool isClickEvent();
 
-    bool isClickEvent();
+	private:
+		bwEventManager() = default;
+		~bwEventManager() = default;
+		bwEventManager(bwEventManager const&) = delete;
 
-private:
-    bwEventManager() = default;
-    ~bwEventManager() = default;
-    bwEventManager(bwEventManager const&) = delete;
+		void operator=(bwEventManager const&) = delete;
 
-    void operator=(bwEventManager const&) = delete;
-
-    static void handleWindowResizeEvent(GLFWwindow* glfw_win, int32_t new_win_x, int32_t new_win_y);
-    static void handleWindowContentScaleEvent(GLFWwindow* glfw_win,
-                                              float new_scale_x,
-                                              float new_scale_y);
-    static void handleMouseMovementEvent(GLFWwindow* glfw_win, double x, double y);
-    static void handleMouseButtonEvent(GLFWwindow* glfw_win,
-                                       int32_t glfw_button,
-                                       int32_t glfw_action,
-                                       int32_t glfw_mods);
-    static void handleMouseScrollEvent(GLFWwindow* glfw_win, double value_x, double value_y);
-    static bwMouseButtonEvent::Button convertGlfwMouseButton(int32_t glfw_button);
-    static bwMouseEvent::Type convertGlfwMouseButtonAction(int32_t glfw_action);
-};
+		static void handleWindowResizeEvent(GLFWwindow* glfw_win, int32_t new_win_x, int32_t new_win_y);
+		static void handleWindowContentScaleEvent(GLFWwindow* glfw_win, float new_scale_x, float new_scale_y);
+		static void handleMouseMovementEvent(GLFWwindow* glfw_win, double x, double y);
+		static void handleMouseButtonEvent(GLFWwindow* glfw_win, int32_t glfw_button, int32_t glfw_action, int32_t glfw_mods);
+		static void handleMouseScrollEvent(GLFWwindow* glfw_win, double value_x, double value_y);
+		static bwMouseButtonEvent::Button convertGlfwMouseButton(int32_t glfw_button);
+		static bwMouseEvent::Type convertGlfwMouseButtonAction(int32_t glfw_action);
+	};
 
 }  // namespace bWidgets

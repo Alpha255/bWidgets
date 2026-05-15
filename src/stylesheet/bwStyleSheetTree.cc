@@ -23,121 +23,119 @@
 
 namespace bWidgets
 {
+	class bwStateProperties
+	{
+	public:
+		const bwStyleProperty* lookupProperty(const std::string_view& identifier) const;
+		bwStyleProperty& ensureProperty(const std::string_view& identifier, bwStyleProperty::Type type);
 
-class bwStateProperties
-{
-public:
-    const bwStyleProperty* lookupProperty(const std::string_view& identifier) const;
-    bwStyleProperty& ensureProperty(const std::string_view& identifier,
-                                    bwStyleProperty::Type type);
+	private:
+		bwStyleProperties properties;
+	};
 
-private:
-    bwStyleProperties properties;
-};
+	class bwStyleSheetNode
+	{
+	public:
+		class bwStateProperties state_properties[int32_t(bwWidget::State::STATE_TOT)];
+	};
 
-class bwStyleSheetNode
-{
-public:
-    class bwStateProperties state_properties[int32_t(bwWidget::State::STATE_TOT)];
-};
+	bwStyleSheetNode* bwStyleSheetTree::lookupNode(const std::string_view& name) const
+	{
+		const auto& node_iterator = std::find_if(
+			nodes.begin(), nodes.end(), [&name](auto& key_value_pair) {
+				return key_value_pair.first == name;
+			});
+		if (node_iterator == nodes.end())
+		{
+			return nullptr;
+		}
 
-bwStyleSheetNode* bwStyleSheetTree::lookupNode(const std::string_view& name) const
-{
-    const auto& node_iterator = std::find_if(
-        nodes.begin(), nodes.end(), [&name](auto& key_value_pair) {
-            return key_value_pair.first == name;
-        });
-    if (node_iterator == nodes.end())
-    {
-        return nullptr;
-    }
+		return node_iterator->second;
+	}
 
-    return node_iterator->second;
-}
+	bwStyleSheetNode& bwStyleSheetTree::ensureNode(const std::string_view& class_name)
+	{
+		if (bwStyleSheetNode* node = lookupNode(class_name))
+		{
+			return *node;
+		}
 
-bwStyleSheetNode& bwStyleSheetTree::ensureNode(const std::string_view& class_name)
-{
-    if (bwStyleSheetNode* node = lookupNode(class_name))
-    {
-        return *node;
-    }
+		bwStyleSheetNode* new_node = new bwStyleSheetNode;
+		nodes.insert({ std::string(class_name), new_node });
+		return *new_node;
+	}
 
-    bwStyleSheetNode* new_node = new bwStyleSheetNode;
-    nodes.insert({ std::string(class_name), new_node });
-    return *new_node;
-}
+	bwStyleSheetTree::~bwStyleSheetTree()
+	{
+		while (!nodes.empty())
+		{
+			auto iterator = nodes.begin();
+			bwStyleSheetNode* node = iterator->second;
 
-bwStyleSheetTree::~bwStyleSheetTree()
-{
-    while (!nodes.empty())
-    {
-        auto iterator = nodes.begin();
-        bwStyleSheetNode* node = iterator->second;
+			nodes.erase(iterator);
+			delete node;
+		}
+	}
 
-        nodes.erase(iterator);
-        delete node;
-    }
-}
+	bwStyleProperty& bwStyleSheetTree::ensureNodeWithProperty(const std::string_view& class_name,
+		const bwWidget::State pseudo_state,
+		const std::string_view& identifier,
+		const bwStyleProperty::Type type)
+	{
+		bwStyleSheetNode& node = ensureNode(class_name);
+		bwStateProperties& state_properties = node.state_properties[int32_t(pseudo_state)];
 
-bwStyleProperty& bwStyleSheetTree::ensureNodeWithProperty(const std::string_view& class_name,
-                                                          const bwWidget::State pseudo_state,
-                                                          const std::string_view& identifier,
-                                                          const bwStyleProperty::Type type)
-{
-    bwStyleSheetNode& node = ensureNode(class_name);
-    bwStateProperties& state_properties = node.state_properties[int32_t(pseudo_state)];
+		return state_properties.ensureProperty(identifier, type);
+	}
 
-    return state_properties.ensureProperty(identifier, type);
-}
+	static const bwStyleProperty* state_properties_lookup_property(
+		const std::string_view& property_name, bwStateProperties& state_properties)
+	{
+		return state_properties.lookupProperty(property_name);
+	}
 
-static const bwStyleProperty* state_properties_lookup_property(
-    const std::string_view& property_name, bwStateProperties& state_properties)
-{
-    return state_properties.lookupProperty(property_name);
-}
+	const bwStyleProperty* bwStyleSheetTree::resolveProperty(const std::string_view& class_name,
+		const std::string_view& property_name,
+		const bwWidget::State state)
+	{
+		if (bwStyleSheetNode* node = lookupNode(class_name))
+		{
+			const bwStyleProperty* property = state_properties_lookup_property(
+				property_name, node->state_properties[int32_t(state)]);
 
-const bwStyleProperty* bwStyleSheetTree::resolveProperty(const std::string_view& class_name,
-                                                         const std::string_view& property_name,
-                                                         const bwWidget::State state)
-{
-    if (bwStyleSheetNode* node = lookupNode(class_name))
-    {
-        const bwStyleProperty* property = state_properties_lookup_property(
-            property_name, node->state_properties[int32_t(state)]);
+			if (!property && (state != bwWidget::State::NORMAL))
+			{
+				// Property for this state not set, check for STATE_NORMAL.
+				property = state_properties_lookup_property(
+					property_name, node->state_properties[int32_t(bwWidget::State::NORMAL)]);
+			}
 
-        if (!property && (state != bwWidget::State::NORMAL))
-        {
-            // Property for this state not set, check for STATE_NORMAL.
-            property = state_properties_lookup_property(
-                property_name, node->state_properties[int32_t(bwWidget::State::NORMAL)]);
-        }
+			return property;
+		}
 
-        return property;
-    }
+		return nullptr;
+	}
 
-    return nullptr;
-}
+	const bwStyleProperty* bwStateProperties::lookupProperty(const std::string_view& identifier) const
+	{
+		return properties.lookup(identifier);
+	}
 
-const bwStyleProperty* bwStateProperties::lookupProperty(const std::string_view& identifier) const
-{
-    return properties.lookup(identifier);
-}
+	/**
+	 * Performs a identifier based lookup of \a property and adds it if not found.
+	 */
 
-/**
- * Performs a identifier based lookup of \a property and adds it if not found.
- */
-bwStyleProperty& bwStateProperties::ensureProperty(const std::string_view& identifier,
-                                                   bwStyleProperty::Type type)
-{
-    for (auto& iter_property : properties)
-    {
-        if (iter_property->getIdentifier() == identifier)
-        {
-            return *iter_property;
-        }
-    }
+	bwStyleProperty& bwStateProperties::ensureProperty(const std::string_view& identifier, bwStyleProperty::Type type)
+	{
+		for (auto& iter_property : properties)
+		{
+			if (iter_property->getIdentifier() == identifier)
+			{
+				return *iter_property;
+			}
+		}
 
-    return properties.addProperty(identifier, type);
-}
+		return properties.addProperty(identifier, type);
+	}
 
 }  // namespace bWidgets

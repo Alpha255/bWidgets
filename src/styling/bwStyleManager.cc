@@ -9,56 +9,55 @@
 
 namespace bWidgets
 {
+	bwStyleManager& bwStyleManager::getStyleManager()
+	{
+		static bwStyleManager instance;
+		return instance;
+	}
 
-bwStyleManager& bwStyleManager::getStyleManager()
-{
-    static bwStyleManager instance;
-    return instance;
-}
+	std::unique_ptr<bwStyle> bwStyleManager::createStyleFromTypeID(bwStyle::TypeID type)
+	{
+		using std::make_unique;
 
-std::unique_ptr<bwStyle> bwStyleManager::createStyleFromTypeID(bwStyle::TypeID type)
-{
-    using std::make_unique;
+		switch (type)
+		{
+		case bwStyle::TypeID::CLASSIC:
+			return make_unique<bwStyleClassic>();
+		case bwStyle::TypeID::CLASSIC_CSS:
+			return make_unique<bwStyleCSS>();
+		case bwStyle::TypeID::FLAT_GREY:
+			return make_unique<bwStyleFlat>();
+		case bwStyle::TypeID::FLAT_DARK:
+			return make_unique<bwStyleFlatDark>();
+		case bwStyle::TypeID::FLAT_LIGHT:
+			return make_unique<bwStyleFlatLight>();
+		default:
+			assert(0);
+			return nullptr;
+		}
+	}
 
-    switch (type)
-    {
-    case bwStyle::TypeID::CLASSIC:
-        return make_unique<bwStyleClassic>();
-    case bwStyle::TypeID::CLASSIC_CSS:
-        return make_unique<bwStyleCSS>();
-    case bwStyle::TypeID::FLAT_GREY:
-        return make_unique<bwStyleFlat>();
-    case bwStyle::TypeID::FLAT_DARK:
-        return make_unique<bwStyleFlatDark>();
-    case bwStyle::TypeID::FLAT_LIGHT:
-        return make_unique<bwStyleFlatLight>();
-    default:
-        assert(0);
-        return nullptr;
-    }
-}
+	void bwStyleManager::registerDefaultStyleTypes()
+	{
+		builtin_style_types[int32_t(bwStyle::TypeID::CLASSIC)].type_id = bwStyle::TypeID::CLASSIC;
+		builtin_style_types[int32_t(bwStyle::TypeID::CLASSIC)].name = "Classic";
 
-void bwStyleManager::registerDefaultStyleTypes()
-{
-    builtin_style_types[int32_t(bwStyle::TypeID::CLASSIC)].type_id = bwStyle::TypeID::CLASSIC;
-    builtin_style_types[int32_t(bwStyle::TypeID::CLASSIC)].name = "Classic";
+		builtin_style_types[int32_t(bwStyle::TypeID::CLASSIC_CSS)].type_id = bwStyle::TypeID::CLASSIC_CSS;
+		builtin_style_types[int32_t(bwStyle::TypeID::CLASSIC_CSS)].name = "Classic (CSS)";
 
-    builtin_style_types[int32_t(bwStyle::TypeID::CLASSIC_CSS)].type_id = bwStyle::TypeID::CLASSIC_CSS;
-    builtin_style_types[int32_t(bwStyle::TypeID::CLASSIC_CSS)].name = "Classic (CSS)";
+		builtin_style_types[int32_t(bwStyle::TypeID::FLAT_GREY)].type_id = bwStyle::TypeID::FLAT_GREY;
+		builtin_style_types[int32_t(bwStyle::TypeID::FLAT_GREY)].name = "Flat Grey";
 
-    builtin_style_types[int32_t(bwStyle::TypeID::FLAT_GREY)].type_id = bwStyle::TypeID::FLAT_GREY;
-    builtin_style_types[int32_t(bwStyle::TypeID::FLAT_GREY)].name = "Flat Grey";
+		builtin_style_types[int32_t(bwStyle::TypeID::FLAT_DARK)].type_id = bwStyle::TypeID::FLAT_DARK;
+		builtin_style_types[int32_t(bwStyle::TypeID::FLAT_DARK)].name = "Flat Dark (CSS)";
 
-    builtin_style_types[int32_t(bwStyle::TypeID::FLAT_DARK)].type_id = bwStyle::TypeID::FLAT_DARK;
-    builtin_style_types[int32_t(bwStyle::TypeID::FLAT_DARK)].name = "Flat Dark (CSS)";
+		builtin_style_types[int32_t(bwStyle::TypeID::FLAT_LIGHT)].type_id = bwStyle::TypeID::FLAT_LIGHT;
+		builtin_style_types[int32_t(bwStyle::TypeID::FLAT_LIGHT)].name = "Flat Light (CSS)";
+	}
 
-    builtin_style_types[int32_t(bwStyle::TypeID::FLAT_LIGHT)].type_id = bwStyle::TypeID::FLAT_LIGHT;
-    builtin_style_types[int32_t(bwStyle::TypeID::FLAT_LIGHT)].name = "Flat Light (CSS)";
-}
-
-const bwStyleManager::StyleTypeArray& bwStyleManager::getBuiltinStyleTypes() const
-{
-    return builtin_style_types;
-}
+	const bwStyleManager::StyleTypeArray& bwStyleManager::getBuiltinStyleTypes() const
+	{
+		return builtin_style_types;
+	}
 
 }  // namespace bWidgets

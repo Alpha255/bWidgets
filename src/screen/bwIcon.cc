@@ -43,240 +43,238 @@
 
 namespace bWidgets
 {
+	struct IconReadData
+	{
+		png_structp png_ptr;
+		png_infop info_ptr;
+	};
 
-struct IconReadData
-{
-    png_structp png_ptr;
-    png_infop info_ptr;
-};
+	bwIconMapReader::bwIconMapReader()
+		: read_data(new IconReadData)
+	{
+		read_data->png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+		if (!read_data->png_ptr)
+		{
+			std::cout << "Error: Failed to create libPNG read_struct" << std::endl;
+			return;
+		}
 
-bwIconMapReader::bwIconMapReader()
-    : read_data(new IconReadData)
-{
-    read_data->png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-    if (!read_data->png_ptr)
-    {
-        std::cout << "Error: Failed to create libPNG read_struct" << std::endl;
-        return;
-    }
+		read_data->info_ptr = png_create_info_struct(read_data->png_ptr);
+		if (!read_data->info_ptr)
+		{
+			png_destroy_read_struct(&read_data->png_ptr, nullptr, nullptr);
+			std::cout << "Error: Failed to create libPNG info_struct" << std::endl;
+			return;
+		}
+	}
 
-    read_data->info_ptr = png_create_info_struct(read_data->png_ptr);
-    if (!read_data->info_ptr)
-    {
-        png_destroy_read_struct(&read_data->png_ptr, nullptr, nullptr);
-        std::cout << "Error: Failed to create libPNG info_struct" << std::endl;
-        return;
-    }
-}
+	bwIconMapReader::~bwIconMapReader()
+	{
+		png_destroy_info_struct(read_data->png_ptr, &read_data->info_ptr);
+		png_destroy_read_struct(&read_data->png_ptr, nullptr, nullptr);
+		read_data.reset();
+	}
 
-bwIconMapReader::~bwIconMapReader()
-{
-    png_destroy_info_struct(read_data->png_ptr, &read_data->info_ptr);
-    png_destroy_read_struct(&read_data->png_ptr, nullptr, nullptr);
-    read_data.reset();
-}
+	static bool icons_check_if_file_is_png(File& file)
+	{
+		const int32_t num_header_bytes = 8;
+		char header[num_header_bytes];
 
-static bool icons_check_if_file_is_png(File& file)
-{
-    const int32_t num_header_bytes = 8;
-    char header[num_header_bytes];
+		if (file.readBytes(header, num_header_bytes, true))
+		{
+			return png_sig_cmp((png_const_bytep)header, 0, num_header_bytes) == 0;
+		}
 
-    if (file.readBytes(header, num_header_bytes, true))
-    {
-        return png_sig_cmp((png_const_bytep)header, 0, num_header_bytes) == 0;
-    }
+		return false;
+	}
 
-    return false;
-}
+	static void libpng_copy_rows_into_pixmap(bwPixmap& pixmap,
+		const png_bytep* row_pointers,
+		uint32_t position_x,
+		uint32_t position_y)
+	{
+		// Assumes pixmap channels and bit-depth match what row_pointers contains.
+		const int32_t height = pixmap.height();
+		const int32_t width = pixmap.width();
+		const uint32_t bytes_per_pixel = (pixmap.getBitDepth() / 8) * pixmap.getNumChannels();
 
-static void libpng_copy_rows_into_pixmap(bwPixmap& pixmap,
-                                         const png_bytep* row_pointers,
-                                         uint32_t position_x,
-                                         uint32_t position_y)
-{
-    // Assumes pixmap channels and bit-depth match what row_pointers contains.
-    const int32_t height = pixmap.height();
-    const int32_t width = pixmap.width();
-    const uint32_t bytes_per_pixel = (pixmap.getBitDepth() / 8) * pixmap.getNumChannels();
+		for (int32_t row = 0; row < height; row++)
+		{
+			std::copy_n(&row_pointers[position_y - row][position_x * bytes_per_pixel],
+				width * bytes_per_pixel,
+				&pixmap.getBytes()[row * width * bytes_per_pixel]);
+		}
+	}
 
-    for (int32_t row = 0; row < height; row++)
-    {
-        std::copy_n(&row_pointers[position_y - row][position_x * bytes_per_pixel],
-                    width * bytes_per_pixel,
-                    &pixmap.getBytes()[row * width * bytes_per_pixel]);
-    }
-}
+	static void libpng_read_from_istream(png_structp png_ptr, png_bytep data, png_size_t length)
+	{
+		File& file = *(File*)png_get_io_ptr(png_ptr);
+		if (!file.readBytes((char*)data, (uint32_t)length, false))
+		{
+			std::cout << "Error reading PNG" << std::endl;
+		}
+	}
 
-static void libpng_read_from_istream(png_structp png_ptr, png_bytep data, png_size_t length)
-{
-    File& file = *(File*)png_get_io_ptr(png_ptr);
-    if (!file.readBytes((char*)data, (uint32_t)length, false))
-    {
-        std::cout << "Error reading PNG" << std::endl;
-    }
-}
+	std::unique_ptr<bwIconMap> bwIconMapReader::readIconMap(File& file)
+	{
+		auto path = file.getPath();
+		std::string extension = path.substr(path.find_last_of(".") + 1);
+		std::transform(extension.begin(), extension.end(), extension.begin(), [](char c) { return (char)tolower(c); });
 
-std::unique_ptr<bwIconMap> bwIconMapReader::readIconMap(File& file)
-{
-    auto path = file.getPath();
-    std::string extension = path.substr(path.find_last_of(".") + 1);
-    std::transform(extension.begin(), extension.end(), extension.begin(), [](char c) { return (char)tolower(c); });
+		if (extension == "png")
+		{
+			return readIconMapFromPNGFile(file);
+		}
 
-    if (extension == "png")
-    {
-        return readIconMapFromPNGFile(file);
-    }
+		return readIconMapFromSVGFiles(file);
+	}
 
-    return readIconMapFromSVGFiles(file);
-}
+	std::unique_ptr<bwIconMap> bwIconMapReader::readIconMapFromPNGFile(File& file)
+	{
+		if (!icons_check_if_file_is_png(file))
+		{
+			std::cout << "Error: File is not a valid PNG (" << file << ")" << std::endl;
+			return nullptr;
+		}
 
-std::unique_ptr<bwIconMap> bwIconMapReader::readIconMapFromPNGFile(File& file)
-{
-    if (!icons_check_if_file_is_png(file))
-    {
-        std::cout << "Error: File is not a valid PNG (" << file << ")" << std::endl;
-        return nullptr;
-    }
+		png_set_read_fn(read_data->png_ptr, (png_voidp)&file, libpng_read_from_istream);
 
-    png_set_read_fn(read_data->png_ptr, (png_voidp)&file, libpng_read_from_istream);
+		png_read_png(read_data->png_ptr, read_data->info_ptr, PNG_TRANSFORM_IDENTITY, nullptr);
 
-    png_read_png(read_data->png_ptr, read_data->info_ptr, PNG_TRANSFORM_IDENTITY, nullptr);
+		const png_uint_32 width = png_get_image_width(read_data->png_ptr, read_data->info_ptr);
+		const png_uint_32 height = png_get_image_height(read_data->png_ptr, read_data->info_ptr);
+		const png_byte bit_depth = png_get_bit_depth(read_data->png_ptr, read_data->info_ptr);
+		const png_byte channels = png_get_channels(read_data->png_ptr, read_data->info_ptr);
 
-    const png_uint_32 width = png_get_image_width(read_data->png_ptr, read_data->info_ptr);
-    const png_uint_32 height = png_get_image_height(read_data->png_ptr, read_data->info_ptr);
-    const png_byte bit_depth = png_get_bit_depth(read_data->png_ptr, read_data->info_ptr);
-    const png_byte channels = png_get_channels(read_data->png_ptr, read_data->info_ptr);
+		png_bytep* row_pointers;
+		row_pointers = (png_byte**)png_get_rows(read_data->png_ptr, read_data->info_ptr);
 
-    png_bytep* row_pointers;
-    row_pointers = (png_byte**)png_get_rows(read_data->png_ptr, read_data->info_ptr);
+		assert((ICON_GRID_ROWS * (ICON_GRID_H + ICON_GRID_MARGIN) + (2 * ICON_GRID_MARGIN)) == height);
+		// Icon image contains 46 pixels for category labels on the right side.
+		assert((ICON_GRID_COLS * (ICON_GRID_W + ICON_GRID_MARGIN) + (2 * ICON_GRID_MARGIN)) == width - 46);
 
-    assert((ICON_GRID_ROWS * (ICON_GRID_H + ICON_GRID_MARGIN) + (2 * ICON_GRID_MARGIN)) == height);
-    // Icon image contains 46 pixels for category labels on the right side.
-    assert((ICON_GRID_COLS * (ICON_GRID_W + ICON_GRID_MARGIN) + (2 * ICON_GRID_MARGIN)) ==
-           width - 46);
+		// TODO Icons don't scale with interface scale yet.
+		std::unique_ptr<bwIconMap> icon_map(new bwIconMap);
+		for (int32_t y = 0, icon_index = 0; y < ICON_GRID_ROWS; y++)
+		{
+			for (int32_t x = 0; x < ICON_GRID_COLS; x++)
+			{
+				std::unique_ptr<bwIcon> icon(new bwIcon(ICON_GRID_W, channels, bit_depth, icon_map->getPixelData(icon_index)));
 
-    // TODO Icons don't scale with interface scale yet.
-    std::unique_ptr<bwIconMap> icon_map(new bwIconMap);
-    for (int32_t y = 0, icon_index = 0; y < ICON_GRID_ROWS; y++)
-    {
-        for (int32_t x = 0; x < ICON_GRID_COLS; x++)
-        {
-            std::unique_ptr<bwIcon> icon(new bwIcon(ICON_GRID_W, channels, bit_depth, icon_map->getPixelData(icon_index)));
+				libpng_copy_rows_into_pixmap(
+					icon->getPixmap(),
+					row_pointers,
+					x * (ICON_GRID_W + ICON_GRID_MARGIN) + ICON_GRID_MARGIN,
+					height - (y * (ICON_GRID_H + ICON_GRID_MARGIN) + ICON_GRID_MARGIN));
+				icon_map->icons.emplace_back(std::move(icon));
 
-            libpng_copy_rows_into_pixmap(
-                icon->getPixmap(),
-                row_pointers,
-                x * (ICON_GRID_W + ICON_GRID_MARGIN) + ICON_GRID_MARGIN,
-                height - (y * (ICON_GRID_H + ICON_GRID_MARGIN) + ICON_GRID_MARGIN));
-            icon_map->icons.emplace_back(std::move(icon));
+				++icon_index;
+			}
+		}
 
-            ++icon_index;
-        }
-    }
+		return icon_map;
+	}
 
-    return icon_map;
-}
+	std::unique_ptr<bwIconMap> bwIconMapReader::readIconMapFromSVGFiles(File& directory)
+	{
+		std::unique_ptr<bwIconMap> iconMap(new bwIconMap);
 
-std::unique_ptr<bwIconMap> bwIconMapReader::readIconMapFromSVGFiles(File& directory)
-{
-    std::unique_ptr<bwIconMap> iconMap(new bwIconMap);
+		constexpr size_t prefixLen = sizeof("_icon") - 1;
 
-    constexpr size_t prefixLen = sizeof("_icon") - 1;
+		for (uint32_t i = 0; i < (uint32_t)BIFIconSvg::BIFSVGICONID_LAST; i++)
+		{
+			assert(i < MAGIC_ENUM_RANGE_MAX);
 
-    for (uint32_t i = 0; i < (uint32_t)BIFIconSvg::BIFSVGICONID_LAST; i++)
-    {
-        assert(i < MAGIC_ENUM_RANGE_MAX);
+			auto name = std::string(magic_enum::enum_name(static_cast<BIFIconSvg>(i)));
 
-        auto name = std::string(magic_enum::enum_name(static_cast<BIFIconSvg>(i)));
+			if (name.empty())
+			{
+				std::cout << "Warning: No name found for icon enum value: " << i << std::endl;
+				continue;
+			}
 
-        if (name.empty())
-        {
-            std::cout << "Warning: No name found for icon enum value: " << i << std::endl;
-            continue;
-        }
+			name = name.substr(prefixLen);
+			name += ".svg";
 
-        name = name.substr(prefixLen);
-        name += ".svg";
+			std::transform(name.begin(), name.end(), name.begin(), [](char c) { return (char)tolower(c); });
 
-        std::transform(name.begin(), name.end(), name.begin(), [](char c) { return (char)tolower(c); });
+			auto path = directory.getPath() + "/" + name;
 
-        auto path = directory.getPath() + "/" + name;
+			if (!std::filesystem::exists(path))
+			{
+				std::cout << "Warning: SVG icon file not found: " << path << std::endl;
+				continue;
+			}
 
-        if (!std::filesystem::exists(path))
-        {
-            std::cout << "Warning: SVG icon file not found: " << path << std::endl;
-            continue;
-        }
+			auto svgImage = nsvgParseFromFile(path.c_str(), "px", 96.0f);
+			if (!svgImage)
+			{
+				std::cout << "Warning: Failed to parse SVG icon file: " << path << std::endl;
+				continue;
+			}
 
-        auto svgImage = nsvgParseFromFile(path.c_str(), "px", 96.0f);
-        if (!svgImage)
-        {
-            std::cout << "Warning: Failed to parse SVG icon file: " << path << std::endl;
-            continue;
-        }
+			auto rasterizer = nsvgCreateRasterizer();
+			constexpr int32_t size = std::max(ICON_GRID_W, ICON_GRID_H);
+			float scale = svgImage->width ? (float)size / svgImage->width : 1.0f;
 
-        auto rasterizer = nsvgCreateRasterizer();
-        constexpr int32_t size = std::max(ICON_GRID_W, ICON_GRID_H);
-        float scale = svgImage->width ? (float)size / svgImage->width : 1.0f;
+			std::unique_ptr<bwIcon> icon(new bwIcon(size,
+				bwIconMap::defaultNumChannel,
+				bwIconMap::defaultBitsPerChannel,
+				iconMap->getPixelData(i)));
 
-        std::unique_ptr<bwIcon> icon(new bwIcon(size,
-            bwIconMap::defaultNumChannel,
-            bwIconMap::defaultBitsPerChannel,
-            iconMap->getPixelData(i)));
+			nsvgRasterize(rasterizer,
+				svgImage,
+				0.0f,
+				0.0f,
+				scale,
+				icon->getPixmap().getBytes(),
+				size,
+				size,
+				size * bwIconMap::defaultNumChannel);
+			nsvgDeleteRasterizer(rasterizer);
 
-        nsvgRasterize(rasterizer,
-                      svgImage,
-                      0.0f,
-                      0.0f,
-                      scale,
-                      icon->getPixmap().getBytes(),
-                      size,
-                      size,
-                      size * bwIconMap::defaultNumChannel);
-        nsvgDeleteRasterizer(rasterizer);
+			nsvgDelete(svgImage);
 
-        nsvgDelete(svgImage);
+			iconMap->icons.emplace_back(std::move(icon));
+		}
 
-        iconMap->icons.emplace_back(std::move(icon));
-    }
+		return iconMap;
+	}
 
-    return iconMap;
-}
+	// --------------------------------------------------------------------
 
-// --------------------------------------------------------------------
+	bwIcon::bwIcon(const uint32_t size,
+		const uint32_t num_channels,
+		const uint32_t bits_per_channel,
+		unsigned char* pixelData)
+		: _pixmap(size, size, num_channels, bits_per_channel, 0u, pixelData)
+	{
+	}
 
-bwIcon::bwIcon(const uint32_t size,
-               const uint32_t num_channels,
-               const uint32_t bits_per_channel,
-               unsigned char* pixelData)
-    : _pixmap(size, size, num_channels, bits_per_channel, 0u, pixelData)
-{
-}
+	bool bwIcon::isValid() const
+	{
+		return true;
+	}
 
-bool bwIcon::isValid() const
-{
-    return true;
-}
+	bwPixmap& bwIcon::getPixmap()
+	{
+		return _pixmap;
+	}
 
-bwPixmap& bwIcon::getPixmap()
-{
-    return _pixmap;
-}
+	const bwPixmap& bwIcon::getPixmap() const
+	{
+		return _pixmap;
+	}
 
-const bwPixmap& bwIcon::getPixmap() const
-{
-    return _pixmap;
-}
+	bwIconMap::bwIconMap()
+	{
+		icons.reserve(numIcons);
+		iconPixelStorage.reset(new unsigned char[iconPixelStride * numIcons]());
+	}
 
-bwIconMap::bwIconMap()
-{
-    icons.reserve(numIcons);
-    iconPixelStorage.reset(new unsigned char[iconPixelStride * numIcons]());
-}
-
-bwIcon& bwIconMap::getIcon(uint32_t index)
-{
-    return *icons[index];
-}
+	bwIcon& bwIconMap::getIcon(uint32_t index)
+	{
+		return *icons[index];
+	}
 
 }  // namespace bWidgets

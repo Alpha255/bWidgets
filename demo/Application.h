@@ -23,28 +23,28 @@
 
 namespace bWidgetsDemo
 {
+	/**
+	 * Singleton class for general data of the bWidget Demo Application.
+	 */
 
-/**
- * Singleton class for general data of the bWidget Demo Application.
- */
-class Application
-{
-public:
-    static Application& ensureApplication();
+	class Application
+	{
+	public:
+		static Application& ensureApplication();
 
-    void setup();
-    void mainLoop();
-    void exit();
+		void setup();
+		void mainLoop();
+		void exit();
 
-    static float interfaceScale();
+		static float interfaceScale();
 
-private:
-    Application()
-    {
-    }
-    // Ensure uniqueness
-    Application(Application const&) = delete;
-    void operator=(Application const&) = delete;
-};
+	private:
+		Application()
+		{
+		}
+		// Ensure uniqueness
+		Application(Application const&) = delete;
+		void operator=(Application const&) = delete;
+	};
 
 }  // namespace bWidgetsDemo

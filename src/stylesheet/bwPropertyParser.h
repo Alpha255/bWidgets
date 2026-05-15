@@ -27,52 +27,51 @@ struct KatanaValue;
 
 namespace bWidgets
 {
+	class bwPropertyParsingFailure : public std::exception
+	{
+	public:
+		const char* what() const noexcept override
+		{
+			return "could not parse value for a property";
+		}
+	};
 
-class bwPropertyParsingFailure : public std::exception
-{
-public:
-    const char* what() const noexcept override
-    {
-        return "could not parse value for a property";
-    }
-};
+	class bwPropertyParser
+	{
+	public:
+		virtual ~bwPropertyParser() = default;
 
-class bwPropertyParser
-{
-public:
-    virtual ~bwPropertyParser() = default;
+		static std::unique_ptr<bwPropertyParser> newFromPropertyType(bwStyleProperty::Type);
 
-    static std::unique_ptr<bwPropertyParser> newFromPropertyType(bwStyleProperty::Type);
+		virtual void parseIntoProperty(bwStyleProperty&, const KatanaValue&) const = 0;
+	};
 
-    virtual void parseIntoProperty(bwStyleProperty&, const KatanaValue&) const = 0;
-};
+	class bwBooleanPropertyParser : public bwPropertyParser
+	{
+	public:
+		void parseIntoProperty(bwStyleProperty&, const KatanaValue&) const override;
+	};
 
-class bwBooleanPropertyParser : public bwPropertyParser
-{
-public:
-    void parseIntoProperty(bwStyleProperty&, const KatanaValue&) const override;
-};
+	class bwIntegerPropertyParser : public bwPropertyParser
+	{
+	public:
+		void parseIntoProperty(bwStyleProperty&, const KatanaValue&) const override;
+	};
 
-class bwIntegerPropertyParser : public bwPropertyParser
-{
-public:
-    void parseIntoProperty(bwStyleProperty&, const KatanaValue&) const override;
-};
+	class bwFloatPropertyParser : public bwPropertyParser
+	{
+	public:
+		void parseIntoProperty(bwStyleProperty&, const KatanaValue&) const override;
+	};
 
-class bwFloatPropertyParser : public bwPropertyParser
-{
-public:
-    void parseIntoProperty(bwStyleProperty&, const KatanaValue&) const override;
-};
+	class bwColorPropertyParser : public bwPropertyParser
+	{
+	public:
+		void parseIntoProperty(bwStyleProperty&, const KatanaValue&) const override;
 
-class bwColorPropertyParser : public bwPropertyParser
-{
-public:
-    void parseIntoProperty(bwStyleProperty&, const KatanaValue&) const override;
-
-private:
-    bwColor parseFromFunction(const KatanaValue&) const;
-    bool canParseFunction(const std::string&) const;
-};
+	private:
+		bwColor parseFromFunction(const KatanaValue&) const;
+		bool canParseFunction(const std::string&) const;
+	};
 
 }  // namespace bWidgets

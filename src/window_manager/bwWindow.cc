@@ -21,7 +21,8 @@
 
 #include "DefaultStage.h"
 #include "window_manager/bwEventManager.h"
-extern "C" {
+extern "C" 
+{
 #include "gawain/gwn_context.h"
 #include "gawain/gwn_immediate.h"
 }
@@ -32,135 +33,135 @@ extern "C" {
 
 namespace bWidgets
 {
+	bwWindow::bwWindow(const std::string& name, uint32_t size_x, uint32_t size_y)
+		: width(size_x)
+		, height(size_y)
+	{
+		//	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		//	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-bwWindow::bwWindow(const std::string& name, uint32_t size_x, uint32_t size_y)
-    : width(size_x), height(size_y)
-{
-    //	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-    //	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+		//	glfwWindowHint(GLFW_SAMPLES, 4);  // antialiasing
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);  // For MacOS
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 
-    //	glfwWindowHint(GLFW_SAMPLES, 4);  // antialiasing
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);  // For MacOS
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+		if (width == 0)
+		{
+			//		width = 0.8f * mode->width;
+		}
+		if (height == 0)
+		{
+			//		height = 0.8 * mode->height;
+		}
 
-    if (width == 0)
-    {
-        //		width = 0.8f * mode->width;
-    }
-    if (height == 0)
-    {
-        //		height = 0.8 * mode->height;
-    }
+		glfw_window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
+		glfwMakeContextCurrent(glfw_window);
 
-    glfw_window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
-    glfwMakeContextCurrent(glfw_window);
+		GPU_init();
+		gwn_context = GWN_context_create();
 
-    GPU_init();
-    gwn_context = GWN_context_create();
+		glEnable(GL_SCISSOR_TEST);
 
-    glEnable(GL_SCISSOR_TEST);
+		bwEventManager::setupWindowHandlers(*this);
+	}
 
-    bwEventManager::setupWindowHandlers(*this);
-}
+	void bwWindow::setupStage()
+	{
+		assert(stage);
 
-void bwWindow::setupStage()
-{
-    assert(stage);
+		float px_scale_x, px_scale_y;
+		glfwGetWindowContentScale(glfw_window, &px_scale_x, &px_scale_y);
+		stage->setContentScale(px_scale_x, px_scale_y);
+	}
 
-    float px_scale_x, px_scale_y;
-    glfwGetWindowContentScale(glfw_window, &px_scale_x, &px_scale_y);
-    stage->setContentScale(px_scale_x, px_scale_y);
-}
+	bwWindow::~bwWindow()
+	{
+		/* Let stage destruct shaders first. */
+		stage = nullptr;
 
-bwWindow::~bwWindow()
-{
-    /* Let stage destruct shaders first. */
-    stage = nullptr;
+		GWN_context_active_set(gwn_context);
+		GPU_exit();
+		GWN_context_discard(gwn_context);
 
-    GWN_context_active_set(gwn_context);
-    GPU_exit();
-    GWN_context_discard(gwn_context);
+		glfwMakeContextCurrent(nullptr);
+		glfwDestroyWindow(glfw_window);
+	}
 
-    glfwMakeContextCurrent(nullptr);
-    glfwDestroyWindow(glfw_window);
-}
+	void bwWindow::draw()
+	{
+		GWN_context_active_set(gwn_context);
+		immActivate();
 
-void bwWindow::draw()
-{
-    GWN_context_active_set(gwn_context);
-    immActivate();
+		if (stage)
+		{
+			stage->draw();
+		}
 
-    if (stage)
-    {
-        stage->draw();
-    }
+		immDeactivate();
+		GWN_context_active_set(nullptr);
 
-    immDeactivate();
-    GWN_context_active_set(nullptr);
+		glfwSwapBuffers(glfw_window);
+	}
 
-    glfwSwapBuffers(glfw_window);
-}
+	bwWindow::WindowAction bwWindow::processEvents()
+	{
+		if (glfwWindowShouldClose(glfw_window))
+		{
+			return WINDOW_ACTION_CLOSE;
+		}
 
-bwWindow::WindowAction bwWindow::processEvents()
-{
-    if (glfwWindowShouldClose(glfw_window))
-    {
-        return WINDOW_ACTION_CLOSE;
-    }
+		return WINDOW_ACTION_CONTINUE;
+	}
 
-    return WINDOW_ACTION_CONTINUE;
-}
+	bwPoint bwWindow::getCursorPosition() const
+	{
+		int32_t win_size_y;
+		double x, y;
 
-bwPoint bwWindow::getCursorPosition() const
-{
-    int32_t win_size_y;
-    double x, y;
+		glfwGetCursorPos(glfw_window, &x, &y);
+		glfwGetWindowSize(glfw_window, nullptr, &win_size_y);
 
-    glfwGetCursorPos(glfw_window, &x, &y);
-    glfwGetWindowSize(glfw_window, nullptr, &win_size_y);
-
-    /* Invert vertically. */
-    bwPoint position{ float(x), float(win_size_y - y) };
+		/* Invert vertically. */
+		bwPoint position{ float(x), float(win_size_y - y) };
 
 #ifndef __APPLE__
-    /* We need unscaled coordinates, which only Apple gives by default. */
-    float px_scale_x, px_scale_y;
-    glfwGetWindowContentScale(glfw_window, &px_scale_x, &px_scale_y);
-    position.x /= px_scale_x;
-    position.y /= px_scale_y;
+		/* We need unscaled coordinates, which only Apple gives by default. */
+		float px_scale_x, px_scale_y;
+		glfwGetWindowContentScale(glfw_window, &px_scale_x, &px_scale_y);
+		position.x /= px_scale_x;
+		position.y /= px_scale_y;
 #endif
 
-    return position;
-}
+		return position;
+	}
 
-void bwWindow::handleResizeEvent(const int32_t new_win_x, const int32_t new_win_y)
-{
-    width = new_win_x;
-    height = new_win_y;
-    stage->handleWindowResizeEvent(*this);
-}
+	void bwWindow::handleResizeEvent(const int32_t new_win_x, const int32_t new_win_y)
+	{
+		width = new_win_x;
+		height = new_win_y;
+		stage->handleWindowResizeEvent(*this);
+	}
 
-void bwWindow::handleContentScaleEvent(const float new_scale_x, const float new_scale_y)
-{
-    stage->setContentScale(new_scale_x, new_scale_y);
-}
+	void bwWindow::handleContentScaleEvent(const float new_scale_x, const float new_scale_y)
+	{
+		stage->setContentScale(new_scale_x, new_scale_y);
+	}
 
-GLFWwindow& bwWindow::getGlfwWindow() const
-{
-    return *glfw_window;
-}
+	GLFWwindow& bwWindow::getGlfwWindow() const
+	{
+		return *glfw_window;
+	}
 
-int32_t bwWindow::getWidth() const
-{
-    return width;
-}
+	int32_t bwWindow::getWidth() const
+	{
+		return width;
+	}
 
-int32_t bwWindow::getHeight() const
-{
-    return height;
-}
+	int32_t bwWindow::getHeight() const
+	{
+		return height;
+	}
 
 }  // namespace bWidgets

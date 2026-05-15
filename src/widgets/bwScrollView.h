@@ -6,45 +6,45 @@
 
 namespace bWidgets
 {
+	namespace bwScreenGraph
+	{
+		class bwWidgetNode;
+	}
 
-namespace bwScreenGraph
-{
-class bwWidgetNode;
-}
-class bwScrollBar;
+	class bwScrollBar;
 
-class bwScrollView : public bwContainerWidget
-{
-    friend class bwScrollViewHandler;
+	class bwScrollView : public bwContainerWidget
+	{
+		friend class bwScrollViewHandler;
 
-public:
-    bwScrollView(bwScreenGraph::bwContainerNode& node,
-                 uint32_t width = 0,
-                 uint32_t height = 0);
+	public:
+		bwScrollView(bwScreenGraph::bwContainerNode& node,
+			uint32_t width = 0,
+			uint32_t height = 0);
 
-    std::string_view getTypeIdentifier() const override;
+		std::string_view getTypeIdentifier() const override;
 
-    void draw(bwStyle& style) override;
+		void draw(bwStyle& style) override;
 
-    std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
+		std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
-    int32_t getScrollOffsetY() const;
-    bwRectanglePixel getContentBounds(float interface_scale) const;
+		int32_t getScrollOffsetY() const;
+		bwRectanglePixel getContentBounds(float interface_scale) const;
 
-private:
-    bwScrollBar& getVerticalScrollBar() const;
-    bwRectanglePixel getVerticalScrollbarRect(const bwStyle& style) const;
-    void drawScrollBars(bwStyle& style);
-    bool isScrollable() const;
-    void validizeScrollValues();
+	private:
+		bwScrollBar& getVerticalScrollBar() const;
+		bwRectanglePixel getVerticalScrollbarRect(const bwStyle& style) const;
+		void drawScrollBars(bwStyle& style);
+		bool isScrollable() const;
+		void validizeScrollValues();
 
-    static int32_t getScrollbarWidth(float interface_scale);
+		static int32_t getScrollbarWidth(float interface_scale);
 
-    constexpr static int32_t SCROLL_BAR_SIZE = 17;
+		constexpr static int32_t SCROLL_BAR_SIZE = 17;
 
-    std::unique_ptr<bwScreenGraph::bwWidgetNode> scrollbar_node;
+		std::unique_ptr<bwScreenGraph::bwWidgetNode> scrollbar_node;
 
-    int32_t vert_scroll{ 0 };
-};
+		int32_t vert_scroll{ 0 };
+	};
 
 }  // namespace bWidgets

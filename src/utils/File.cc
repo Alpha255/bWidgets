@@ -25,47 +25,47 @@
 #include "utils/File.h"
 
 File::File(const std::string& path, std::ios::openmode mode)
-    : _path(path)
-    , _open_mode(mode)
+	: _path(path)
+	, _open_mode(mode)
 {
 }
 
 std::string File::readIntoString()
 {
-    if (!_file_stream.is_open())
-    {
-        _file_stream.open(_path, _open_mode);
-    }
+	if (!_file_stream.is_open())
+	{
+		_file_stream.open(_path, _open_mode);
+	}
 
-    std::string string;
-    std::string line;
+	std::string string;
+	std::string line;
 
-    assert(_file_stream.is_open());
-    while (getline(_file_stream, line))
-    {
-        string += line + '\n';
-    }
+	assert(_file_stream.is_open());
+	while (getline(_file_stream, line))
+	{
+		string += line + '\n';
+	}
 
-    return string;
+	return string;
 }
 
 bool File::readBytes(char* bytes, const uint32_t num_bytes, bool reset_cursor)
 {
-    if (!_file_stream.is_open())
-    {
-        _file_stream.open(_path, _open_mode);
-    }
+	if (!_file_stream.is_open())
+	{
+		_file_stream.open(_path, _open_mode);
+	}
 
-    _file_stream.read(bytes, num_bytes);
-    if (reset_cursor)
-    {
-        _file_stream.seekg(0);
-    }
-    return _file_stream.good();
+	_file_stream.read(bytes, num_bytes);
+	if (reset_cursor)
+	{
+		_file_stream.seekg(0);
+	}
+	return _file_stream.good();
 }
 
 std::ostream& operator<<(std::ostream& stream, const File& file)
 {
-    stream << file._path;
-    return stream;
+	stream << file._path;
+	return stream;
 }

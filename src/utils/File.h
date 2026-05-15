@@ -28,21 +28,21 @@
 class File
 {
 public:
-    explicit File(const std::string& path, std::ios::openmode mode = std::ios::in);
-    ~File() = default;
+	explicit File(const std::string& path, std::ios::openmode mode = std::ios::in);
+	~File() = default;
 
-    std::string readIntoString();
-    bool readBytes(char*, const uint32_t, bool reset_cursor);
+	std::string readIntoString();
+	bool readBytes(char*, const uint32_t, bool reset_cursor);
 
-    friend std::ostream& operator<<(std::ostream&, const File&);
+	friend std::ostream& operator<<(std::ostream&, const File&);
 
-    inline const std::string& getPath() const
-    {
-        return _path;
-    }
+	inline const std::string& getPath() const
+	{
+		return _path;
+	}
 
 private:
-    const std::string _path;
-    std::ifstream _file_stream;
-    std::ios::openmode _open_mode;
+	const std::string _path;
+	std::ifstream _file_stream;
+	std::ios::openmode _open_mode;
 };

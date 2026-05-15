@@ -22,7 +22,8 @@
 #include <cassert>
 #include <cmath>
 
-extern "C" {
+extern "C" 
+{
 #include "gawain/gwn_immediate.h"
 }
 #include "screen/bwFont.h"
@@ -38,308 +39,312 @@ extern "C" {
 
 namespace bWidgets
 {
+	GawainPaintEngine::GawainPaintEngine(bwFont& font, bwIconMap& icon_map)
+		: font(font)
+		, icon_map(icon_map)
+	{
+	}
 
-GawainPaintEngine::GawainPaintEngine(bwFont& font, bwIconMap& icon_map)
-    : font(font), icon_map(icon_map)
-{
-}
+	void GawainPaintEngine::setupViewport(const bwRectanglePixel& rect, const bwColor& clear_color)
+	{
+		const float width = (rect.width() + 1) * m_scale_x;
+		const float height = (rect.height() + 1) * m_scale_y;
 
-void GawainPaintEngine::setupViewport(const bwRectanglePixel& rect, const bwColor& clear_color)
-{
-    const float width = (rect.width() + 1) * m_scale_x;
-    const float height = (rect.height() + 1) * m_scale_y;
+		glViewport(rect.xmin * m_scale_x, rect.ymin * m_scale_y, width, height);
+		glScissor(rect.xmin * m_scale_x, rect.ymin * m_scale_y, width, height);
 
-    glViewport(rect.xmin * m_scale_x, rect.ymin * m_scale_y, width, height);
-    glScissor(rect.xmin * m_scale_x, rect.ymin * m_scale_y, width, height);
+		glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
+		glClear(GL_COLOR_BUFFER_BIT);
 
-    glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
-    glClear(GL_COLOR_BUFFER_BIT);
+		gpuOrtho(0, width, 0, height);
+		gpuIdentityMatrix();
+	}
 
-    gpuOrtho(0, width, 0, height);
-    gpuIdentityMatrix();
-}
+	void GawainPaintEngine::enableMask(const bwRectanglePixel& rect)
+	{
+		glScissor(rect.xmin * m_scale_x,
+			rect.ymin * m_scale_y,
+			(rect.width() + 1) * m_scale_x,
+			(rect.height() + 1) * m_scale_y);
+	}
 
-void GawainPaintEngine::enableMask(const bwRectanglePixel& rect)
-{
-    glScissor(rect.xmin * m_scale_x,
-              rect.ymin * m_scale_y,
-              (rect.width() + 1) * m_scale_x,
-              (rect.height() + 1) * m_scale_y);
-}
-
-// --------------------------------------------------------------------
-// Polygon Drawing
+	// --------------------------------------------------------------------
+	// Polygon Drawing
 
 #define WIDGET_AA_JITTER 8
 
-static const float jit[WIDGET_AA_JITTER][2] = {
-    { 0.468813f, -0.481430f },  { -0.155755f, -0.352820f }, { 0.219306f, -0.238501f },
-    { -0.393286f, -0.110949f }, { -0.024699f, 0.013908f },  { 0.343805f, 0.147431f },
-    { -0.272855f, 0.269918f },  { 0.095909f, 0.388710f }
-};
+	static const float jit[WIDGET_AA_JITTER][2] = 
+	{
+		{ 0.468813f, -0.481430f },  { -0.155755f, -0.352820f }, { 0.219306f, -0.238501f },
+		{ -0.393286f, -0.110949f }, { -0.024699f, 0.013908f },  { 0.343805f, 0.147431f },
+		{ -0.272855f, 0.269918f },  { 0.095909f, 0.388710f }
+	};
 
-static Gwn_PrimType stage_polygon_drawtype_convert(const bwPainter::DrawType& drawtype,
-                                           bool use_antialiasing)
-{
-    switch (drawtype)
-    {
-    case bwPainter::DrawType::FILLED:
-        return GWN_PRIM_TRI_FAN;
-    case bwPainter::DrawType::OUTLINE:
-        return use_antialiasing ? GWN_PRIM_TRI_STRIP : GWN_PRIM_LINE_LOOP;
-    case bwPainter::DrawType::LINE:
-        return GWN_PRIM_LINE_STRIP;
-    }
+	static Gwn_PrimType stage_polygon_drawtype_convert(const bwPainter::DrawType& drawtype,
+		bool use_antialiasing)
+	{
+		switch (drawtype)
+		{
+		case bwPainter::DrawType::FILLED:
+			return GWN_PRIM_TRI_FAN;
+		case bwPainter::DrawType::OUTLINE:
+			return use_antialiasing ? GWN_PRIM_TRI_STRIP : GWN_PRIM_LINE_LOOP;
+		case bwPainter::DrawType::LINE:
+			return GWN_PRIM_LINE_STRIP;
+		}
 
-    return GWN_PRIM_NONE;
-}
+		return GWN_PRIM_NONE;
+	}
 
-static void stage_polygon_draw_uniform_color(const bwPolygon& poly,
-                                             const bwColor& color,
-                                             const Gwn_PrimType type,
-                                             const uint32_t attr_pos,
-                                             float scale_x,
-                                             float scale_y)
-{
-    const bwPointVec& vertices = poly.getVertices();
+	static void stage_polygon_draw_uniform_color(const bwPolygon& poly,
+		const bwColor& color,
+		const Gwn_PrimType type,
+		const uint32_t attr_pos,
+		float scale_x,
+		float scale_y)
+	{
+		const bwPointVec& vertices = poly.getVertices();
 
-    immUniformColor4fv(color);
+		immUniformColor4fv(color);
 
-    immBegin(type, (uint32_t)vertices.size());
-    for (const bwPoint& vertex : vertices)
-    {
-        immVertex2f(attr_pos, vertex.x * scale_x, vertex.y * scale_y);
-    }
-    immEnd();
-}
-static void stage_polygon_draw_shaded(const bwPainter& painter,
-                                      const bwPolygon& poly,
-                                      const Gwn_PrimType type,
-                                      const uint32_t attr_pos,
-                                      const uint32_t attr_color,
-                                      float scale_x,
-                                      float scale_y)
-{
-    const bwPointVec& vertices = poly.getVertices();
+		immBegin(type, (uint32_t)vertices.size());
+		for (const bwPoint& vertex : vertices)
+		{
+			immVertex2f(attr_pos, vertex.x * scale_x, vertex.y * scale_y);
+		}
+		immEnd();
+	}
 
-    immBegin(type, (uint32_t)vertices.size());
-    for (int32_t i = 0; i < vertices.size(); i++)
-    {
-        immAttrib4fv(attr_color, painter.getVertexColor(i));
-        immVertex2f(attr_pos, vertices[i].x * scale_x, vertices[i].y * scale_y);
-    }
-    immEnd();
-}
-static void stage_polygon_draw(const bwPainter& painter,
-                               const bwPolygon& poly,
-                               const bwColor& color,
-                               const Gwn_PrimType type,
-                               const uint32_t attr_pos,
-                               const uint32_t attr_color,
-                               float scale_x,
-                               float scale_y)
-{
-    if (painter.isGradientEnabled())
-    {
-        stage_polygon_draw_shaded(painter, poly, type, attr_pos, attr_color, scale_x, scale_y);
-    }
-    else
-    {
-        stage_polygon_draw_uniform_color(poly, color, type, attr_pos, scale_x, scale_y);
-    }
-}
+	static void stage_polygon_draw_shaded(const bwPainter& painter,
+		const bwPolygon& poly,
+		const Gwn_PrimType type,
+		const uint32_t attr_pos,
+		const uint32_t attr_color,
+		float scale_x,
+		float scale_y)
+	{
+		const bwPointVec& vertices = poly.getVertices();
 
-void GawainPaintEngine::drawPolygon(const bwPainter& painter, const bwPolygon& poly)
-{
-    const bool is_shaded = painter.isGradientEnabled();
-    const bwColor& color = painter.getActiveColor();
-    Gwn_PrimType prim_type = stage_polygon_drawtype_convert(painter.active_drawtype,
-                                                            painter.use_antialiasing);
-    Gwn_VertFormat* format = immVertexFormat();
-    uint32_t attr_pos = GWN_vertformat_attr_add(
-        format, "pos", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
-    uint32_t attr_color = is_shaded ? GWN_vertformat_attr_add(
-                                              format, "color", GWN_COMP_F32, 4, GWN_FETCH_FLOAT) :
-                                          0;
+		immBegin(type, (uint32_t)vertices.size());
+		for (int32_t i = 0; i < vertices.size(); i++)
+		{
+			immAttrib4fv(attr_color, painter.getVertexColor(i));
+			immVertex2f(attr_pos, vertices[i].x * scale_x, vertices[i].y * scale_y);
+		}
+		immEnd();
+	}
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
+	static void stage_polygon_draw(const bwPainter& painter,
+		const bwPolygon& poly,
+		const bwColor& color,
+		const Gwn_PrimType type,
+		const uint32_t attr_pos,
+		const uint32_t attr_color,
+		float scale_x,
+		float scale_y)
+	{
+		if (painter.isGradientEnabled())
+		{
+			stage_polygon_draw_shaded(painter, poly, type, attr_pos, attr_color, scale_x, scale_y);
+		}
+		else
+		{
+			stage_polygon_draw_uniform_color(poly, color, type, attr_pos, scale_x, scale_y);
+		}
+	}
 
-    GPUShader::immBind(is_shaded ? GPUShader::ID_SMOOTH_COLOR : GPUShader::ID_UNIFORM_COLOR);
+	void GawainPaintEngine::drawPolygon(const bwPainter& painter, const bwPolygon& poly)
+	{
+		const bool is_shaded = painter.isGradientEnabled();
+		const bwColor& color = painter.getActiveColor();
+		Gwn_PrimType prim_type = stage_polygon_drawtype_convert(painter.active_drawtype,
+			painter.use_antialiasing);
+		Gwn_VertFormat* format = immVertexFormat();
+		uint32_t attr_pos = GWN_vertformat_attr_add(
+			format, "pos", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
+		uint32_t attr_color = is_shaded ? GWN_vertformat_attr_add(
+			format, "color", GWN_COMP_F32, 4, GWN_FETCH_FLOAT) :
+			0;
 
-    if (painter.use_antialiasing)
-    {
-        bwColor drawcolor = color;
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 
-        drawcolor[3] /= WIDGET_AA_JITTER;
+		GPUShader::immBind(is_shaded ? GPUShader::ID_SMOOTH_COLOR : GPUShader::ID_UNIFORM_COLOR);
 
-        for (const float* i : jit)
-        {
-            gpuTranslate2f(i);
-            stage_polygon_draw(
-                painter, poly, drawcolor, prim_type, attr_pos, attr_color, m_scale_x, m_scale_y);
-            gpuTranslate2f(-i[0], -i[1]);
-        }
-    }
-    else
-    {
-        stage_polygon_draw(
-            painter, poly, color, prim_type, attr_pos, attr_color, m_scale_x, m_scale_y);
-    }
+		if (painter.use_antialiasing)
+		{
+			bwColor drawcolor = color;
 
-    GPUShader::immUnbind();
-    glDisable(GL_BLEND);
-}
+			drawcolor[3] /= WIDGET_AA_JITTER;
 
-// --------------------------------------------------------------------
-// Text Drawing
+			for (const float* i : jit)
+			{
+				gpuTranslate2f(i);
+				stage_polygon_draw(
+					painter, poly, drawcolor, prim_type, attr_pos, attr_color, m_scale_x, m_scale_y);
+				gpuTranslate2f(-i[0], -i[1]);
+			}
+		}
+		else
+		{
+			stage_polygon_draw(
+				painter, poly, color, prim_type, attr_pos, attr_color, m_scale_x, m_scale_y);
+		}
 
-static float stage_text_xpos_calc(bwFont& font,
-                                 const std::string& text,
-                                 const bwRectanglePixel& rectangle,
-                                 const TextAlignment alignment,
-                                 float scale_x)
-{
-    int32_t value = 0;
+		GPUShader::immUnbind();
+		glDisable(GL_BLEND);
+	}
 
-    switch (alignment)
-    {
-    case TextAlignment::LEFT:
-        // XXX -9 is ugly. Goes out of widget rectangle even.
-        value = (rectangle.xmin + 9) * scale_x;
-        break;
-    case TextAlignment::CENTER:
-        value = rectangle.centerX() * scale_x - (font.calculateStringWidth(text) / 2.0f);
-        break;
-    case TextAlignment::RIGHT:
-        // XXX -9 is ugly. Goes out of widget rectangle even.
-        value = (rectangle.xmax - 9) * scale_x - font.calculateStringWidth(text);
-        break;
-    }
+	// --------------------------------------------------------------------
+	// Text Drawing
 
-    return value;
-}
+	static float stage_text_xpos_calc(bwFont& font,
+		const std::string& text,
+		const bwRectanglePixel& rectangle,
+		const TextAlignment alignment,
+		float scale_x)
+	{
+		int32_t value = 0;
 
-void GawainPaintEngine::drawText(const bwPainter& painter,
-                                 const std::string& text,
-                                 const bwRectanglePixel& rectangle,
-                                 const TextAlignment alignment)
-{
-    bwRectanglePixel scaled_mask = painter.getContentMask();
-    const float font_height = font.getSize();
-    const float draw_pos_x = stage_text_xpos_calc(font, text, rectangle, alignment, m_scale_x);
-    const float draw_pos_y = (rectangle.centerY() + 1.0f) * m_scale_y - (font_height / 2.0f);
+		switch (alignment)
+		{
+		case TextAlignment::LEFT:
+			// XXX -9 is ugly. Goes out of widget rectangle even.
+			value = (rectangle.xmin + 9) * scale_x;
+			break;
+		case TextAlignment::CENTER:
+			value = rectangle.centerX() * scale_x - (font.calculateStringWidth(text) / 2.0f);
+			break;
+		case TextAlignment::RIGHT:
+			// XXX -9 is ugly. Goes out of widget rectangle even.
+			value = (rectangle.xmax - 9) * scale_x - font.calculateStringWidth(text);
+			break;
+		}
 
-    scaled_mask.xmin *= m_scale_x;
-    scaled_mask.xmax *= m_scale_x;
-    scaled_mask.ymin *= m_scale_y;
-    scaled_mask.ymax *= m_scale_y;
-    font.setActiveColor(painter.getActiveColor());
-    font.setMask(scaled_mask);
-    font.render(text, std::floor(draw_pos_x), std::floor(draw_pos_y));
-}
+		return value;
+	}
 
-// --------------------------------------------------------------------
-// Icon Drawing
+	void GawainPaintEngine::drawText(const bwPainter& painter,
+		const std::string& text,
+		const bwRectanglePixel& rectangle,
+		const TextAlignment alignment)
+	{
+		bwRectanglePixel scaled_mask = painter.getContentMask();
+		const float font_height = font.getSize();
+		const float draw_pos_x = stage_text_xpos_calc(font, text, rectangle, alignment, m_scale_x);
+		const float draw_pos_y = (rectangle.centerY() + 1.0f) * m_scale_y - (font_height / 2.0f);
 
-static void engine_icon_texture_draw(const bwRectanglePixel& icon_rect, const bwColor& color)
-{
-    Gwn_VertFormat* format = immVertexFormat();
-    uint32_t pos = GWN_vertformat_attr_add(format, "pos", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
-    uint32_t texcoord = GWN_vertformat_attr_add(
-        format, "texCoord", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
+		scaled_mask.xmin *= m_scale_x;
+		scaled_mask.xmax *= m_scale_x;
+		scaled_mask.ymin *= m_scale_y;
+		scaled_mask.ymax *= m_scale_y;
+		font.setActiveColor(painter.getActiveColor());
+		font.setMask(scaled_mask);
+		font.render(text, std::floor(draw_pos_x), std::floor(draw_pos_y));
+	}
 
-    GPUShader::immBind(GPUShader::ID_TEXTURE_RECT);
-    immUniformColor4fv(color);
-    immUniform1i("image", 0);
+	// --------------------------------------------------------------------
+	// Icon Drawing
 
-    immBegin(GWN_PRIM_TRI_STRIP, 4);
+	static void engine_icon_texture_draw(const bwRectanglePixel& icon_rect, const bwColor& color)
+	{
+		Gwn_VertFormat* format = immVertexFormat();
+		uint32_t pos = GWN_vertformat_attr_add(format, "pos", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
+		uint32_t texcoord = GWN_vertformat_attr_add(
+			format, "texCoord", GWN_COMP_F32, 2, GWN_FETCH_FLOAT);
 
-    immAttrib2f(texcoord, 0.0f, 0.0f);
-    immVertex2f(pos, icon_rect.xmin, icon_rect.ymin);
+		GPUShader::immBind(GPUShader::ID_TEXTURE_RECT);
+		immUniformColor4fv(color);
+		immUniform1i("image", 0);
 
-    immAttrib2f(texcoord, 1.0f, 0.0f);
-    immVertex2f(pos, icon_rect.xmax, icon_rect.ymin);
+		immBegin(GWN_PRIM_TRI_STRIP, 4);
 
-    immAttrib2f(texcoord, 0.0f, 1.0f);
-    immVertex2f(pos, icon_rect.xmin, icon_rect.ymax);
+		immAttrib2f(texcoord, 0.0f, 0.0f);
+		immVertex2f(pos, icon_rect.xmin, icon_rect.ymin);
 
-    immAttrib2f(texcoord, 1.0f, 1.0f);
-    immVertex2f(pos, icon_rect.xmax, icon_rect.ymax);
+		immAttrib2f(texcoord, 1.0f, 0.0f);
+		immVertex2f(pos, icon_rect.xmax, icon_rect.ymin);
 
-    immEnd();
-    GPUShader::immUnbind();
-}
+		immAttrib2f(texcoord, 0.0f, 1.0f);
+		immVertex2f(pos, icon_rect.xmin, icon_rect.ymax);
 
-/**
- * Enables necessary GL states, generates and binds the texture.
- */
-static void engine_icon_texture_drawing_prepare(const bwPixmap& pixmap, GLuint& texture_id)
-{
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
+		immAttrib2f(texcoord, 1.0f, 1.0f);
+		immVertex2f(pos, icon_rect.xmax, icon_rect.ymax);
 
-    glGenTextures(1, &texture_id);
+		immEnd();
+		GPUShader::immUnbind();
+	}
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture_id);
+	/**
+	 * Enables necessary GL states, generates and binds the texture.
+	 */
+	static void engine_icon_texture_drawing_prepare(const bwPixmap& pixmap, GLuint& texture_id)
+	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // TODO should consider channel bit depth.
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGBA,
-                 pixmap.width(),
-                 pixmap.height(),
-                 0,
-                 GL_RGBA,
-                 GL_UNSIGNED_BYTE,
-                 pixmap.getBytes());
-}
-static void engine_icon_texture_drawing_cleanup(GLuint texture_id)
-{
-    assert(texture_id != 0);
+		glGenTextures(1, &texture_id);
 
-    glDisable(GL_BLEND);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDeleteTextures(1, &texture_id);
-}
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_id);
 
-/**
- * Makes \a icon_rect use dimensions of \a icon, but centers it and clips it
- * within \a bounds.
- */
-static void engine_icon_rectangle_adjust(bwRectanglePixel& icon_rect,
-                                         const bwRectanglePixel& bounds,
-                                         const bwPixmap& pixmap,
-                                         float scale_x,
-                                         float scale_y)
-{
-    const int32_t xmin = std::max(bounds.centerX() - (pixmap.width() / 2) + 4, bounds.xmin);
-    const int32_t ymin = std::max(bounds.centerY() - (pixmap.height() / 2) + 1, bounds.ymin);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		// TODO should consider channel bit depth.
+		glTexImage2D(GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			pixmap.width(),
+			pixmap.height(),
+			0,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE,
+			pixmap.getBytes());
+	}
 
-    icon_rect.set(xmin * scale_x,
-                  std::min(pixmap.width(), bounds.width()) * scale_x,
-                  ymin * scale_y,
-                  std::min(pixmap.height(), bounds.height()) * scale_y);
-}
+	static void engine_icon_texture_drawing_cleanup(GLuint texture_id)
+	{
+		assert(texture_id != 0);
 
-void GawainPaintEngine::drawIcon(const bwPainter& /*painter*/,
-                                 const bwIconInterface& icon_interface,
-                                 const bwRectanglePixel& rectangle,
-                                 const bwColor& color)
-{
-    const auto& icon = static_cast<const bwIcon&>(icon_interface);
-    const bwPixmap& pixmap = icon.getPixmap();
-    bwRectanglePixel icon_rect;
-    GLuint texture_id = 0;
+		glDisable(GL_BLEND);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDeleteTextures(1, &texture_id);
+	}
 
-    engine_icon_rectangle_adjust(icon_rect, rectangle, pixmap, m_scale_x, m_scale_y);
+	/**
+	 * Makes \a icon_rect use dimensions of \a icon, but centers it and clips it
+	 * within \a bounds.
+	 */
+	static void engine_icon_rectangle_adjust(bwRectanglePixel& icon_rect,
+		const bwRectanglePixel& bounds,
+		const bwPixmap& pixmap,
+		float scale_x,
+		float scale_y)
+	{
+		const int32_t xmin = std::max(bounds.centerX() - (pixmap.width() / 2) + 4, bounds.xmin);
+		const int32_t ymin = std::max(bounds.centerY() - (pixmap.height() / 2) + 1, bounds.ymin);
 
-    engine_icon_texture_drawing_prepare(pixmap, texture_id);
-    engine_icon_texture_draw(icon_rect, color);
-    engine_icon_texture_drawing_cleanup(texture_id);
-}
+		icon_rect.set(xmin * scale_x,
+			std::min(pixmap.width(), bounds.width()) * scale_x,
+			ymin * scale_y,
+			std::min(pixmap.height(), bounds.height()) * scale_y);
+	}
+
+	void GawainPaintEngine::drawIcon(const bwPainter& /*painter*/,
+		const bwIconInterface& icon_interface,
+		const bwRectanglePixel& rectangle,
+		const bwColor& color)
+	{
+		const auto& icon = static_cast<const bwIcon&>(icon_interface);
+		const bwPixmap& pixmap = icon.getPixmap();
+		bwRectanglePixel icon_rect;
+		GLuint texture_id = 0;
+
+		engine_icon_rectangle_adjust(icon_rect, rectangle, pixmap, m_scale_x, m_scale_y);
+
+		engine_icon_texture_drawing_prepare(pixmap, texture_id);
+		engine_icon_texture_draw(icon_rect, color);
+		engine_icon_texture_drawing_cleanup(texture_id);
+	}
 
 }  // namespace bWidgets

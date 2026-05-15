@@ -29,27 +29,26 @@
 
 namespace bWidgetsDemo
 {
+	Application& Application::ensureApplication()
+	{
+		static Application app;
+		return app;
+	}
 
-Application& Application::ensureApplication()
-{
-    static Application app;
-    return app;
-}
+	void Application::setup()
+	{
+		bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
+		wm.addWindowWithStage<DefaultStage>("bWidgets Demo");
+	}
 
-void Application::setup()
-{
-    bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
-    wm.addWindowWithStage<DefaultStage>("bWidgets Demo");
-}
+	void Application::mainLoop()
+	{
+		bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
+		wm.mainLoop();
+	}
 
-void Application::mainLoop()
-{
-    bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
-    wm.mainLoop();
-}
-
-void Application::exit()
-{
-}
+	void Application::exit()
+	{
+	}
 
 }  // namespace bWidgetsDemo

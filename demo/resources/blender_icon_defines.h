@@ -32,15 +32,15 @@
 
 typedef enum
 {
-/* ui */
+	/* ui */
 #include "blender_icons.h"
-    BIFICONID_LAST
+	BIFICONID_LAST
 } BIFIconID;
 
 enum class BIFIconSvg
 {
 #include "blender_icons_svg.h"
-    BIFSVGICONID_LAST
+	BIFSVGICONID_LAST
 };
 
 #define BIFICONID_FIRST (ICON_NONE)

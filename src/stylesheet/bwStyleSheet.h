@@ -26,27 +26,26 @@
 
 namespace bWidgets
 {
+	class bwStyleSheet
+	{
+	public:
+		bwStyleSheet(std::string filepath);
+		~bwStyleSheet();
 
-class bwStyleSheet
-{
-public:
-    bwStyleSheet(std::string filepath);
-    ~bwStyleSheet();
+		void reload();
 
-    void reload();
+		void resolveValue(const std::string_view& class_name,
+			bwWidget::State state,
+			bwStyleProperty& property);
 
-    void resolveValue(const std::string_view& class_name,
-                      bwWidget::State state,
-                      bwStyleProperty& property);
+		const std::string& getFilepath() const;
 
-    const std::string& getFilepath() const;
+	private:
+		void load();
+		void unload();
 
-private:
-    void load();
-    void unload();
-
-    std::string filepath;
-    std::unique_ptr<class bwStyleSheetTree> tree;
-};
+		std::string filepath;
+		std::unique_ptr<class bwStyleSheetTree> tree;
+	};
 
 }  // namespace bWidgets

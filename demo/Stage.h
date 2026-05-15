@@ -37,57 +37,56 @@
 
 namespace bWidgets
 {
-class bwMouseEvent;
-class bwWindow;
+	class bwMouseEvent;
+	class bwWindow;
 }
 
 namespace bWidgetsDemo
 {
+	class Stage
+	{
+		friend class UseFontSubPixelsToggleSetter;
 
-class Stage
-{
-    friend class UseFontSubPixelsToggleSetter;
+	public:
+		Stage(const uint32_t mask_width, const uint32_t mask_height);
+		virtual ~Stage();
 
-public:
-    Stage(const uint32_t mask_width, const uint32_t mask_height);
-    virtual ~Stage();
+		void draw();
 
-    void draw();
+		void handleMouseMovementEvent(const bWidgets::bwMouseEvent& event);
+		void handleMouseButtonEvent(const bWidgets::bwMouseEvent& event);
+		void handleMouseScrollEvent(const bWidgets::bwMouseEvent& event,
+			enum bWidgets::bwMouseWheelEvent::Direction dir);
+		void handleWindowResizeEvent(const bWidgets::bwWindow& win);
 
-    void handleMouseMovementEvent(const bWidgets::bwMouseEvent& event);
-    void handleMouseButtonEvent(const bWidgets::bwMouseEvent& event);
-    void handleMouseScrollEvent(const bWidgets::bwMouseEvent& event,
-                                enum bWidgets::bwMouseWheelEvent::Direction dir);
-    void handleWindowResizeEvent(const bWidgets::bwWindow& win);
+		void setContentScale(float scale_x, float scale_y);
+		static void setInterfaceScale(const float value);
+		static void setFontSize(const float size);
+		static void setFontTightPositioning(const bool value);
+		static void setFontAntiAliasingMode(const bWidgets::bwFont::AntiAliasingMode aa_mode);
+		static void setFontHinting(const bool value);
+		static void setFontSubPixelPositioning(const bool value);
 
-    void setContentScale(float scale_x, float scale_y);
-    static void setInterfaceScale(const float value);
-    static void setFontSize(const float size);
-    static void setFontTightPositioning(const bool value);
-    static void setFontAntiAliasingMode(const bWidgets::bwFont::AntiAliasingMode aa_mode);
-    static void setFontHinting(const bool value);
-    static void setFontSubPixelPositioning(const bool value);
+	protected:
+		virtual void activateStyleID(bWidgets::bwStyle::TypeID type_id);
 
-protected:
-    virtual void activateStyleID(bWidgets::bwStyle::TypeID type_id);
+		bWidgets::bwScreenGraph::bwScreenGraph screen_graph;
 
-    bWidgets::bwScreenGraph::bwScreenGraph screen_graph;
+		// Static members, global UI data for all stages
+		static std::unique_ptr<bWidgets::bwStyle> style;
+		static std::unique_ptr<bWidgets::bwFont> font;
+		static std::unique_ptr<bWidgets::bwIconMap> icon_map;
+		static std::unique_ptr<bWidgets::bwStyleSheet> style_sheet;
+		static float interface_scale;
 
-    // Static members, global UI data for all stages
-    static std::unique_ptr<bWidgets::bwStyle> style;
-    static std::unique_ptr<bWidgets::bwFont> font;
-    static std::unique_ptr<bWidgets::bwIconMap> icon_map;
-    static std::unique_ptr<bWidgets::bwStyleSheet> style_sheet;
-    static float interface_scale;
+		uint32_t mask_width, mask_height;
 
-    uint32_t mask_width, mask_height;
+	private:
+		static void StyleSheetPolish(bWidgets::bwWidget& widget);
 
-private:
-    static void StyleSheetPolish(bWidgets::bwWidget& widget);
-
-    void initFonts();
-    void initIcons();
-    void setStyleSheet(const std::string& filepath);
-};
+		void initFonts();
+		void initIcons();
+		void setStyleSheet(const std::string& filepath);
+	};
 
 }  // namespace bWidgetsDemo

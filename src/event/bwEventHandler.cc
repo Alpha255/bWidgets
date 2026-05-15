@@ -6,46 +6,46 @@
 
 namespace bWidgets
 {
-namespace bwScreenGraph
-{
+	namespace bwScreenGraph
+	{
 
-void bwEventHandler::addEventListener(bwEventHandler::EventType event_type, EventListener listener)
-{
-    assert(event_type < TOT_EVENT_TYPES);
-    listeners[event_type].push_back(listener);
-}
+		void bwEventHandler::addEventListener(bwEventHandler::EventType event_type, EventListener listener)
+		{
+			assert(event_type < TOT_EVENT_TYPES);
+			listeners[event_type].push_back(listener);
+		}
 
-void bwEventHandler::onMouseMove(bwEvent&)
-{
-}
+		void bwEventHandler::onMouseMove(bwEvent&)
+		{
+		}
 
-void bwEventHandler::onMouseEnter(bwEvent&)
-{
-}
+		void bwEventHandler::onMouseEnter(bwEvent&)
+		{
+		}
 
-void bwEventHandler::onMouseLeave(bwEvent&)
-{
-}
+		void bwEventHandler::onMouseLeave(bwEvent&)
+		{
+		}
 
-void bwEventHandler::onMousePress(bwMouseButtonEvent&)
-{
-}
+		void bwEventHandler::onMousePress(bwMouseButtonEvent&)
+		{
+		}
 
-void bwEventHandler::onMouseRelease(bwMouseButtonEvent&)
-{
-}
+		void bwEventHandler::onMouseRelease(bwMouseButtonEvent&)
+		{
+		}
 
-void bwEventHandler::onMouseClick(bwMouseButtonEvent&)
-{
-}
+		void bwEventHandler::onMouseClick(bwMouseButtonEvent&)
+		{
+		}
 
-void bwEventHandler::onMouseDrag(bwMouseButtonDragEvent&)
-{
-}
+		void bwEventHandler::onMouseDrag(bwMouseButtonDragEvent&)
+		{
+		}
 
-void bwEventHandler::onMouseWheel(bwMouseWheelEvent&)
-{
-}
+		void bwEventHandler::onMouseWheel(bwMouseWheelEvent&)
+		{
+		}
 
-}  // namespace bwScreenGraph
+	}  // namespace bwScreenGraph
 }  // namespace bWidgets

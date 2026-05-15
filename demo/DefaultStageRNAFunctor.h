@@ -29,38 +29,37 @@
 
 namespace bWidgets
 {
-class bwWidget;
+	class bwWidget;
 }
 
 namespace bWidgetsDemo
 {
+	class DefaultStage;
 
-class DefaultStage;
+	class DefaultStageRNAFunctor : public bWidgets::bwFunctorInterface
+	{
+	public:
+		DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
+			DefaultStage& stage,
+			const std::string& prop_name,
+			const bWidgets::bwWidget& widget);
+		DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
+			DefaultStage& stage,
+			const std::string& prop_name,
+			const bWidgets::bwWidget& widget,
+			int32_t enum_value);
 
-class DefaultStageRNAFunctor : public bWidgets::bwFunctorInterface
-{
-public:
-    DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
-                           DefaultStage& stage,
-                           const std::string& prop_name,
-                           const bWidgets::bwWidget& widget);
-    DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
-                           DefaultStage& stage,
-                           const std::string& prop_name,
-                           const bWidgets::bwWidget& widget,
-                           int32_t enum_value);
+		void operator()() override;
 
-    void operator()() override;
+		const std::string& getPropName() const;
+		std::optional<int32_t> getEnumValue() const;
 
-    const std::string& getPropName() const;
-    std::optional<int32_t> getEnumValue() const;
-
-private:
-    RNAProperties<DefaultStage>& m_props;
-    DefaultStage& m_stage;
-    std::string m_prop_name;
-    const bWidgets::bwWidget& m_widget;
-    std::optional<int32_t> m_enum_value;
-};
+	private:
+		RNAProperties<DefaultStage>& m_props;
+		DefaultStage& m_stage;
+		std::string m_prop_name;
+		const bWidgets::bwWidget& m_widget;
+		std::optional<int32_t> m_enum_value;
+	};
 
 }  // namespace bWidgetsDemo

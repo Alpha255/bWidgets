@@ -27,48 +27,47 @@
 
 namespace bWidgets
 {
+	class bwWindowEvent
+	{
+		friend class bwEventManager;
 
-class bwWindowEvent
-{
-    friend class bwEventManager;
+	protected:
+		bwWindowEvent() = default;
+	};
 
-protected:
-    bwWindowEvent() = default;
-};
+	class bwMouseEvent : bwWindowEvent
+	{
+	public:
+		enum class Type
+		{
+			PRESS,
+			RELEASE,
+			MOVE,
+			SCROLL_UP,
+			SCROLL_DOWN,
 
-class bwMouseEvent : bwWindowEvent
-{
-public:
-    enum class Type
-    {
-        PRESS,
-        RELEASE,
-        MOVE,
-        SCROLL_UP,
-        SCROLL_DOWN,
+			UNKNOWN
+		};
 
-        UNKNOWN
-    };
+		using Button = bwMouseButtonEvent::Button;
 
-    using Button = bwMouseButtonEvent::Button;
+		bwMouseEvent(Type type, Button button, const bwPoint& location);
 
-    bwMouseEvent(Type type, Button button, const bwPoint& location);
+		bool isClick() const;
 
-    bool isClick() const;
+		Button getButton() const;
+		Type getType() const;
 
-    Button getButton() const;
-    Type getType() const;
+		static const bwPoint& getMouseLocation();
 
-    static const bwPoint& getMouseLocation();
+	private:
+		Type type;
+		Button button;
 
-private:
-    Type type;
-    Button button;
-
-    static bwPoint location;
-    // Location during previous mouse button press.
-    static bwPoint last_down_location;
-    static Button last_down_button;
-};
+		static bwPoint location;
+		// Location during previous mouse button press.
+		static bwPoint last_down_location;
+		static Button last_down_button;
+	};
 
 }  // namespace bWidgets

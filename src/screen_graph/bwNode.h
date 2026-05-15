@@ -9,253 +9,253 @@
 
 namespace bWidgets
 {
-namespace bwScreenGraph
-{
+	namespace bwScreenGraph
+	{
+		class bwEventHandler;
 
-class bwEventHandler;
+		/**
+		 * \brief The base data-structure for a screen-graph node
+		 *
+		 * Screen-graph nodes are the atomical components of a screen-graph, which is
+		 * key for the bWidgets design. If you're not familiar with our screen-graph
+		 * concept, you should really have a look at the
+		 * [bWidgets design overview](md_docs_bWidgets_design_overview.html).
+		 *
+		 * There are three kinds of screen-graph elements/nodes:
+		 * * Widget nodes (node representing a simple widget)
+		 * * Layout nodes (node with children aligned in specified layout)
+		 * * Container nodes (combination of both, widget with children aligned in
+		 *   layout - i.e. panel)
+		 *
+		 * To ensure separation of concerns, the screen-graph node must not have any
+		 * functionality of its own (no non-trivial member functions). Any functionality
+		 * must be implemented using friend classes and functions. For example to build
+		 * a screen-graph and the necessary nodes, a screen-graph builder class should
+		 * be used and be declared as friend of the `Node` class.
+		 * Having to declare those helpers as friends may turn out to an annoyance
+		 * with small benefits. In that case we should just make data public.
+		 */
 
-/**
- * \brief The base data-structure for a screen-graph node
- *
- * Screen-graph nodes are the atomical components of a screen-graph, which is
- * key for the bWidgets design. If you're not familiar with our screen-graph
- * concept, you should really have a look at the
- * [bWidgets design overview](md_docs_bWidgets_design_overview.html).
- *
- * There are three kinds of screen-graph elements/nodes:
- * * Widget nodes (node representing a simple widget)
- * * Layout nodes (node with children aligned in specified layout)
- * * Container nodes (combination of both, widget with children aligned in
- *   layout - i.e. panel)
- *
- * To ensure separation of concerns, the screen-graph node must not have any
- * functionality of its own (no non-trivial member functions). Any functionality
- * must be implemented using friend classes and functions. For example to build
- * a screen-graph and the necessary nodes, a screen-graph builder class should
- * be used and be declared as friend of the `Node` class.
- * Having to declare those helpers as friends may turn out to an annoyance
- * with small benefits. In that case we should just make data public.
- */
-class bwNode
-{
-    friend class bwBuilder;
+		class bwNode
+		{
+			friend class bwBuilder;
 
-public:
-    using ChildList = std::list<std::unique_ptr<bwNode>>;
-    using ChildIterator = ChildList::iterator;
+		public:
+			using ChildList = std::list<std::unique_ptr<bwNode>>;
+			using ChildIterator = ChildList::iterator;
 
-    bwNode() = default;
-    virtual ~bwNode() = default;
+			bwNode() = default;
+			virtual ~bwNode() = default;
 
-    virtual const ChildList* Children() const
-    {
-        return nullptr;
-    }
-    virtual ChildList* Children()
-    {
-        return nullptr;
-    }
+			virtual const ChildList* Children() const
+			{
+				return nullptr;
+			}
+			virtual ChildList* Children()
+			{
+				return nullptr;
+			}
 
-    virtual bool childrenVisible() const
-    {
-        return true;
-    }
+			virtual bool childrenVisible() const
+			{
+				return true;
+			}
 
-    virtual bwLayoutInterface* Layout() const
-    {
-        return nullptr;
-    }
+			virtual bwLayoutInterface* Layout() const
+			{
+				return nullptr;
+			}
 
-    virtual bwWidget* Widget() const
-    {
-        return nullptr;
-    }
+			virtual bwWidget* Widget() const
+			{
+				return nullptr;
+			}
 
-    bwNode* Parent() const
-    {
-        return parent;
-    }
+			bwNode* Parent() const
+			{
+				return parent;
+			}
 
-    bwEventHandler* eventHandler() const
-    {
-        return handler.get();
-    }
+			bwEventHandler* eventHandler() const
+			{
+				return handler.get();
+			}
 
-    virtual bwRectanglePixel Rectangle() const = 0;
-    virtual std::optional<bwRectanglePixel> MaskRectangle() const = 0;
-    virtual bool isVisible() const = 0;
+			virtual bwRectanglePixel Rectangle() const = 0;
+			virtual std::optional<bwRectanglePixel> MaskRectangle() const = 0;
+			virtual bool isVisible() const = 0;
 
-protected:
-    bwNode* parent{ nullptr };
-    std::unique_ptr<bwEventHandler> handler{ nullptr };
-};
+		protected:
+			bwNode* parent{ nullptr };
+			std::unique_ptr<bwEventHandler> handler{ nullptr };
+		};
 
-/**
- * \brief Node for aligning children to a specific layout.
- */
-class bwLayoutNode : virtual public bwNode
-{
-    friend class bwBuilder;
+		/**
+		 * \brief Node for aligning children to a specific layout.
+		 */
+		class bwLayoutNode : virtual public bwNode
+		{
+			friend class bwBuilder;
 
-public:
-    const ChildList* Children() const override
-    {
-        return &children;
-    }
-    ChildList* Children() override
-    {
-        return &children;
-    }
+		public:
+			const ChildList* Children() const override
+			{
+				return &children;
+			}
+			ChildList* Children() override
+			{
+				return &children;
+			}
 
-    bwLayoutInterface* Layout() const override
-    {
-        return layout.get();
-    }
+			bwLayoutInterface* Layout() const override
+			{
+				return layout.get();
+			}
 
-    bwRectanglePixel Rectangle() const override
-    {
-        assert(layout);
-        return layout->getRectangle();
-    }
+			bwRectanglePixel Rectangle() const override
+			{
+				assert(layout);
+				return layout->getRectangle();
+			}
 
-    std::optional<bwRectanglePixel> MaskRectangle() const override
-    {
-        return std::nullopt;
-    }
+			std::optional<bwRectanglePixel> MaskRectangle() const override
+			{
+				return std::nullopt;
+			}
 
-    bool isVisible() const override
-    {
-        return true;
-    }
+			bool isVisible() const override
+			{
+				return true;
+			}
 
-    void setLayout(std::unique_ptr<bwLayoutInterface> inLayout)
-    {
-        layout = std::move(inLayout);
-    }
+			void setLayout(std::unique_ptr<bwLayoutInterface> inLayout)
+			{
+				layout = std::move(inLayout);
+			}
 
-    template<class Layout, typename... Args>
-    Layout& createLayout(Args&&... args)
-    {
-        static_assert(std::is_base_of<bwLayoutInterface, Layout>::value, "should be a valid layout type");
-        
-        assert(layout == nullptr);
-        layout = std::make_unique<Layout>(std::forward<Args>(args)...);
-        return static_cast<Layout&>(*layout);
-    }
+			template<class Layout, typename... Args>
+			Layout& createLayout(Args&&... args)
+			{
+				static_assert(std::is_base_of<bwLayoutInterface, Layout>::value, "should be a valid layout type");
 
-private:
-    std::unique_ptr<bwLayoutInterface> layout;
-    ChildList children;
-};
+				assert(layout == nullptr);
+				layout = std::make_unique<Layout>(std::forward<Args>(args)...);
+				return static_cast<Layout&>(*layout);
+			}
 
-/**
- * \brief Node representing a single widget with no children.
- */
-class bwWidgetNode : virtual public bwNode
-{
-    friend class bwBuilder;
+		private:
+			std::unique_ptr<bwLayoutInterface> layout;
+			ChildList children;
+		};
 
-public:
-    bwWidget* Widget() const override
-    {
-        assert(widget);
-        return &*widget;
-    }
+		/**
+		 * \brief Node representing a single widget with no children.
+		 */
+		class bwWidgetNode : virtual public bwNode
+		{
+			friend class bwBuilder;
 
-    bwRectanglePixel Rectangle() const override
-    {
-        assert(widget);
-        return widget->rectangle;
-    }
+		public:
+			bwWidget* Widget() const override
+			{
+				assert(widget);
+				return &*widget;
+			}
 
-    std::optional<bwRectanglePixel> MaskRectangle() const override
-    {
-        return std::nullopt;
-    }
+			bwRectanglePixel Rectangle() const override
+			{
+				assert(widget);
+				return widget->rectangle;
+			}
 
-    bool isVisible() const override
-    {
-        assert(widget);
-        return widget->isHidden() == false;
-    }
+			std::optional<bwRectanglePixel> MaskRectangle() const override
+			{
+				return std::nullopt;
+			}
 
-    void setWidget(std::unique_ptr<bwWidget> inWidget)
-    {
-        widget = std::move(inWidget);
-        handler = widget->createHandler();
-    }
+			bool isVisible() const override
+			{
+				assert(widget);
+				return widget->isHidden() == false;
+			}
 
-     template<class Widget, typename... Args> 
-     Widget& createWidget(Args&&... args)
-     {
-        static_assert(std::is_base_of<bwWidget, Widget>::value, "should be a valid widget type");
+			void setWidget(std::unique_ptr<bwWidget> inWidget)
+			{
+				widget = std::move(inWidget);
+				handler = widget->createHandler();
+			}
 
-        assert(widget == nullptr);
-        widget = std::make_unique<Widget>(std::forward<Args>(args)...);
-        handler = widget->createHandler();
-        return static_cast<Widget&>(*widget);
-     }
-private:
-    std::unique_ptr<bwWidget> widget;
-};
+			template<class Widget, typename... Args>
+			Widget& createWidget(Args&&... args)
+			{
+				static_assert(std::is_base_of<bwWidget, Widget>::value, "should be a valid widget type");
 
-/**
- * \brief Node representing a widget with children.
- *
- * Note virtual inheritance of LayoutNode and WidgetNode, required to solve
- * diamond problems.
- */
-class bwContainerNode : public bwLayoutNode, public bwWidgetNode
-{
-public:
-    const ChildList* Children() const override
-    {
-        return bwLayoutNode::Children();
-    }
-    ChildList* Children() override
-    {
-        return bwLayoutNode::Children();
-    }
+				assert(widget == nullptr);
+				widget = std::make_unique<Widget>(std::forward<Args>(args)...);
+				handler = widget->createHandler();
+				return static_cast<Widget&>(*widget);
+			}
+		private:
+			std::unique_ptr<bwWidget> widget;
+		};
 
-    bwLayoutInterface* Layout() const override
-    {
-        return bwLayoutNode::Layout();
-    }
+		/**
+		 * \brief Node representing a widget with children.
+		 *
+		 * Note virtual inheritance of LayoutNode and WidgetNode, required to solve
+		 * diamond problems.
+		 */
+		class bwContainerNode : public bwLayoutNode, public bwWidgetNode
+		{
+		public:
+			const ChildList* Children() const override
+			{
+				return bwLayoutNode::Children();
+			}
+			ChildList* Children() override
+			{
+				return bwLayoutNode::Children();
+			}
 
-    bwWidget* Widget() const override
-    {
-        return bwWidgetNode::Widget();
-    }
+			bwLayoutInterface* Layout() const override
+			{
+				return bwLayoutNode::Layout();
+			}
 
-    bwContainerWidget& ContainerWidget() const
-    {
-        return static_cast<bwContainerWidget&>(*Widget());
-    }
+			bwWidget* Widget() const override
+			{
+				return bwWidgetNode::Widget();
+			}
 
-    bwRectanglePixel Rectangle() const override
-    {
-        return bwWidgetNode::Rectangle();
-    }
-    bwRectanglePixel ContentRectangle() const
-    {
-        return bwLayoutNode::Rectangle();
-    }
+			bwContainerWidget& ContainerWidget() const
+			{
+				return static_cast<bwContainerWidget&>(*Widget());
+			}
 
-    std::optional<bwRectanglePixel> MaskRectangle() const override
-    {
-        return ContainerWidget().getMaskRectangle();
-    }
+			bwRectanglePixel Rectangle() const override
+			{
+				return bwWidgetNode::Rectangle();
+			}
+			bwRectanglePixel ContentRectangle() const
+			{
+				return bwLayoutNode::Rectangle();
+			}
 
-    bool isVisible() const override
-    {
-        return bwWidgetNode::isVisible();
-    }
+			std::optional<bwRectanglePixel> MaskRectangle() const override
+			{
+				return ContainerWidget().getMaskRectangle();
+			}
 
-    bool childrenVisible() const override
-    {
-        return ContainerWidget().childrenVisible();
-    }
-};
+			bool isVisible() const override
+			{
+				return bwWidgetNode::isVisible();
+			}
 
-}  // namespace bwScreenGraph
+			bool childrenVisible() const override
+			{
+				return ContainerWidget().childrenVisible();
+			}
+		};
+
+	}  // namespace bwScreenGraph
 }  // namespace bWidgets

@@ -31,51 +31,51 @@
 
 namespace bWidgets
 {
+	class bwWindowManager
+	{
+	public:
+		// Constructor is private (singleton!)
+		static bwWindowManager& getWindowManager();
+		~bwWindowManager();
 
-class bwWindowManager
-{
-public:
-    // Constructor is private (singleton!)
-    static bwWindowManager& getWindowManager();
-    ~bwWindowManager();
+		void mainLoop();
+		bwWindow& addWindow(std::string name);
+		bool isMainWindow(const bwWindow& win) const;
 
-    void mainLoop();
-    bwWindow& addWindow(std::string name);
-    bool isMainWindow(const bwWindow& win) const;
+		template<class T> 
+		bwWindow& addWindowWithStage(std::string name)
+		{
+			auto& win = windows.emplace_back(name);
+			if (windows.size() == 1)
+			{
+				main_win = &windows.back();
+			}
 
-    template<class T> bwWindow& addWindowWithStage(std::string name)
-    {
-        auto& win = windows.emplace_back(name);
-        if (windows.size() == 1)
-        {
-            main_win = &windows.back();
-        }
+			win.createStage<T>();
 
-        win.createStage<T>();
+			return windows.back();
+		}
 
-        return windows.back();
-    }
+		void removeWindow(bwWindow& win);
 
-    void removeWindow(bwWindow& win);
+		using WindowList = std::list<bwWindow>;
 
-    using WindowList = std::list<bwWindow>;
+	private:
+		bwWindowManager();
+		bwWindowManager(bwWindowManager const&) = delete;
+		void operator=(bwWindowManager const&) = delete;
 
-private:
-    bwWindowManager();
-    bwWindowManager(bwWindowManager const&) = delete;
-    void operator=(bwWindowManager const&) = delete;
+		enum WindowManagerAction
+		{
+			WM_ACTION_CONTINUE,
+			WM_ACTION_CLOSE,
+		};
+		WindowManagerAction processEvents();
+		void drawWindows();
 
-    enum WindowManagerAction
-    {
-        WM_ACTION_CONTINUE,
-        WM_ACTION_CLOSE,
-    };
-    WindowManagerAction processEvents();
-    void drawWindows();
-
-    class bwEventManager& event_manager;
-    WindowList windows;
-    bwWindow* main_win;
-};
+		class bwEventManager& event_manager;
+		WindowList windows;
+		bwWindow* main_win;
+	};
 
 }  // namespace bWidgets

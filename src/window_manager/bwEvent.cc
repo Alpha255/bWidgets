@@ -25,54 +25,54 @@
 
 namespace bWidgets
 {
+	bwPoint bwMouseEvent::location{};
+	bwPoint bwMouseEvent::last_down_location{};
+	bwMouseEvent::Button bwMouseEvent::last_down_button = Button::UNKNOWN;
 
-bwPoint bwMouseEvent::location{};
-bwPoint bwMouseEvent::last_down_location{};
-bwMouseEvent::Button bwMouseEvent::last_down_button = Button::UNKNOWN;
+	bwMouseEvent::bwMouseEvent(Type type, Button _button, const bwPoint& _location) 
+		: type(type)
+	{
+		if (type == Type::PRESS)
+		{
+			last_down_location = _location;
+			last_down_button = _button;
+		}
+		else if (type == Type::MOVE)
+		{
+			_button = last_down_button;
+		}
+		location = _location;
+		button = _button;
+	}
 
-bwMouseEvent::bwMouseEvent(Type type, Button _button, const bwPoint& _location) : type(type)
-{
-    if (type == Type::PRESS)
-    {
-        last_down_location = _location;
-        last_down_button = _button;
-    }
-    else if (type == Type::MOVE)
-    {
-        _button = last_down_button;
-    }
-    location = _location;
-    button = _button;
-}
+	bool bwMouseEvent::isClick() const
+	{
+		if ((type == Type::RELEASE) && (button == last_down_button))
+		{
+			const float dist = glm::distance(glm::vec2(location.x, location.y),
+				glm::vec2(last_down_location.x, last_down_location.y));
+			if (dist <= 3)
+			{
+				return true;
+			}
+		}
 
-bool bwMouseEvent::isClick() const
-{
-    if ((type == Type::RELEASE) && (button == last_down_button))
-    {
-        const float dist = glm::distance(glm::vec2(location.x, location.y),
-                                         glm::vec2(last_down_location.x, last_down_location.y));
-        if (dist <= 3)
-        {
-            return true;
-        }
-    }
+		return false;
+	}
 
-    return false;
-}
+	bwMouseEvent::Button bwMouseEvent::getButton() const
+	{
+		return button;
+	}
 
-bwMouseEvent::Button bwMouseEvent::getButton() const
-{
-    return button;
-}
+	bwMouseEvent::Type bwMouseEvent::getType() const
+	{
+		return type;
+	}
 
-bwMouseEvent::Type bwMouseEvent::getType() const
-{
-    return type;
-}
-
-const bwPoint& bwMouseEvent::getMouseLocation()
-{
-    return location;
-}
+	const bwPoint& bwMouseEvent::getMouseLocation()
+	{
+		return location;
+	}
 
 }  // namespace bWidgets

@@ -21,7 +21,8 @@
 
 #pragma once
 
-extern "C" {  // Gawain links to this
-void GPU_matrix_bind(const struct Gwn_ShaderInterface* shaderface);
-bool GPU_matrix_dirty_get(void);
+extern "C" 
+{  // Gawain links to this
+	void GPU_matrix_bind(const struct Gwn_ShaderInterface* shaderface);
+	bool GPU_matrix_dirty_get(void);
 }

@@ -2,10 +2,9 @@
 
 namespace bWidgets
 {
-
-bwStyleFlatDark::bwStyleFlatDark()
-{
-    type_id = TypeID::FLAT_DARK;
-}
+	bwStyleFlatDark::bwStyleFlatDark()
+	{
+		type_id = TypeID::FLAT_DARK;
+	}
 
 }  // namespace bWidgets

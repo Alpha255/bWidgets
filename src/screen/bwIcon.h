@@ -33,68 +33,67 @@
 
 namespace bWidgets
 {
+	struct IconReadData;
 
-struct IconReadData;
+	class bwIcon : public bwIconInterface
+	{
+	public:
+		bwIcon(const uint32_t size,
+			const uint32_t num_channels,
+			const uint32_t bits_per_channel,
+			unsigned char* pixelData = nullptr);
 
-class bwIcon : public bwIconInterface
-{
-public:
-    bwIcon(const uint32_t size,
-           const uint32_t num_channels,
-           const uint32_t bits_per_channel,
-           unsigned char* pixelData = nullptr);
+		bool isValid() const override;
 
-    bool isValid() const override;
+		bwPixmap& getPixmap();
+		const bwPixmap& getPixmap() const;
 
-    bwPixmap& getPixmap();
-    const bwPixmap& getPixmap() const;
+	private:
+		bwPixmap _pixmap;
+	};
 
-private:
-    bwPixmap _pixmap;
-};
+	class bwIconMap
+	{
+		friend class bwIconMapReader;
 
-class bwIconMap
-{
-    friend class bwIconMapReader;
+	public:
+		~bwIconMap() = default;
 
-public:
-    ~bwIconMap() = default;
+		bwIcon& getIcon(uint32_t index);
 
-    bwIcon& getIcon(uint32_t index);
+		constexpr static uint32_t defaultNumChannel = 4u;
+		constexpr static uint32_t defaultBitsPerChannel = 8u;
+	private:
+		bwIconMap();
 
-    constexpr static uint32_t defaultNumChannel = 4u;
-    constexpr static uint32_t defaultBitsPerChannel = 8u;
-private:
-    bwIconMap();
+		unsigned char* getPixelData(uint32_t index)
+		{
+			assert(index < numIcons);
+			return &iconPixelStorage[index * iconPixelStride];
+		}
 
-    unsigned char* getPixelData(uint32_t index)
-    {
-        assert(index < numIcons);
-        return &iconPixelStorage[index * iconPixelStride];
-    }
+		std::vector<std::unique_ptr<bwIcon>> icons;
+		std::unique_ptr<unsigned char[]> iconPixelStorage;
+		constexpr static size_t iconPixelStride = ICON_GRID_W * ICON_GRID_H *
+			bwIconMap::defaultNumChannel *
+			bwIconMap::defaultBitsPerChannel;
+		constexpr static size_t numIcons = ICON_GRID_ROWS * ICON_GRID_COLS + 1u;
+	};
 
-    std::vector<std::unique_ptr<bwIcon>> icons;
-    std::unique_ptr<unsigned char[]> iconPixelStorage;
-    constexpr static size_t iconPixelStride = ICON_GRID_W * ICON_GRID_H *
-                                              bwIconMap::defaultNumChannel *
-                                              bwIconMap::defaultBitsPerChannel;
-    constexpr static size_t numIcons = ICON_GRID_ROWS * ICON_GRID_COLS + 1u;
-};
+	class bwIconMapReader
+	{
+	public:
+		bwIconMapReader();
+		~bwIconMapReader();
 
-class bwIconMapReader
-{
-public:
-    bwIconMapReader();
-    ~bwIconMapReader();
+	public:
+		std::unique_ptr<bwIconMap> readIconMap(class File& file);
+	protected:
+		std::unique_ptr<bwIconMap> readIconMapFromPNGFile(class File&);
+		std::unique_ptr<bwIconMap> readIconMapFromSVGFiles(class File&);
 
-public:
-    std::unique_ptr<bwIconMap> readIconMap(class File& file);
-protected:
-    std::unique_ptr<bwIconMap> readIconMapFromPNGFile(class File&);
-    std::unique_ptr<bwIconMap> readIconMapFromSVGFiles(class File&);
-
-private:
-    std::unique_ptr<IconReadData> read_data;
-};
+	private:
+		std::unique_ptr<IconReadData> read_data;
+	};
 
 }  // namespace bWidgets

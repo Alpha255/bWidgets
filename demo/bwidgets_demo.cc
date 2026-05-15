@@ -26,11 +26,11 @@ using namespace bWidgetsDemo;
 
 int32_t main(int32_t /*argc*/, char** /*argv*/)
 {
-    Application& app = Application::ensureApplication();
+	Application& app = Application::ensureApplication();
 
-    app.setup();
-    app.mainLoop();
-    app.exit();
+	app.setup();
+	app.mainLoop();
+	app.exit();
 
-    return 0;
+	return 0;
 }
