@@ -315,8 +315,7 @@ namespace bWidgetsDemo
 			"font_use_subpixels",
 			[](DefaultStage&) { return true; }, /* TODO */
 			[](DefaultStage& stage, bool value) {
-				Stage::setFontAntiAliasingMode(value ? bwFont::SUBPIXEL_LCD_RGB_COVERAGE :
-					bwFont::NORMAL_COVERAGE);
+				Stage::setFontAntiAliasingMode(value ? bwFont::SUBPIXEL_LCD_RGB_COVERAGE : bwFont::NORMAL_COVERAGE);
 				stage.updateFontAAMode(value);
 			});
 		properties.defProperty<bool>(

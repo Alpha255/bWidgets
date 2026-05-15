@@ -116,6 +116,7 @@ set(SRC
 	utils/File.h
 	utils/bwUtil.h
 	utils/FixedNum.h
+	utils/bwUtil.cc
 
 	# widgets
 	widgets/bwAbstractButton.cc
