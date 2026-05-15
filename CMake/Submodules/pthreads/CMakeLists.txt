@@ -6,23 +6,23 @@ set(PTHREADS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../Submodules/pthreads
 message(STATUS "Pthreads source directory: ${PTHREADS_SOURCE_DIR}")
 
 set(PTHREADS_SOURCES
-    ${PTHREADS_SOURCE_DIR}/pthread.c
+    #${PTHREADS_SOURCE_DIR}/pthread.c
     #${PTHREADS_SOURCE_DIR}/alloc.c
-    ${PTHREADS_SOURCE_DIR}/attr.c
-    ${PTHREADS_SOURCE_DIR}/barrier.c
-    ${PTHREADS_SOURCE_DIR}/cancel.c
+    #${PTHREADS_SOURCE_DIR}/attr.c
+    #${PTHREADS_SOURCE_DIR}/barrier.c
+    #${PTHREADS_SOURCE_DIR}/cancel.c
     ${PTHREADS_SOURCE_DIR}/cleanup.c
-    ${PTHREADS_SOURCE_DIR}/condvar.c
+    #${PTHREADS_SOURCE_DIR}/condvar.c
     ${PTHREADS_SOURCE_DIR}/create.c
     ${PTHREADS_SOURCE_DIR}/dll.c
     ${PTHREADS_SOURCE_DIR}/errno.c
-    ${PTHREADS_SOURCE_DIR}/exit.c
+    #${PTHREADS_SOURCE_DIR}/exit.c
     ${PTHREADS_SOURCE_DIR}/fork.c
     ${PTHREADS_SOURCE_DIR}/global.c
-    ${PTHREADS_SOURCE_DIR}/misc.c
-    ${PTHREADS_SOURCE_DIR}/mutex.c
-    ${PTHREADS_SOURCE_DIR}/nonportable.c
-    ${PTHREADS_SOURCE_DIR}/private.c
+    #${PTHREADS_SOURCE_DIR}/misc.c
+    #${PTHREADS_SOURCE_DIR}/mutex.c
+    #${PTHREADS_SOURCE_DIR}/nonportable.c
+    #${PTHREADS_SOURCE_DIR}/private.c
     ${PTHREADS_SOURCE_DIR}/pthread_attr_destroy.c
     ${PTHREADS_SOURCE_DIR}/pthread_attr_getdetachstate.c
     ${PTHREADS_SOURCE_DIR}/pthread_attr_getinheritsched.c
@@ -135,8 +135,8 @@ set(PTHREADS_SOURCES
     ${PTHREADS_SOURCE_DIR}/ptw32_timespec.c
     ${PTHREADS_SOURCE_DIR}/ptw32_tkAssocCreate.c
     ${PTHREADS_SOURCE_DIR}/ptw32_tkAssocDestroy.c
-    ${PTHREADS_SOURCE_DIR}/rwlock.c
-    ${PTHREADS_SOURCE_DIR}/sched.c
+    #${PTHREADS_SOURCE_DIR}/rwlock.c
+    #${PTHREADS_SOURCE_DIR}/sched.c
     ${PTHREADS_SOURCE_DIR}/sched_get_priority_max.c
     ${PTHREADS_SOURCE_DIR}/sched_get_priority_min.c
     ${PTHREADS_SOURCE_DIR}/sched_getscheduler.c
@@ -153,11 +153,11 @@ set(PTHREADS_SOURCES
     ${PTHREADS_SOURCE_DIR}/sem_trywait.c
     ${PTHREADS_SOURCE_DIR}/sem_unlink.c
     ${PTHREADS_SOURCE_DIR}/sem_wait.c
-    ${PTHREADS_SOURCE_DIR}/semaphore.c
+    #${PTHREADS_SOURCE_DIR}/semaphore.c
     ${PTHREADS_SOURCE_DIR}/signal.c
-    ${PTHREADS_SOURCE_DIR}/spin.c
-    ${PTHREADS_SOURCE_DIR}/sync.c
-    ${PTHREADS_SOURCE_DIR}/tsd.c
+    #${PTHREADS_SOURCE_DIR}/spin.c
+    #${PTHREADS_SOURCE_DIR}/sync.c
+    #${PTHREADS_SOURCE_DIR}/tsd.c
     ${PTHREADS_SOURCE_DIR}/w32_CancelableWait.c
 )
 

@@ -60,11 +60,10 @@ set(SRC
 )
 
 set(LIB
-	bwd_extern_glew
 	pthreads
 )
 
-add_definitions(-DWITH_GL_PROFILE_CORE -DWITH_OPENGL)
+add_definitions(-DWITH_GL_PROFILE_CORE -DWITH_OPENGL -DGLEW_BUILD)
 
 add_library(bwd_extern_gawain)
 target_sources(bwd_extern_gawain PRIVATE ${SRC})

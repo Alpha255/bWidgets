@@ -176,7 +176,7 @@ endif()
 find_package(OpenGL REQUIRED)
 list(APPEND LIB ${OPENGL_LIBRARIES})
 
-add_definitions(-DGLEW_STATIC)
+add_definitions(-DGLEW_BUILD)
 
 add_library(bWidgets STATIC)
 target_sources(bWidgets PRIVATE ${SRC})
