@@ -119,7 +119,7 @@ namespace bWidgets
 	{
 		auto path = file.getPath();
 		std::string extension = path.substr(path.find_last_of(".") + 1);
-		std::transform(extension.begin(), extension.end(), extension.begin(), [](char c) { return (char)tolower(c); });
+		bwUtils::toLowercase(extension);
 
 		if (extension == "png")
 		{
@@ -196,7 +196,7 @@ namespace bWidgets
 			name = name.substr(prefixLen);
 			name += ".svg";
 
-			std::transform(name.begin(), name.end(), name.begin(), [](char c) { return (char)tolower(c); });
+			bwUtils::toLowercase(name);
 
 			auto path = directory.getPath() + "/" + name;
 

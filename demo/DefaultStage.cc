@@ -279,8 +279,7 @@ namespace bWidgetsDemo
 			{
 				if (iter_checkbox->apply_functor)
 				{
-					const auto* rna_functor = dynamic_cast<DefaultStageRNAFunctor*>(
-						iter_checkbox->apply_functor.get());
+					const auto* rna_functor = dynamic_cast<DefaultStageRNAFunctor*>(iter_checkbox->apply_functor.get());
 					if (rna_functor && (rna_functor->getPropName() == "font_use_subpixel_positioning"))
 					{
 						iter_checkbox->hide(!value);

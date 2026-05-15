@@ -466,8 +466,7 @@ namespace bWidgets
 		FT_UInt glyph_index;
 		std::unique_ptr<bwFontGlyph> glyph;
 
-		for (FT_ULong charcode = FT_Get_First_Char(font.face, &glyph_index); glyph_index != 0;
-			charcode = FT_Get_Next_Char(font.face, charcode, &glyph_index))
+		for (FT_ULong charcode = FT_Get_First_Char(font.face, &glyph_index); glyph_index != 0; charcode = FT_Get_Next_Char(font.face, charcode, &glyph_index))
 		{
 			FT_Int32 load_flags = font.getFreeTypeLoadFlags();
 			FT_Error error = FT_Load_Glyph(font.face, glyph_index, load_flags);
