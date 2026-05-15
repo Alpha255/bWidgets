@@ -34,7 +34,7 @@ namespace bWidgetsDemo
 		DefaultStage(uint32_t mask_width, uint32_t mask_height);
 
 	private:
-		void registerProperties(RNAProperties<DefaultStage>& properties);
+		void registerProperties(bWidgets::RNAProperties<DefaultStage>& properties);
 
 		void activateStyleID(bWidgets::bwStyle::TypeID) override;
 		void addStyleSelector(bWidgets::bwScreenGraph::bwLayoutNode& parent_node);
@@ -44,7 +44,7 @@ namespace bWidgetsDemo
 		void updateStyleButtons();
 		bool updateStyleButton(bWidgets::bwWidget& widget_iter);
 
-		RNAProperties<DefaultStage> properties;
+		bWidgets::RNAProperties<DefaultStage> properties;
 
 		const uint32_t padding = 10;
 	};

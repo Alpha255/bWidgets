@@ -128,7 +128,7 @@ namespace bWidgetsDemo
 	{
 		/* Convenience */
 		using namespace bwScreenGraph;
-		using RNABuilder = RNAScreenGraphBuilder<DefaultStage, DefaultStageRNAFunctor>;
+		using RNABuilder = bWidgets::RNAScreenGraphBuilder<DefaultStage, DefaultStageRNAFunctor>;
 		RNABuilder builder(parent_node, *this, properties);
 
 		builder.buildLayout<bwRowLayout, RNABuilder>(
@@ -290,7 +290,7 @@ namespace bWidgetsDemo
 		}
 	}
 
-	void DefaultStage::registerProperties(RNAProperties<DefaultStage>& properties)
+	void DefaultStage::registerProperties(bWidgets::RNAProperties<DefaultStage>& properties)
 	{
 		properties.defProperty<bwStyle::TypeID>(
 			"style_type",

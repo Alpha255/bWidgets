@@ -31,7 +31,7 @@
 
 #include "bwUtil.h"
 
-namespace bWidgetsDemo
+namespace bWidgets
 {
 	class RNAProperty
 	{
@@ -42,7 +42,8 @@ namespace bWidgetsDemo
 	template<typename _Obj, typename _T> using Getter = std::function<_T(_Obj&)>;
 	template<typename _Obj, typename _T> using Setter = std::function<void(_Obj&, _T)>;
 
-	template<typename _Obj, typename _T> class RNAPropertyInternal : public RNAProperty
+	template<typename _Obj, typename _T> 
+	class RNAPropertyInternal : public RNAProperty
 	{
 		union Value
 		{
@@ -65,12 +66,15 @@ namespace bWidgetsDemo
 		} m_value;
 
 	public:
-		RNAPropertyInternal(_T& ref) : m_value(ref), m_use_ref(true)
+		RNAPropertyInternal(_T& ref) 
+			: m_value(ref)
+			, m_use_ref(true)
 		{
 		}
 
 		RNAPropertyInternal(Getter<_Obj, _T> get, Setter<_Obj, _T> set)
-			: m_value({ get, set }), m_use_ref(false)
+			: m_value({ get, set })
+			, m_use_ref(false)
 		{
 		}
 
@@ -107,7 +111,8 @@ namespace bWidgetsDemo
 		bool m_use_ref;
 	};
 
-	template<typename _Obj> class RNAProperties
+	template<typename _Obj>
+	class RNAProperties
 	{
 	public:
 		using ObjectT = _Obj;
@@ -120,8 +125,7 @@ namespace bWidgetsDemo
 			Getter<ObjectT, _T> get,
 			Setter<ObjectT, _T> set)
 		{
-			auto pair = m_properties.emplace(
-				name, std::make_unique<RNAPropertyInternal<ObjectT, _T>>(get, set));
+			auto pair = m_properties.emplace(name, std::make_unique<RNAPropertyInternal<ObjectT, _T>>(get, set));
 			return *(*pair.first).second;
 		}
 
@@ -140,7 +144,8 @@ namespace bWidgetsDemo
 			return nullptr;
 		}
 
-		template<typename _T> _T* get(const std::string& name, const _Obj& object) const
+		template<typename _T>
+		_T* get(const std::string& name, const _Obj& object) const
 		{
 			if (const RNAProperty* prop = find(name))
 			{
@@ -148,7 +153,8 @@ namespace bWidgetsDemo
 				return prop_internal.get(object);
 			}
 		}
-		template<typename _T> void set(const std::string& name, _Obj& object, const _T& value)
+		template<typename _T>
+		void set(const std::string& name, _Obj& object, const _T& value)
 		{
 			if (RNAProperty* prop = find(name))
 			{

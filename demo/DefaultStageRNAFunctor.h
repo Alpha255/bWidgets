@@ -39,11 +39,11 @@ namespace bWidgetsDemo
 	class DefaultStageRNAFunctor : public bWidgets::bwFunctorInterface
 	{
 	public:
-		DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
+		DefaultStageRNAFunctor(bWidgets::RNAProperties<DefaultStage>& props,
 			DefaultStage& stage,
 			const std::string& prop_name,
 			const bWidgets::bwWidget& widget);
-		DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
+		DefaultStageRNAFunctor(bWidgets::RNAProperties<DefaultStage>& props,
 			DefaultStage& stage,
 			const std::string& prop_name,
 			const bWidgets::bwWidget& widget,
@@ -55,7 +55,7 @@ namespace bWidgetsDemo
 		std::optional<int32_t> getEnumValue() const;
 
 	private:
-		RNAProperties<DefaultStage>& m_props;
+		bWidgets::RNAProperties<DefaultStage>& m_props;
 		DefaultStage& m_stage;
 		std::string m_prop_name;
 		const bWidgets::bwWidget& m_widget;

@@ -27,10 +27,10 @@ using namespace bWidgets;
 
 namespace bWidgetsDemo
 {
-	DefaultStageRNAFunctor::DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
+	DefaultStageRNAFunctor::DefaultStageRNAFunctor(bWidgets::RNAProperties<DefaultStage>& props,
 		DefaultStage& stage,
 		const std::string& prop_name,
-		const bwWidget& widget)
+		const bWidgets::bwWidget& widget)
 		: m_props(props)
 		, m_stage(stage)
 		, m_prop_name(prop_name)
@@ -40,10 +40,10 @@ namespace bWidgetsDemo
 		assert(props.find(prop_name));
 	}
 
-	DefaultStageRNAFunctor::DefaultStageRNAFunctor(RNAProperties<DefaultStage>& props,
+	DefaultStageRNAFunctor::DefaultStageRNAFunctor(bWidgets::RNAProperties<DefaultStage>& props,
 		DefaultStage& stage,
 		const std::string& prop_name,
-		const bwWidget& widget,
+		const bWidgets::bwWidget& widget,
 		int32_t enum_value)
 		: DefaultStageRNAFunctor(props, stage, prop_name, widget)
 	{
@@ -52,15 +52,15 @@ namespace bWidgetsDemo
 
 	void DefaultStageRNAFunctor::operator()()
 	{
-		if (widget_cast<bwCheckbox>(m_widget))
+		if (widget_cast<bWidgets::bwCheckbox>(m_widget))
 		{
-			m_props.set(m_prop_name, m_stage, m_widget.getState() == bwWidget::State::SUNKEN);
+			m_props.set(m_prop_name, m_stage, m_widget.getState() == bWidgets::bwWidget::State::SUNKEN);
 		}
-		else if (auto* slider = widget_cast<bwNumberSlider>(m_widget))
+		else if (auto* slider = widget_cast<bWidgets::bwNumberSlider>(m_widget))
 		{
 			m_props.set(m_prop_name, m_stage, slider->getValue());
 		}
-		else if (widget_cast<bwRadioButton>(m_widget))
+		else if (widget_cast<bWidgets::bwRadioButton>(m_widget))
 		{
 			m_props.set(m_prop_name, m_stage, m_enum_value.value());
 		}
