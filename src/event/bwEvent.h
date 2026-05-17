@@ -5,6 +5,21 @@
 
 namespace bWidgets
 {
+	enum class KeyboardKey
+	{
+	};
+
+	enum class KeyModifier
+	{
+
+	};
+
+	struct bwInputKeys
+	{
+		std::vector<KeyboardKey> keys;
+		std::vector<KeyModifier> modifiers;
+	};
+
 	class bwEvent
 	{
 	public:
@@ -73,6 +88,10 @@ namespace bWidgets
 
 	private:
 		Direction direction;
+	};
+
+	class bwKeyEvent : public bwEvent
+	{
 	};
 
 }  // namespace bWidgets

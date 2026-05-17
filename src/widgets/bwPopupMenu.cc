@@ -5,132 +5,24 @@
 
 namespace bWidgets
 {
-	bwMenuItem::bwMenuItem(std::string label, Type type) 
-		: label(std::move(label)), type(type)
+	bwMenuItem::bwMenuItem(std::string inlabel,
+		Type inType,
+		bool inEnabled,
+		BIFIconSvg inIcon)
+		: label(std::move(inlabel))
+		, type(inType)
+		, enabled(inEnabled)
+		, icon(inIcon)
 	{
 	}
 
-	class bwMenuHandler : public bwScreenGraph::bwEventHandler
+	std::string_view bwPopupMenu::getTypeIdentifier() const
 	{
-	public:
-		explicit bwMenuHandler(bwMenu& menu) : menu(menu)
-		{
-		}
-
-		void onMouseMove(bwEvent& event) override;
-		void onMouseLeave(bwEvent&) override;
-		void onMousePress(bwMouseButtonEvent& event) override;
-
-	private:
-		int32_t itemIndexAt(float x, float y_coord) const;
-		bwMenu& menu;
-	};
-
-	int32_t bwMenuHandler::itemIndexAt(float x, float y_coord) const
-	{
-		if (!menu.is_open)
-		{
-			return -1;
-		}
-
-		bwRectanglePixel dropdown_rect = menu.getDropdownRect();
-		if (!dropdown_rect.isCoordinateInside(x, y_coord))
-		{
-			return -1;
-		}
-
-		/* Items are drawn from ymax downward (top to bottom). */
-		int32_t y = dropdown_rect.ymax - (int32_t)menu.item_padding;
-		for (int32_t i = 0; i < (int32_t)menu.items.size(); i++)
-		{
-			y -= (int32_t)menu.item_height;
-			bwRectanglePixel item_rect
-			{
-				dropdown_rect.xmin, 
-				dropdown_rect.xmax, 
-				y, 
-				y + (int32_t)menu.item_height
-			};
-			if (item_rect.isCoordinateInside(x, y_coord))
-			{
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	void bwMenuHandler::onMouseMove(bwEvent& event)
-	{
-		if (menu.is_open)
-		{
-			menu.hovered_item = itemIndexAt(event.location.x, event.location.y);
-		}
-		else
-		{
-			menu.hovered_item = -1;
-		}
-	}
-
-	void bwMenuHandler::onMouseLeave(bwEvent&)
-	{
-		menu.hovered_item = -1;
-	}
-
-	void bwMenuHandler::onMousePress(bwMouseButtonEvent& event)
-	{
-		if (event.button != bwMouseButtonEvent::Button::LEFT)
-		{
-			return;
-		}
-
-		const bwPoint& pos = event.location;
-
-		/* Click in title bar → toggle dropdown. */
-		if (menu.title_rect.isCoordinateInside(pos.x, pos.y))
-		{
-			menu.is_open = !menu.is_open;
-			menu.hovered_item = -1;
-			event.swallow();
-			return;
-		}
-
-		/* Click in open dropdown → select item or close. */
-		if (menu.is_open)
-		{
-			const int32_t idx = itemIndexAt(pos.x, pos.y);
-			if (idx >= 0)
-			{
-				const auto& item = menu.items[idx];
-				if (item->type != bwMenuItem::Type::SEPARATOR && item->enabled)
-				{
-					menu.is_open = false;
-					menu.hovered_item = -1;
-					event.swallow();
-				}
-			}
-			else
-			{
-				/* Click outside dropdown while open — close it. */
-				menu.is_open = false;
-				menu.hovered_item = -1;
-			}
-		}
-	}
-
-	bwMenu::bwMenu(const bwScreenGraph::bwContainerNode& node,
-		std::optional<uint32_t> width_hint,
-		std::optional<uint32_t> height_hint)
-		: bwContainerWidget(node, width_hint, height_hint)
-	{
-	}
-
-	std::string_view bwMenu::getTypeIdentifier() const
-	{
-		return "bwMenu";
+		return "bwPopupMenu";
 	}
 
 	/** Returns dropdown panel rect (below the title bar). Uses title_rect for positioning. */
-	bwRectanglePixel bwMenu::getDropdownRect() const
+	bwRectanglePixel bwPopupMenu::getDropdownRect() const
 	{
 		const int32_t dropdown_height = 2 * (int32_t)item_padding + (int32_t)items.size() * (int32_t)item_height;
 		return bwRectanglePixel
@@ -143,7 +35,7 @@ namespace bWidgets
 	}
 
 	/** Draws the title bar button only (called by the normal Drawer pass). */
-	void bwMenu::draw(bwStyle& style)
+	void bwPopupMenu::draw(bwStyle& style)
 	{
 		bwPainter painter;
 
@@ -178,7 +70,7 @@ namespace bWidgets
 	}
 
 	/** Draws the dropdown panel with all items (called as an overlay after the main draw pass). */
-	void bwMenu::drawDropdown(bwStyle& style)
+	void bwPopupMenu::drawDropdown(bwStyle& style)
 	{
 		bwPainter painter;
 		bwRectanglePixel dropdown_rect = getDropdownRect();
@@ -219,7 +111,7 @@ namespace bWidgets
 		}
 	}
 
-	void bwMenu::drawItem(bwStyle& style,
+	void bwPopupMenu::drawItem(bwStyle& style,
 		const bwMenuItem& item,
 		const bwRectanglePixel& item_rect,
 		bool hovered)
@@ -301,7 +193,7 @@ namespace bWidgets
 		}
 	}
 
-	void bwMenu::drawSeparator(const bwRectanglePixel& item_rect)
+	void bwPopupMenu::drawSeparator(const bwRectanglePixel& item_rect)
 	{
 		bwPainter painter;
 
@@ -311,43 +203,140 @@ namespace bWidgets
 		painter.drawLine(bwPoint(item_rect.xmin + item_padding, sep_y), bwPoint(item_rect.xmax - item_padding, sep_y));
 	}
 
-	void bwMenu::registerProperties()
-	{
-		bwContainerWidget::registerProperties();
-	}
-
-	std::unique_ptr<bwScreenGraph::bwEventHandler> bwMenu::createHandler()
+	std::unique_ptr<bwScreenGraph::bwEventHandler> bwPopupMenu::createHandler()
 	{
 		return std::make_unique<bwMenuHandler>(*this);
 	}
 
-	bwMenuItem& bwMenu::addItem(std::string label)
+	bwMenuItem& bwPopupMenu::addItem(std::string label)
 	{
 		items.emplace_back(std::make_unique<bwMenuItem>(std::move(label), bwMenuItem::Type::ACTION));
 		return *items.back();
 	}
 
-	bwMenuItem& bwMenu::addSubmenu(std::string label)
+	bwMenuItem& bwPopupMenu::addSubmenu(std::string label)
 	{
 		items.emplace_back(std::make_unique<bwMenuItem>(std::move(label), bwMenuItem::Type::SUBMENU));
 		return *items.back();
 	}
 
-	bwMenuItem& bwMenu::addSeparator()
+	bwMenuItem& bwPopupMenu::addSeparator()
 	{
 		items.emplace_back(std::make_unique<bwMenuItem>("", bwMenuItem::Type::SEPARATOR));
 		return *items.back();
 	}
 
-	bwMenuItem& bwMenu::addItemToSubmenu(bwMenuItem& submenu, std::string label)
+	bwMenuItem& bwPopupMenu::addItemToSubmenu(bwMenuItem& submenu, std::string label)
 	{
 		submenu.submenu_items.emplace_back(std::make_unique<bwMenuItem>(std::move(label), bwMenuItem::Type::ACTION));
 		return *submenu.submenu_items.back();
 	}
 
-	const std::vector<std::unique_ptr<bwMenuItem>>& bwMenu::getItems() const
+	class bwMenuHandler : public bwScreenGraph::bwEventHandler
 	{
-		return items;
+	public:
+		explicit bwMenuHandler(bwPopupMenu& menu)
+			: menu(menu)
+		{
+		}
+
+		void onMouseMove(bwEvent& event) override;
+		void onMouseLeave(bwEvent&) override;
+		void onMousePress(bwMouseButtonEvent& event) override;
+
+	private:
+		int32_t itemIndexAt(float x, float y_coord) const;
+		bwPopupMenu& menu;
+	};
+
+	int32_t bwMenuHandler::itemIndexAt(float x, float y_coord) const
+	{
+		if (!menu.is_open)
+		{
+			return -1;
+		}
+
+		bwRectanglePixel dropdown_rect = menu.getDropdownRect();
+		if (!dropdown_rect.isCoordinateInside(x, y_coord))
+		{
+			return -1;
+		}
+
+		/* Items are drawn from ymax downward (top to bottom). */
+		int32_t y = dropdown_rect.ymax - (int32_t)menu.item_padding;
+		for (int32_t i = 0; i < (int32_t)menu.items.size(); i++)
+		{
+			y -= (int32_t)menu.item_height;
+			bwRectanglePixel item_rect
+			{
+				dropdown_rect.xmin,
+				dropdown_rect.xmax,
+				y,
+				y + (int32_t)menu.item_height
+			};
+			if (item_rect.isCoordinateInside(x, y_coord))
+			{
+				return i;
+			}
+		}
+		return -1;
 	}
 
+	void bwMenuHandler::onMouseMove(bwEvent& event)
+	{
+		if (menu.is_open)
+		{
+			menu.hovered_item = itemIndexAt(event.location.x, event.location.y);
+		}
+		else
+		{
+			menu.hovered_item = -1;
+		}
+	}
+
+	void bwMenuHandler::onMouseLeave(bwEvent&)
+	{
+		menu.hovered_item = -1;
+	}
+
+	void bwMenuHandler::onMousePress(bwMouseButtonEvent& event)
+	{
+		if (event.button != bwMouseButtonEvent::Button::LEFT)
+		{
+			return;
+		}
+
+		const bwPoint& pos = event.location;
+
+		/* Click in title bar → toggle dropdown. */
+		if (menu.title_rect.isCoordinateInside(pos.x, pos.y))
+		{
+			menu.is_open = !menu.is_open;
+			menu.hovered_item = -1;
+			event.swallow();
+			return;
+		}
+
+		/* Click in open dropdown → select item or close. */
+		if (menu.is_open)
+		{
+			const int32_t idx = itemIndexAt(pos.x, pos.y);
+			if (idx >= 0)
+			{
+				const auto& item = menu.items[idx];
+				if (item->type != bwMenuItem::Type::SEPARATOR && item->enabled)
+				{
+					menu.is_open = false;
+					menu.hovered_item = -1;
+					event.swallow();
+				}
+			}
+			else
+			{
+				/* Click outside dropdown while open — close it. */
+				menu.is_open = false;
+				menu.hovered_item = -1;
+			}
+		}
+	}
 }  // namespace bWidgets

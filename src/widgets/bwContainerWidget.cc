@@ -5,7 +5,8 @@ namespace bWidgets
 	bwContainerWidget::bwContainerWidget(const bwScreenGraph::bwContainerNode& node,
 		std::optional<uint32_t> width_hint,
 		std::optional<uint32_t> height_hint)
-		: bwWidget(width_hint, height_hint), node(node)
+		: bwWidget(width_hint, height_hint)
+		, node(node)
 	{
 	}
 
