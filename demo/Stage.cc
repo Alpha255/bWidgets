@@ -55,7 +55,7 @@ namespace bWidgetsDemo
 	std::unique_ptr<bwIconMap> Stage::icon_map = nullptr;
 	float Stage::interface_scale = 1.0f;
 
-	bwScreenGraph::bwScreenGraph createScreenGraph(const uint32_t width, const uint32_t height)
+	std::unique_ptr<bwScreenGraph::bwScreenGraph> Stage::createScreenGraph(const uint32_t width, const uint32_t height)
 	{
 		auto container = std::make_unique<bwScreenGraph::bwContainerNode>();
 		container->createLayout<bwScrollViewLayout>()
@@ -63,11 +63,12 @@ namespace bWidgetsDemo
 			.setPadding(7u);
 		container->createWidget<bwScrollView>(*container, width, height);
 
-		return bwScreenGraph::bwScreenGraph(std::move(container));
+		return std::make_unique<bwScreenGraph::bwScreenGraph>(std::move(container));
 	}
 
 	Stage::Stage(const uint32_t width, const uint32_t height)
-		: screen_graph(createScreenGraph(width, height)), mask_width(width), mask_height(height)
+		: mask_width(width)
+		, mask_height(height)
 	{
 		initFonts();
 		initIcons();
@@ -86,6 +87,7 @@ namespace bWidgetsDemo
 	Stage::~Stage()
 	{
 		GPUShader::clearCache();
+		screen_graph.reset();
 	}
 
 	void Stage::initFonts()
@@ -119,6 +121,12 @@ namespace bWidgetsDemo
 
 	void Stage::draw()
 	{
+		if (!screen_graph)
+		{
+			screen_graph = createScreenGraph(mask_width, mask_height);
+			buildWidgets();
+		}
+	
 		bwRectanglePixel stage_rect{ 0, int32_t(mask_width) - 1, 0, int32_t(mask_height - 1) };
 		bwStyleProperties properties;
 		bwColor clear_color{ 114u };
@@ -148,9 +156,9 @@ namespace bWidgetsDemo
 
 		bwPainter::s_paint_engine->setupViewport(stage_rect, clear_color);
 
-		resolveScreenGraphNodeLayout(screen_graph.Root(), stage_rect, interface_scale);
+		resolveScreenGraphNodeLayout(screen_graph->Root(), stage_rect, interface_scale);
 
-		bwScreenGraph::bwDrawer::draw(screen_graph, *style);
+		bwScreenGraph::bwDrawer::draw(*screen_graph, *style);
 	}
 
 	void Stage::StyleSheetPolish(bwWidget& widget)
@@ -226,13 +234,13 @@ namespace bWidgetsDemo
 
 		// TODO Multiple hovered items need to be possible (e.g. button + surrounding panel).
 
-		screen_graph.event_dispatcher.dispatchMouseMovement(bwEvent(mouse_location));
+		screen_graph->event_dispatcher.dispatchMouseMovement(bwEvent(mouse_location));
 	}
 
 	void Stage::handleMouseButtonEvent(const bwMouseEvent& event)
 	{
 		bwMouseButtonEvent bw_event(event.getButton(), event.getMouseLocation());
-		bwEventDispatcher& dispatcher = screen_graph.event_dispatcher;
+		bwEventDispatcher& dispatcher = screen_graph->event_dispatcher;
 
 		switch (event.getType())
 		{
@@ -250,7 +258,7 @@ namespace bWidgetsDemo
 	void Stage::handleMouseScrollEvent(const bwMouseEvent& event, bwMouseWheelEvent::Direction dir)
 	{
 		bwMouseWheelEvent bw_event(dir, event.getMouseLocation());
-		bwEventDispatcher& dispatcher = screen_graph.event_dispatcher;
+		bwEventDispatcher& dispatcher = screen_graph->event_dispatcher;
 
 		dispatcher.dispatchMouseWheelScroll(bw_event);
 	}

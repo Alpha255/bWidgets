@@ -15,7 +15,8 @@ namespace bWidgets
 		public:
 			template<typename _NodeType>
 			bwScreenGraph(std::unique_ptr<_NodeType> _root_node)
-				: event_dispatcher(*this), root_node(std::move(_root_node))
+				: event_dispatcher(*this)
+				, root_node(std::move(_root_node))
 			{
 			}
 

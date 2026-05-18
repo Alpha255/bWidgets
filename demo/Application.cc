@@ -24,8 +24,8 @@
 #include "window_manager/bwWindowManager.h"
 
 #include "Application.h"
-
 #include "DefaultStage.h"
+#include "BlenderStage.h"
 
 namespace bWidgetsDemo
 {
@@ -38,7 +38,7 @@ namespace bWidgetsDemo
 	void Application::setup()
 	{
 		bWidgets::bwWindowManager& wm = bWidgets::bwWindowManager::getWindowManager();
-		wm.addWindowWithStage<DefaultStage>("bWidgets Demo");
+		wm.addWindowWithStage<BlenderStage>("blender");
 	}
 
 	void Application::mainLoop()

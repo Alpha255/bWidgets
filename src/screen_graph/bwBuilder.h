@@ -32,7 +32,8 @@ namespace bWidgets
 			 * Can bind to a plain old function pointer, a function object (functor) or a lambda.
 			 */
 
-			template<typename _BuilderType = bwBuilder> using BuildFunc = std::function<void(_BuilderType&)>;
+			template<typename _BuilderType = bwBuilder> 
+			using BuildFunc = std::function<void(_BuilderType&)>;
 
 			bwBuilder(bwLayoutNode& active_layout_node);
 			bwBuilder(bwScreenGraph& screen_graph);

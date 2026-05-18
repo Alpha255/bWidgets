@@ -55,8 +55,7 @@ namespace bWidgetsDemo
 
 		void handleMouseMovementEvent(const bWidgets::bwMouseEvent& event);
 		void handleMouseButtonEvent(const bWidgets::bwMouseEvent& event);
-		void handleMouseScrollEvent(const bWidgets::bwMouseEvent& event,
-			enum bWidgets::bwMouseWheelEvent::Direction dir);
+		void handleMouseScrollEvent(const bWidgets::bwMouseEvent& event, bWidgets::bwMouseWheelEvent::Direction dir);
 		void handleWindowResizeEvent(const bWidgets::bwWindow& win);
 
 		void setContentScale(float scale_x, float scale_y);
@@ -66,11 +65,14 @@ namespace bWidgetsDemo
 		static void setFontAntiAliasingMode(const bWidgets::bwFont::AntiAliasingMode aa_mode);
 		static void setFontHinting(const bool value);
 		static void setFontSubPixelPositioning(const bool value);
-
+	
 	protected:
+		virtual std::unique_ptr<bWidgets::bwScreenGraph::bwScreenGraph> createScreenGraph(uint32_t width, uint32_t height);
+		virtual void buildWidgets() {}
+
 		virtual void activateStyleID(bWidgets::bwStyle::TypeID type_id);
 
-		bWidgets::bwScreenGraph::bwScreenGraph screen_graph;
+		std::unique_ptr<bWidgets::bwScreenGraph::bwScreenGraph> screen_graph;
 
 		// Static members, global UI data for all stages
 		static std::unique_ptr<bWidgets::bwStyle> style;
@@ -79,7 +81,8 @@ namespace bWidgetsDemo
 		static std::unique_ptr<bWidgets::bwStyleSheet> style_sheet;
 		static float interface_scale;
 
-		uint32_t mask_width, mask_height;
+		uint32_t mask_width;
+		uint32_t mask_height;
 
 	private:
 		static void StyleSheetPolish(bWidgets::bwWidget& widget);

@@ -50,6 +50,7 @@ namespace bWidgets
 		std::string_view getTypeIdentifier() const override;
 
 		void draw(bwStyle& style) override;
+
 		std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
 		bwPopupMenu& addAction(std::string label, bool enabled = true, BIFIconSvg icon = BIFIconSvg::ICON_NONE);
@@ -67,7 +68,6 @@ namespace bWidgets
 		void drawSeparator(const bwRectanglePixel& rect);
 
 		std::string title;
-
 		std::vector<std::unique_ptr<bwMenuItem>> menu_items;
 	};
 }  // namespace bWidgets

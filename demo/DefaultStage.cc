@@ -44,101 +44,6 @@ namespace bWidgetsDemo
 	DefaultStage::DefaultStage(uint32_t mask_width, uint32_t mask_height)
 		: Stage(mask_width, mask_height)
 	{
-		using namespace bwScreenGraph;
-		/* Convenience */
-		using RNABuilder = RNAScreenGraphBuilder<DefaultStage, DefaultStageRNAFunctor>;
-
-		/* Build the scrollable content region (below the menu bar). */
-		RNABuilder builder(screen_graph, *this, properties);
-
-		registerProperties(properties);
-
-		addStyleSelector(screen_graph.Root());
-
-		builder.addRNAWidget<bwNumberSlider>("interface_scale")
-			.setMinMax(0.5f, 2.0f)
-			.setValue(1.0f)
-			.setText("Interface Scale: ");
-
-		builder.addWidget<bwLabel>("Font Rendering:");
-
-		builder.buildLayout<bwRowLayout, RNABuilder>([](RNABuilder& builder) {
-			builder.addRNAWidget<bwCheckbox>("font_use_tight_positioning")
-				.setLabel("Tight Positioning")
-				.setState(bwWidget::State::SUNKEN);
-			builder.addRNAWidget<bwCheckbox>("font_use_hinting").setLabel("Hinting");
-			});
-
-		builder.buildLayout<bwRowLayout, RNABuilder>([](RNABuilder& builder) {
-			builder.addRNAWidget<bwCheckbox>("font_use_subpixels").setLabel("Subpixel Rendering");
-			builder.addRNAWidget<bwCheckbox>("font_use_subpixel_positioning")
-				.setLabel("Subpixel Positioning")
-				.hide();
-			});
-
-#if 0
-		bwBuilder testBuilder(screen_graph);
-		testBuilder.buildLayout<bwRowLayout>([](bwBuilder& builder) {
-			auto& use_subpixel = builder.addWidget<bwCheckbox>();
-			auto& use_subpixel_positioning = builder.addWidget<bwCheckbox>()
-				.setLabel("Subpixel Positioning")
-				.hide();
-
-			use_subpixel.createApplyFunctor<bwFunctorLambda>([&use_subpixel, &use_subpixel_positioning]() {
-				use_subpixel_positioning.hide(!use_subpixel.isChecked());
-			});
-
-			use_subpixel.createApplyFunctor2<bwFunctorLambda2<bwCheckbox>>([&use_subpixel_positioning](bwCheckbox& checkbox) {
-				use_subpixel_positioning.hide(!checkbox.isChecked());
-			});
-
-			use_subpixel.createApplyFunctor3<bwFunctorLambda3<bool>>(
-				[&use_subpixel]() { return use_subpixel.isChecked(); },
-				[&use_subpixel_positioning](bool isChecked) { use_subpixel_positioning.hide(!isChecked); }
-			);
-		});
-#endif
-
-		builder.buildContainer<bwPanel, RNABuilder>(
-			[](RNABuilder& builder) {
-				builder.buildLayout<bwColumnLayout>(
-					[](bwBuilder& builder) {
-						builder.addWidget<bwPushButton>("Translate");
-						builder.addWidget<bwPushButton>("Rotate");
-						builder.addWidget<bwPushButton>("Scale");
-					},
-					true);
-
-				builder.addWidget<bwPushButton>("Mirror").setIcon(icon_map->getIcon(ICON_MOD_MIRROR));
-			},
-			std::make_unique<bwPanelLayout>(),
-			"Some Testing Widgets",
-			PANEL_HEADER_HEIGHT);
-
-		builder.buildContainer<bwPanel>(
-			[](bwBuilder& builder) {
-				builder.buildLayout<bwRowLayout>([](bwBuilder& builder) {
-					builder.addWidget<bwCheckbox>("Make Awesome");
-					builder.addWidget<bwCheckbox>("Wireframes");
-					});
-
-				builder.addWidget<bwTextBox>().setText("Some Text...");
-
-				builder.buildLayout<bwRowLayout>([](bwBuilder& builder) {
-					builder.addWidget<bwLabel>()
-						.setLabel("Pose Icon")
-						.setIcon(icon_map->getIcon(ICON_POSE_HLT));
-					builder.addWidget<bwLabel>()
-						.setLabel("Normalized FCurve Icon")
-						.setIcon(icon_map->getIcon(ICON_NORMALIZE_FCURVES));
-					builder.addWidget<bwLabel>()
-						.setLabel("Chroma Scope Icon")
-						.setIcon(icon_map->getIcon(ICON_SEQ_CHROMA_SCOPE));
-					});
-			},
-			std::make_unique<bwPanelLayout>(),
-			"More Testing...",
-			PANEL_HEADER_HEIGHT);
 	}
 
 	bool isUseCSSVersionToggleHidden(const bwStyle& style)
@@ -250,7 +155,7 @@ namespace bWidgetsDemo
 	{
 		// Deactivate style radio buttons that are not active. In future this should be handled within
 		// bWidgets somehow (groups of radio buttons and a value getter maybe?).
-		for (bwScreenGraph::bwNode& node : screen_graph)
+		for (bwScreenGraph::bwNode& node : *screen_graph)
 		{
 			if (!node.isVisible())
 			{
@@ -266,7 +171,7 @@ namespace bWidgetsDemo
 	void DefaultStage::activateStyleID(bwStyle::TypeID type_id)
 	{
 		Stage::activateStyleID(type_id);
-		for (auto& iter_node : screen_graph)
+		for (auto& iter_node : *screen_graph)
 		{
 			bwWidget* widget = iter_node.Widget();
 			if (!widget)
@@ -288,7 +193,7 @@ namespace bWidgetsDemo
 
 	void DefaultStage::updateFontAAMode(bool value)
 	{
-		for (bwScreenGraph::bwNode& node : screen_graph.Root())
+		for (bwScreenGraph::bwNode& node : screen_graph->Root())
 		{
 			bwWidget* widget = node.Widget();
 			if (!widget)
@@ -307,6 +212,105 @@ namespace bWidgetsDemo
 				}
 			}
 		}
+	}
+
+	void DefaultStage::buildWidgets()
+	{
+		using namespace bwScreenGraph;
+		/* Convenience */
+		using RNABuilder = RNAScreenGraphBuilder<DefaultStage, DefaultStageRNAFunctor>;
+
+		/* Build the scrollable content region (below the menu bar). */
+		RNABuilder builder(*screen_graph, *this, properties);
+
+		registerProperties(properties);
+
+		addStyleSelector(screen_graph->Root());
+
+		builder.addRNAWidget<bwNumberSlider>("interface_scale")
+			.setMinMax(0.5f, 2.0f)
+			.setValue(1.0f)
+			.setText("Interface Scale: ");
+
+		builder.addWidget<bwLabel>("Font Rendering:");
+
+		builder.buildLayout<bwRowLayout, RNABuilder>([](RNABuilder& builder) {
+			builder.addRNAWidget<bwCheckbox>("font_use_tight_positioning")
+				.setLabel("Tight Positioning")
+				.setState(bwWidget::State::SUNKEN);
+			builder.addRNAWidget<bwCheckbox>("font_use_hinting").setLabel("Hinting");
+			});
+
+		builder.buildLayout<bwRowLayout, RNABuilder>([](RNABuilder& builder) {
+			builder.addRNAWidget<bwCheckbox>("font_use_subpixels").setLabel("Subpixel Rendering");
+			builder.addRNAWidget<bwCheckbox>("font_use_subpixel_positioning")
+				.setLabel("Subpixel Positioning")
+				.hide();
+			});
+
+#if 0
+		bwBuilder testBuilder(screen_graph);
+		testBuilder.buildLayout<bwRowLayout>([](bwBuilder& builder) {
+			auto& use_subpixel = builder.addWidget<bwCheckbox>();
+			auto& use_subpixel_positioning = builder.addWidget<bwCheckbox>()
+				.setLabel("Subpixel Positioning")
+				.hide();
+
+			use_subpixel.createApplyFunctor<bwFunctorLambda>([&use_subpixel, &use_subpixel_positioning]() {
+				use_subpixel_positioning.hide(!use_subpixel.isChecked());
+				});
+
+			use_subpixel.createApplyFunctor2<bwFunctorLambda2<bwCheckbox>>([&use_subpixel_positioning](bwCheckbox& checkbox) {
+				use_subpixel_positioning.hide(!checkbox.isChecked());
+				});
+
+			use_subpixel.createApplyFunctor3<bwFunctorLambda3<bool>>(
+				[&use_subpixel]() { return use_subpixel.isChecked(); },
+				[&use_subpixel_positioning](bool isChecked) { use_subpixel_positioning.hide(!isChecked); }
+			);
+			});
+#endif
+
+		builder.buildContainer<bwPanel, RNABuilder>(
+			[](RNABuilder& builder) {
+				builder.buildLayout<bwColumnLayout>(
+					[](bwBuilder& builder) {
+						builder.addWidget<bwPushButton>("Translate");
+						builder.addWidget<bwPushButton>("Rotate");
+						builder.addWidget<bwPushButton>("Scale");
+					},
+					true);
+
+				builder.addWidget<bwPushButton>("Mirror").setIcon(icon_map->getIcon(ICON_MOD_MIRROR));
+			},
+			std::make_unique<bwPanelLayout>(),
+			"Some Testing Widgets",
+			PANEL_HEADER_HEIGHT);
+
+		builder.buildContainer<bwPanel>(
+			[](bwBuilder& builder) {
+				builder.buildLayout<bwRowLayout>([](bwBuilder& builder) {
+					builder.addWidget<bwCheckbox>("Make Awesome");
+					builder.addWidget<bwCheckbox>("Wireframes");
+					});
+
+				builder.addWidget<bwTextBox>().setText("Some Text...");
+
+				builder.buildLayout<bwRowLayout>([](bwBuilder& builder) {
+					builder.addWidget<bwLabel>()
+						.setLabel("Pose Icon")
+						.setIcon(icon_map->getIcon(ICON_POSE_HLT));
+					builder.addWidget<bwLabel>()
+						.setLabel("Normalized FCurve Icon")
+						.setIcon(icon_map->getIcon(ICON_NORMALIZE_FCURVES));
+					builder.addWidget<bwLabel>()
+						.setLabel("Chroma Scope Icon")
+						.setIcon(icon_map->getIcon(ICON_SEQ_CHROMA_SCOPE));
+					});
+			},
+			std::make_unique<bwPanelLayout>(),
+			"More Testing...",
+			PANEL_HEADER_HEIGHT);
 	}
 
 	void DefaultStage::registerProperties(bWidgets::RNAProperties<DefaultStage>& properties)

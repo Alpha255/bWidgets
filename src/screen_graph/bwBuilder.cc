@@ -6,11 +6,13 @@ namespace bWidgets
 {
 	namespace bwScreenGraph
 	{
-		bwBuilder::bwBuilder(bwLayoutNode& active_layout_node) : _active_layout_node(active_layout_node)
+		bwBuilder::bwBuilder(bwLayoutNode& active_layout_node) 
+			: _active_layout_node(active_layout_node)
 		{
 		}
 
-		bwBuilder::bwBuilder(bwScreenGraph& screen_graph) : bwBuilder(screen_graph.Root())
+		bwBuilder::bwBuilder(bwScreenGraph& screen_graph) 
+			: bwBuilder(screen_graph.Root())
 		{
 		}
 

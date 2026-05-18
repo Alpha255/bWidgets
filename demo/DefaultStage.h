@@ -33,6 +33,8 @@ namespace bWidgetsDemo
 	public:
 		DefaultStage(uint32_t mask_width, uint32_t mask_height);
 
+	protected:
+		void buildWidgets() override;
 	private:
 		void registerProperties(bWidgets::RNAProperties<DefaultStage>& properties);
 

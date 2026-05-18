@@ -27,8 +27,7 @@ namespace bWidgets
 		const bwScreenGraph::bwContainerNode& node;
 
 	public:
-		bwWidgetBaseStyle base_style;  // XXX public for setWidgetStyle. Should only
-		// be temporarily needed.
+		bwWidgetBaseStyle base_style;  // XXX public for setWidgetStyle. Should only be temporarily needed.
 	};
 
 }  // namespace bWidgets

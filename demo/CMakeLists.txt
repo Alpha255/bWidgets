@@ -31,11 +31,13 @@ set(SRC
 	bwidgets_demo.cc
 	Application.cc
 	DefaultStage.cc
+	BlenderStage.cc
 	DefaultStageRNAFunctor.cc
 	Stage.cc
 
 	Application.h
 	DefaultStage.h
+	BlenderStage.h
 	DefaultStageRNAFunctor.h
 	Stage.h
 	resources/blender_icon_defines.h
