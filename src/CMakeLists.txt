@@ -122,6 +122,8 @@ set(SRC
 	widgets/bwAbstractButton.cc
 	widgets/bwCheckbox.cc
 	widgets/bwContainerWidget.cc
+	widgets/bwMenuBar.cc
+	widgets/bwMenuButton.cc
 	widgets/bwLabel.cc
 	widgets/bwPopupMenu.cc
 	widgets/bwNumberSlider.cc
@@ -137,6 +139,8 @@ set(SRC
 	widgets/bwAbstractButton.h
 	widgets/bwCheckbox.h
 	widgets/bwContainerWidget.h
+	widgets/bwMenuBar.h
+	widgets/bwMenuButton.h
 	widgets/bwLabel.h
 	widgets/bwPopupMenu.h
 	widgets/bwNumberSlider.h

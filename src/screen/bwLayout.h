@@ -55,6 +55,10 @@ namespace bWidgets
 
 	class bwLayoutItem : public bWidgets::bwLayoutInterface
 	{
+		friend void resolveScreenGraphNodeLayout(bWidgets::bwScreenGraph::bwLayoutNode& node,
+			const bWidgets::bwRectangle<float>& rect,
+			const float scale_fac);
+
 	public:
 		enum class Type
 		{
@@ -74,10 +78,10 @@ namespace bWidgets
 
 		virtual ~bwLayoutItem() override = default;
 
-		virtual void resolve(bWidgets::bwScreenGraph::bwNode& node,
+		void resolve(bWidgets::bwScreenGraph::bwNode& node,
 			const bWidgets::bwPoint& layout_pos,
 			const uint32_t item_margin,
-			const float scale_fac);
+			const float scale_factor) override;
 
 		bWidgets::bwRectanglePixel getRectangle() override;
 		uint32_t getHeight() const;

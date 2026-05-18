@@ -51,18 +51,17 @@ namespace bWidgets
 		uint32_t rounded_corners;
 
 	protected:
-		// Protected constructor to force calling through inherited class (pseudo
-		// abstract).
+		// Protected constructor to force calling through inherited class (pseudo abstract).
 		bwAbstractButton(const std::string& text,
 			std::optional<uint32_t> width_hint = std::nullopt,
 			std::optional<uint32_t> height_hint = std::nullopt);
+
 		void apply();
 
 		std::string text;
 
 	public:
-		bwWidgetBaseStyle base_style;  // XXX public for setWidgetStyle. Should only
-		// be temporarily needed.
+		bwWidgetBaseStyle base_style;  // XXX public for setWidgetStyle. Should only be temporarily needed.
 	};
 
 	class bwAbstractButtonHandler : public bwScreenGraph::bwEventHandler

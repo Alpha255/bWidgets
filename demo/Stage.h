@@ -51,6 +51,8 @@ namespace bWidgetsDemo
 		Stage(const uint32_t mask_width, const uint32_t mask_height);
 		virtual ~Stage();
 
+		void setup(const float scale_x, const float scale_y);
+
 		void draw();
 
 		void handleMouseMovementEvent(const bWidgets::bwMouseEvent& event);

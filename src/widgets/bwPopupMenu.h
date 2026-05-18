@@ -22,11 +22,11 @@ namespace bWidgets
 			SEPARATOR,
 		};
 
-		bwMenuItem(std::string inlabel, 
-			Type inType = Type::ACTION, 
-			bool inEnabled = true, 
+		bwMenuItem(std::string inlabel,
+			Type inType = Type::ACTION,
+			bool inEnabled = true,
 			BIFIconSvg inIcon = BIFIconSvg::ICON_NONE);
-	private:
+
 		Type type;
 		bool enabled = true;
 		bwInputKeys shortcut;
@@ -38,14 +38,10 @@ namespace bWidgets
 	{
 		friend class bwMenuHandler;
 	public:
-		bwPopupMenu(std::string inTitle,
-			const bwScreenGraph::bwContainerNode& node,
+		bwPopupMenu(const bwScreenGraph::bwContainerNode& node,
+			std::string inTitle,
 			std::optional<uint32_t> width_hint = std::nullopt,
-			std::optional<uint32_t> height_hint = std::nullopt)
-			: bwContainerWidget(node, width_hint, height_hint)
-			, title(std::move(inTitle))
-		{
-		}
+			std::optional<uint32_t> height_hint = std::nullopt);
 
 		std::string_view getTypeIdentifier() const override;
 
@@ -59,6 +55,9 @@ namespace bWidgets
 
 		bwRectanglePixel getDropdownRect() const;
 		void drawDropdown(bwStyle& style);
+
+		bool is_open{ false };
+
 	private:
 		void drawItem(bwStyle& style,
 			const bwMenuItem& item,
@@ -69,5 +68,14 @@ namespace bWidgets
 
 		std::string title;
 		std::vector<std::unique_ptr<bwMenuItem>> menu_items;
+
+		static constexpr uint32_t item_padding = 4;
+		static constexpr uint32_t item_height = 20;
+		static constexpr uint32_t preferred_dropdown_width = 200;
+
+		int32_t hovered_item{ -1 };
+
+		bwWidgetBaseStyle item_style;
+		bwWidgetBaseStyle item_hover_style;
 	};
 }  // namespace bWidgets

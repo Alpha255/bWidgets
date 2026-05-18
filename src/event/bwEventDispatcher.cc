@@ -82,8 +82,7 @@ namespace bWidgets
 
 	void bwEventDispatcher::dispatchMouseButtonPress(bwMouseButtonEvent& event)
 	{
-		bwScreenGraph::bwNode* node =
-			context.active ? context.active : findHoveredNode(event, screen_graph.Root());
+		bwScreenGraph::bwNode* node = context.active ? context.active : findHoveredNode(event, screen_graph.Root());
 
 		if (node)
 		{

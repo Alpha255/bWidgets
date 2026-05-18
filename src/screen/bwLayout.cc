@@ -31,7 +31,7 @@ namespace bWidgets
 {
 	void resolveScreenGraphNodeLayout(bwScreenGraph::bwLayoutNode& node,
 		const bwRectangle<float>& rect,
-		const float scale_fac)
+		const float scale_factor)
 	{
 		if (bwLayoutItem* layout = static_cast<bwLayoutItem*>(node.Layout()))
 		{
@@ -45,7 +45,12 @@ namespace bWidgets
 					widget->height_hint = rect.height();
 				}
 
-				root->resolve(node, { rect.xmin, rect.ymin }, root->item_margin, scale_fac);
+				root->resolve(node, { rect.xmin, rect.ymin }, root->item_margin, scale_factor);
+			}
+			else
+			{
+				layout->width = rect.width();
+				layout->resolve(node, { rect.xmin, rect.ymax }, 0, scale_factor);
 			}
 		}
 	}
@@ -171,7 +176,7 @@ namespace bWidgets
 		const bwPoint& panel_pos,
 		const uint32_t padding,
 		const uint32_t item_margin,
-		const float scale_fac)
+		const float scale_factor)
 	{
 		const bwPanel* panel = static_cast<bwPanel*>(panel_node.Widget());
 		bwLayoutItem* layout = static_cast<bwLayoutItem*>(panel_node.Layout());
@@ -185,7 +190,7 @@ namespace bWidgets
 
 		//  layout->width -= 2.0f * padding;
 
-		layout->resolve(panel_node, panel_items_pos, item_margin, scale_fac);
+		layout->resolve(panel_node, panel_items_pos, item_margin, scale_factor);
 
 		layout->width = initial_width;
 	}
@@ -193,7 +198,7 @@ namespace bWidgets
 	void bwLayoutItem::resolve(bwScreenGraph::bwNode& node,
 		const bwPoint& layout_pos,
 		const uint32_t item_margin,
-		const float scale_fac)
+		const float scale_factor)
 	{
 		bwScreenGraph::bwNode::ChildList* children = node.Children();
 		int32_t xpos = layout_pos.x + padding;
@@ -279,11 +284,11 @@ namespace bWidgets
 				layout->width = item_width;
 				layout->height = 0;
 
-				panel.header_height = panel.getHeaderHeightHint() * scale_fac;
+				panel.header_height = panel.getHeaderHeightHint() * scale_factor;
 				if (child_node.childrenVisible())
 				{
 					resolvePanelContents(
-						child_node, bwPoint(xpos, ypos), item_margin, item_margin, scale_fac);
+						child_node, bwPoint(xpos, ypos), item_margin, item_margin, scale_factor);
 					layout->height += 2 * item_margin;
 				}
 				location.y = ypos - layout->height;
@@ -292,12 +297,12 @@ namespace bWidgets
 			else if (layout)
 			{
 				layout->width = item_width;
-				layout->resolve(child_node, bwPoint(xpos, ypos), item_margin, scale_fac);
+				layout->resolve(child_node, bwPoint(xpos, ypos), item_margin, scale_factor);
 				location.y = ypos;
 			}
 			if (widget)
 			{
-				const int32_t widget_height = layout ? layout->height : widget->height_hint * scale_fac;
+				const int32_t widget_height = (layout && layout->height > 0) ? layout->height : widget->height_hint * scale_factor;
 				widget->rectangle.set(xpos, item_width, ypos - widget_height, widget_height);
 				location.y = widget->rectangle.ymin;
 				if (align)
@@ -437,7 +442,7 @@ namespace bWidgets
 	void bwScrollViewLayout::resolve(bwScreenGraph::bwNode& node,
 		const bwPoint& layout_pos,
 		const uint32_t item_margin,
-		const float scale_fac)
+		const float scale_factor)
 	{
 		bwWidget* widget = node.Widget();
 		bwScrollView* view_widget = widget_cast<bwScrollView>(widget);
@@ -452,7 +457,7 @@ namespace bWidgets
 
 		widget->rectangle.set(layout_pos.x, widget->width_hint, layout_pos.y, widget->height_hint);
 
-		bwRectanglePixel content_bounds = view_widget->getContentBounds(scale_fac);
+		bwRectanglePixel content_bounds = view_widget->getContentBounds(scale_factor);
 		width = content_bounds.width();
 
 		bwPoint children_pos
@@ -461,7 +466,7 @@ namespace bWidgets
 			float(content_bounds.ymax + view_widget->getScrollOffsetY())
 		};
 
-		bwLayoutItem::resolve(node, children_pos, item_margin, scale_fac);
+		bwLayoutItem::resolve(node, children_pos, item_margin, scale_factor);
 		height += padding;
 	}
 

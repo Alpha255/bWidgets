@@ -27,6 +27,7 @@
 #include "paint/bwPainter.h"
 #include "bwRange.h"
 #include "bwRectangle.h"
+#include "bwPopupMenu.h"
 #include "bwScrollView.h"
 #include "bwStyleCSS.h"
 #include "bwStyleManager.h"
@@ -42,6 +43,7 @@
 #include "screen/bwLayout.h"
 #include "stylesheet/bwStyleSheet.h"
 #include "window_manager/bwWindow.h"
+#include "styling/bwPreferences.h"
 
 #include "Stage.h"
 
@@ -90,6 +92,17 @@ namespace bWidgetsDemo
 		screen_graph.reset();
 	}
 
+	void Stage::setup(const float scale_x, const float scale_y)
+	{
+		setContentScale(scale_x, scale_y);
+
+		if (!screen_graph)
+		{
+			screen_graph = createScreenGraph(mask_width, mask_height);
+			buildWidgets();
+		}
+	}
+
 	void Stage::initFonts()
 	{
 		// Initialize freetype
@@ -120,13 +133,9 @@ namespace bWidgetsDemo
 	}
 
 	void Stage::draw()
-	{
-		if (!screen_graph)
-		{
-			screen_graph = createScreenGraph(mask_width, mask_height);
-			buildWidgets();
-		}
-	
+	{	
+		assert(screen_graph);
+
 		bwRectanglePixel stage_rect{ 0, int32_t(mask_width) - 1, 0, int32_t(mask_height - 1) };
 		bwStyleProperties properties;
 		bwColor clear_color{ 114u };
@@ -159,6 +168,17 @@ namespace bWidgetsDemo
 		resolveScreenGraphNodeLayout(screen_graph->Root(), stage_rect, interface_scale);
 
 		bwScreenGraph::bwDrawer::draw(*screen_graph, *style);
+
+		for (bwScreenGraph::bwNode& node : *screen_graph)
+		{
+			if (auto* menu = widget_cast<bwPopupMenu>(node.Widget()))
+			{
+				if (menu->is_open)
+				{
+					menu->drawDropdown(*style);
+				}
+			}
+		}
 	}
 
 	void Stage::StyleSheetPolish(bwWidget& widget)
@@ -173,6 +193,9 @@ namespace bWidgetsDemo
 
 	void Stage::setContentScale(const float scale_x, const float scale_y)
 	{
+		float dpiHint = bwUserPreferences::get().getDefaultScreenDpi() * scale_x;
+		bwUserPreferences::get().initalizeWithDpiAwareness(dpiHint);
+
 		auto& gwn_engine = dynamic_cast<GawainPaintEngine&>(*bwPainter::s_paint_engine);
 		gwn_engine.m_scale_x = scale_x;
 		gwn_engine.m_scale_y = scale_y;
@@ -230,6 +253,8 @@ namespace bWidgetsDemo
 
 	void Stage::handleMouseMovementEvent(const bwMouseEvent& event)
 	{
+		assert(screen_graph);
+
 		const bwPoint& mouse_location = event.getMouseLocation();
 
 		// TODO Multiple hovered items need to be possible (e.g. button + surrounding panel).
@@ -239,6 +264,8 @@ namespace bWidgetsDemo
 
 	void Stage::handleMouseButtonEvent(const bwMouseEvent& event)
 	{
+		assert(screen_graph);
+
 		bwMouseButtonEvent bw_event(event.getButton(), event.getMouseLocation());
 		bwEventDispatcher& dispatcher = screen_graph->event_dispatcher;
 
@@ -257,6 +284,8 @@ namespace bWidgetsDemo
 
 	void Stage::handleMouseScrollEvent(const bwMouseEvent& event, bwMouseWheelEvent::Direction dir)
 	{
+		assert(screen_graph);
+
 		bwMouseWheelEvent bw_event(dir, event.getMouseLocation());
 		bwEventDispatcher& dispatcher = screen_graph->event_dispatcher;
 

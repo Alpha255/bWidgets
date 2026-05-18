@@ -63,8 +63,6 @@ namespace bWidgets
 		gwn_context = GWN_context_create();
 
 		glEnable(GL_SCISSOR_TEST);
-
-		bwEventManager::setupWindowHandlers(*this);
 	}
 
 	void bwWindow::setupStage()
@@ -73,7 +71,9 @@ namespace bWidgets
 
 		float px_scale_x, px_scale_y;
 		glfwGetWindowContentScale(glfw_window, &px_scale_x, &px_scale_y);
-		stage->setContentScale(px_scale_x, px_scale_y);
+
+		stage->setup(px_scale_x, px_scale_y);
+		bwEventManager::setupWindowHandlers(*this);
 	}
 
 	bwWindow::~bwWindow()

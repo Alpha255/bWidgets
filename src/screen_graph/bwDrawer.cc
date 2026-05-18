@@ -11,7 +11,8 @@ namespace bWidgets
 {
 	namespace bwScreenGraph
 	{
-		bwDrawer::bwDrawer(bwStyle& _style) : style(_style)
+		bwDrawer::bwDrawer(bwStyle& _style) 
+			: style(_style)
 		{
 		}
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <assert.h>
 
 #include "bwNode.h"
 #include "bwScreenGraph.h"
@@ -51,8 +52,7 @@ namespace bWidgets
 			template<typename _LayoutType, typename... _Args>
 			bwLayoutNode& addLayout(_Args&&... __args)
 			{
-				static_assert(std::is_base_of<bwLayoutInterface, _LayoutType>::value,
-					"Should implement bwLayoutInterface");
+				static_assert(std::is_base_of<bwLayoutInterface, _LayoutType>::value, "Should implement bwLayoutInterface");
 
 				bwLayoutNode& new_node = addChildNode<bwLayoutNode>(_active_layout_node);
 				new_node.layout = std::make_unique<_LayoutType>(std::forward<_Args>(__args)...);
@@ -83,8 +83,7 @@ namespace bWidgets
 			template<typename _LayoutType, typename _BuilderType, typename... _Args>
 			bwLayoutNode& buildLayout(BuildFunc<_BuilderType> build_func, _Args&&... __args)
 			{
-				static_assert(std::is_base_of_v<bwLayoutInterface, _LayoutType>,
-					"Should implement bwLayoutInterface");
+				static_assert(std::is_base_of_v<bwLayoutInterface, _LayoutType>, "Should implement bwLayoutInterface");
 				static_assert(std::is_base_of_v<bwBuilder, _BuilderType>, "Should inherit from bwBuilder");
 
 				bwLayoutNode& new_node = addChildNode<bwLayoutNode>(_active_layout_node);
@@ -97,8 +96,7 @@ namespace bWidgets
 			template<typename _WidgetType, typename... _Args>
 			_WidgetType& addWidget(_Args&&... __args)
 			{
-				static_assert(std::is_base_of<bwWidget, _WidgetType>::value,
-					"Should derrive from bwWidget");
+				static_assert(std::is_base_of<bwWidget, _WidgetType>::value, "Should derrive from bwWidget");
 
 				bwWidgetNode& new_node = addChildNode<bwWidgetNode>(_active_layout_node);
 				new_node.widget = std::make_unique<_WidgetType>(std::forward<_Args>(__args)...);
@@ -109,10 +107,8 @@ namespace bWidgets
 			template<typename _WidgetType, typename... _Args>
 			bwContainerNode& addContainer(std::unique_ptr<bwLayoutInterface> layout, _Args&&... __args)
 			{
-				static_assert(std::is_base_of<bwWidget, _WidgetType>::value,
-					"Should derrive from bwWidget");
-				static_assert(std::is_base_of<bwContainerWidget, _WidgetType>::value,
-					"Should derrive from bwContainerWidget");
+				static_assert(std::is_base_of<bwWidget, _WidgetType>::value, "Should derrive from bwWidget");
+				static_assert(std::is_base_of<bwContainerWidget, _WidgetType>::value, "Should derrive from bwContainerWidget");
 
 				bwContainerNode& new_node = addChildNode<bwContainerNode>(_active_layout_node);
 
@@ -136,8 +132,7 @@ namespace bWidgets
 				std::unique_ptr<bwLayoutInterface> layout,
 				_Args&&... __args)
 			{
-				return buildContainer<_WidgetType, bwBuilder>(
-					build_func, std::move(layout), std::forward<_Args>(__args)...);
+				return buildContainer<_WidgetType, bwBuilder>(build_func, std::move(layout), std::forward<_Args>(__args)...);
 			}
 
 			/**
@@ -161,10 +156,8 @@ namespace bWidgets
 				std::unique_ptr<bwLayoutInterface> layout,
 				_Args&&... __args)
 			{
-				static_assert(std::is_base_of<bwWidget, _WidgetType>::value,
-					"Should derrive from bwWidget");
-				static_assert(std::is_base_of<bwContainerWidget, _WidgetType>::value,
-					"Should derrive from bwContainerWidget");
+				static_assert(std::is_base_of<bwWidget, _WidgetType>::value, "Should derrive from bwWidget");
+				static_assert(std::is_base_of<bwContainerWidget, _WidgetType>::value, "Should derrive from bwContainerWidget");
 				static_assert(std::is_base_of_v<bwBuilder, _BuilderType>, "Should inherit from bwBuilder");
 
 				bwContainerNode& new_node = addChildNode<bwContainerNode>(_active_layout_node);
@@ -174,6 +167,33 @@ namespace bWidgets
 				buildChildren(build_func, new_node);
 
 				return new_node;
+			}
+
+			template<typename _WidgetType, typename... _Args>
+			bwContainerNode& buildRootContainer(BuildFunc<> build_func,
+				std::unique_ptr<bwLayoutInterface> layout,
+				_Args&&... __args)
+			{
+				return buildRootContainer<_WidgetType, bwBuilder>(build_func, std::move(layout), std::forward<_Args>(__args)...);
+			}
+
+			template<typename _WidgetType, typename _BuilderType, typename... _Args>
+			bwContainerNode& buildRootContainer(BuildFunc<_BuilderType> build_func,
+				std::unique_ptr<bwLayoutInterface> layout,
+				_Args&&... __args)
+			{
+				static_assert(std::is_base_of<bwWidget, _WidgetType>::value, "Should derrive from bwWidget");
+				static_assert(std::is_base_of<bwContainerWidget, _WidgetType>::value, "Should derrive from bwContainerWidget");
+				static_assert(std::is_base_of_v<bwBuilder, _BuilderType>, "Should inherit from bwBuilder");
+				//assert(std::is_base_of<bwContainerNode, decltype(_active_layout_node)>::value);
+
+				bwContainerNode& layout_node = static_cast<bwContainerNode&>(_active_layout_node.get());
+				setLayout(layout_node, std::move(layout));
+				layout_node.widget = std::make_unique<_WidgetType>(layout_node, std::forward<_Args>(__args)...);
+				layout_node.handler = layout_node.widget->createHandler();
+				buildChildren(build_func, layout_node);
+
+				return layout_node;
 			}
 
 			/**
@@ -206,8 +226,7 @@ namespace bWidgets
 			template<typename _WidgetType, typename... _Args>
 			static _WidgetType& emplaceWidget(bwLayoutNode& node, _Args&&... __args)
 			{
-				static_assert(std::is_base_of<bwWidget, _WidgetType>::value,
-					"Should derrive from bwWidget");
+				static_assert(std::is_base_of<bwWidget, _WidgetType>::value, "Should derrive from bwWidget");
 
 				bwWidgetNode& new_node = addChildNode<bwWidgetNode>(node);
 				new_node.widget = std::make_unique<_WidgetType>(std::forward<_Args>(__args)...);
@@ -218,8 +237,7 @@ namespace bWidgets
 		private:
 			template<typename _NodeType> static _NodeType& addChildNode(bwLayoutNode& parent_node)
 			{
-				static_assert(std::is_base_of<bwNode, _NodeType>::value,
-					"Should derrive from bwScreenGraph::bwNode");
+				static_assert(std::is_base_of<bwNode, _NodeType>::value, "Should derrive from bwScreenGraph::bwNode");
 
 				parent_node.children.push_back(std::make_unique<_NodeType>());
 				bwNode& ref = *parent_node.children.back();

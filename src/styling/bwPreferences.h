@@ -4,7 +4,7 @@
 #include "generics/bwPoint.h"
 #include <stdint.h>
 #include <assert.h>
-#include <WinUser.h>
+#include <Windows.h>
 
 namespace bWidgets
 {
@@ -48,14 +48,20 @@ namespace bWidgets
 		float icon_only;
 	};
 
-	struct dwUserPreferences
+	struct bwUserPreferences
 	{
+		static bwUserPreferences& get()
+		{
+			static bwUserPreferences instance;
+			return instance;
+		}
+
 		const float scale = 1.0f;
-		const uint32_t default_dpi = 72u;
+		const float default_dpi = 72u;
 		const float text_margin = 0.4f;
 
 		uint32_t line_width = 0;
-		uint32_t dpi = 72u;
+		float dpi = 72u;
 		float scale_factor = 1.0f;
 		float inv_scale_factor = 1.0f; // wm_surface_constant_dpi_set_userpref, WM_window_dpi_set_userdef
 		float pixel_size = 1.0f;
@@ -105,24 +111,24 @@ namespace bWidgets
 			return scale_factor * 12.0f;
 		}
 
-		inline uint32_t getDefaultScreenDpi() const
+		inline float getDefaultScreenDpi() const
 		{
 #if _WIN32
 			return USER_DEFAULT_SCREEN_DPI;
 #else
 			assert(false);
-			return 0u;
+			return 0.0f;
 #endif
 		}
 
-		void initalizeWithDpiAwareness(const uint32_t dpiHint)
+		void initalizeWithDpiAwareness(const float dpiHint)
 		{
-			auto autoDpi = std::max<uint32_t>(dpiHint, getDefaultScreenDpi());
+			auto autoDpi = std::max<float>(dpiHint, getDefaultScreenDpi());
 			this->dpi = autoDpi * scale * (default_dpi / getDefaultScreenDpi());
-			this->pixel_size = static_cast<float>(std::max<uint32_t>(1u, std::max<uint32_t>(1u, dpi / 64u + line_width)));
+			this->pixel_size = static_cast<float>(std::max<uint32_t>(1u, std::max<uint32_t>(1u, static_cast<uint32_t>(dpi / 64u) + line_width)));
 			this->scale_factor = dpi / default_dpi;
 			this->inv_scale_factor = 1.0f / scale_factor;
-			this->widget_unit = static_cast<uint32_t>(roundf(18.0f * scale_factor)) + (2u * pixel_size);
+			this->widget_unit = static_cast<uint32_t>(roundf(18.0f * scale_factor)) + (2.0f * pixel_size);
 		}
 	};
 
