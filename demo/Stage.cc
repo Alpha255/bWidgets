@@ -169,16 +169,15 @@ namespace bWidgetsDemo
 
 		bwScreenGraph::bwDrawer::draw(*screen_graph, *style);
 
+#if 0
 		for (bwScreenGraph::bwNode& node : *screen_graph)
 		{
 			if (auto* menu = widget_cast<bwPopupMenu>(node.Widget()))
 			{
-				if (menu->is_open)
-				{
-					menu->drawDropdown(*style);
-				}
+				menu->drawDropdown(*style);
 			}
 		}
+#endif
 	}
 
 	void Stage::StyleSheetPolish(bwWidget& widget)

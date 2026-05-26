@@ -3,14 +3,16 @@
 #include "bwWidget.h"
 #include "bwAbstractButton.h"
 #include "bwWidgetBaseStyle.h"
+#include "bwPopupMenu.h"
 
 namespace bWidgets
 {
 	class bwMenuButton : public bwAbstractButton
 	{
 	public:
-		bwMenuButton(const std::string& text)
+		bwMenuButton(const std::string& text, bwMenuItem::onBuildPopupMenu&& onBuildFunc)
 			: bwAbstractButton(text)
+			, on_build_popupmenu(std::move(onBuildFunc))
 		{
 		}
 
@@ -25,5 +27,7 @@ namespace bWidgets
 		{
 			return getState() == State::HIGHLIGHTED;
 		}
+	private:
+		bwMenuItem::onBuildPopupMenu on_build_popupmenu;
 	};
 }

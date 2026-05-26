@@ -8,20 +8,20 @@ namespace bWidgets
 	bwMenuItem::bwMenuItem(std::string inlabel,
 		Type inType,
 		bool inEnabled,
-		BIFIconSvg inIcon)
+		BIFIconSvg inIcon,
+		bwShortcut inShortcut)
 		: type(inType)
 		, enabled(inEnabled)
 		, label(std::move(inlabel))
 		, icon(inIcon)
+		, shortcut(std::move(inShortcut))
 	{
 	}
 
 	bwPopupMenu::bwPopupMenu(const bwScreenGraph::bwContainerNode& node,
-		std::string inTitle,
 		std::optional<uint32_t> width_hint,
 		std::optional<uint32_t> height_hint)
 		: bwContainerWidget(node, width_hint, height_hint)
-		, title(std::move(inTitle))
 	{
 		initialize();
 
@@ -39,21 +39,22 @@ namespace bWidgets
 		return "bwPopupMenu";
 	}
 
-	bwPopupMenu& bwPopupMenu::addAction(std::string label, bool enabled, BIFIconSvg icon)
+	bwMenuItem& bwPopupMenu::addAction(std::string label)
 	{
-		menu_items.push_back(std::make_unique<bwMenuItem>(std::move(label), bwMenuItem::Type::ACTION, enabled, icon));
-		return *this;
+		auto& item = menu_items.emplace_back(std::make_unique<bwMenuItem>(std::move(label)));
+		return *item;
 	}
 
-	bwPopupMenu& bwPopupMenu::addSubmenu(std::string label, bool enabled, BIFIconSvg icon)
+	bwMenuItem& bwPopupMenu::addSubmenu(std::string label, bwMenuItem::onBuildPopupMenu&& onBuildSubmenu)
 	{
-		menu_items.push_back(std::make_unique<bwMenuItem>(std::move(label), bwMenuItem::Type::SUBMENU, enabled, icon));
-		return *this;
+		auto& item = menu_items.emplace_back(std::make_unique<bwMenuItem>(std::move(label)));
+		item->setOnBuildSubmenu(std::move(onBuildSubmenu));
+		return *item;
 	}
 
 	bwPopupMenu& bwPopupMenu::addSeparator()
 	{
-		menu_items.push_back(std::make_unique<bwMenuItem>(std::string(), bwMenuItem::Type::SEPARATOR));
+		menu_items.emplace_back(std::make_unique<bwMenuItem>(std::string(), bwMenuItem::Type::SEPARATOR));
 		return *this;
 	}
 
@@ -82,22 +83,21 @@ namespace bWidgets
 			rectangle.ymax
 		};
 
-		if (is_open)
+		const bwGradient hover_gradient
 		{
-			const bwGradient hover_gradient
-			{
-				base_style.backgroundColor(),
-				base_style.shadeTop(),
-				base_style.shadeBottom()
-			};
-			painter.drawRoundboxWidgetBase(base_style, style, btn_rect, hover_gradient, base_style.corner_radius);
-		}
+			base_style.backgroundColor(),
+			base_style.shadeTop(),
+			base_style.shadeBottom()
+		};
+		painter.drawRoundboxWidgetBase(base_style, style, btn_rect, hover_gradient, base_style.corner_radius);
 
+#if 0
 		bwRectanglePixel text_rect = btn_rect;
 		text_rect.xmin += static_cast<int32_t>(item_padding) + 4;
 		text_rect.xmax -= static_cast<int32_t>(item_padding);
 		painter.setActiveColor(base_style.textColor());
 		painter.drawText(title, text_rect, TextAlignment::LEFT);
+#endif
 	}
 
 	void bwPopupMenu::drawDropdown(bwStyle& style)
@@ -124,15 +124,13 @@ namespace bWidgets
 				y + static_cast<int32_t>(item_height)
 			};
 
-			switch (item->type)
+			if (item->isSeparator())
 			{
-			case bwMenuItem::Type::ACTION:
-			case bwMenuItem::Type::SUBMENU:
-				drawItem(style, *item, item_rect, item_index == hovered_item);
-				break;
-			case bwMenuItem::Type::SEPARATOR:
 				drawSeparator(item_rect);
-				break;
+			}
+			else
+			{
+				drawItem(style, *item, item_rect, item_index == hovered_item);
 			}
 
 			item_index++;
@@ -144,6 +142,7 @@ namespace bWidgets
 		const bwRectanglePixel& item_rect,
 		bool hovered)
 	{
+#if 0
 		bwPainter painter;
 		const bool can_highlight = hovered && item.enabled;
 
@@ -216,6 +215,7 @@ namespace bWidgets
 			// TODO: Convert bwInputKeys to display string properly
 			painter.drawText("...", text_rect, TextAlignment::RIGHT);
 		}
+#endif
 	}
 
 	void bwPopupMenu::drawSeparator(const bwRectanglePixel& item_rect)
@@ -229,21 +229,16 @@ namespace bWidgets
 			bwPoint(item_rect.xmax - static_cast<int32_t>(item_padding), sep_y));
 	}
 
-	class bwMenuHandler : public bwScreenGraph::bwEventHandler
+	class bwPopupMenuHandler : public bwScreenGraph::bwEventHandler
 	{
 	public:
-		explicit bwMenuHandler(bwPopupMenu& menu)
+		explicit bwPopupMenuHandler(bwPopupMenu& menu)
 			: menu(menu)
 		{
 		}
 
 		void onMouseMove(bwEvent& event) override
 		{
-			if (!menu.is_open)
-			{
-				return;
-			}
-
 			const bwRectanglePixel dropdown = menu.getDropdownRect();
 			if (!dropdown.isCoordinateInside(event.location.x, event.location.y))
 			{
@@ -255,7 +250,7 @@ namespace bWidgets
 			const int32_t idx = rel_y / static_cast<int32_t>(menu.item_height);
 
 			if (idx >= 0 && static_cast<size_t>(idx) < menu.menu_items.size()
-				&& menu.menu_items[idx]->type != bwMenuItem::Type::SEPARATOR)
+				&& !menu.menu_items[idx]->isSeparator())
 			{
 				menu.hovered_item = idx;
 			}
@@ -277,13 +272,6 @@ namespace bWidgets
 				return;
 			}
 
-			if (!menu.is_open)
-			{
-				menu.is_open = true;
-				event.swallow();
-				return;
-			}
-
 			const bwRectanglePixel dropdown = menu.getDropdownRect();
 			if (dropdown.isCoordinateInside(event.location.x, event.location.y))
 			{
@@ -291,18 +279,16 @@ namespace bWidgets
 					&& static_cast<size_t>(menu.hovered_item) < menu.menu_items.size())
 				{
 					const auto& item = menu.menu_items[menu.hovered_item];
-					if (item->enabled && item->type == bwMenuItem::Type::ACTION)
+					if (item->isEnabled() && item->isAction())
 					{
 						// Action triggered -- TODO: fire callback
 					}
 				}
-				menu.is_open = false;
 				menu.hovered_item = -1;
 				event.swallow();
 			}
 			else
 			{
-				menu.is_open = false;
 				menu.hovered_item = -1;
 			}
 		}
@@ -313,6 +299,6 @@ namespace bWidgets
 
 	std::unique_ptr<bwScreenGraph::bwEventHandler> bwPopupMenu::createHandler()
 	{
-		return std::make_unique<bwMenuHandler>(*this);
+		return std::make_unique<bwPopupMenuHandler>(*this);
 	}
 }  // namespace bWidgets

@@ -18,7 +18,27 @@ namespace bWidgetsDemo
 
 		bwScreenGraph::bwBuilder builder(*graph);
 		builder.buildRootContainer<bwMenuBar>([](bwScreenGraph::bwBuilder& builder) {
-			builder.addWidget<bwMenuButton>("File");
+			builder.addWidget<bwMenuButton>("File", [](bwPopupMenu& menu) {
+				menu.addSubmenu("New", [](bwPopupMenu& submenu) {
+					submenu.addAction("General"); })
+					.setIcon(BIFIconSvg::ICON_FILE_NEW)
+					.setShortcut(ModifierKey::CTRL, KeyboardKey::N);
+				menu.addAction("Open")
+					.setIcon(BIFIconSvg::ICON_FILE_FOLDER)
+					.setShortcut(ModifierKey::CTRL, KeyboardKey::O);
+				menu.addSubmenu("Open Recent", [](bwPopupMenu& submenu) {
+					submenu.addAction("No Recent Files")
+						.setShortcut(ModifierKey::SHIFT, ModifierKey::CTRL, KeyboardKey::O); });
+				menu.addSeparator();
+				menu.addAction("Save")
+					.setIcon(BIFIconSvg::ICON_DISK_DRIVE)
+					.setShortcut(ModifierKey::CTRL, KeyboardKey::S);
+				menu.addAction("Save As...")
+					.setShortcut(ModifierKey::SHIFT, ModifierKey::CTRL, KeyboardKey::S);
+				menu.addSeparator();
+				menu.addAction("Exit")
+					.setShortcut(ModifierKey::CTRL, KeyboardKey::Q);
+			});
 		},
 		std::make_unique<bwColumnLayout>(true),
 		width);

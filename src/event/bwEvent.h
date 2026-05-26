@@ -2,22 +2,69 @@
 
 #include "bwDistance.h"
 #include "bwPoint.h"
+#include <string>
 
 namespace bWidgets
 {
 	enum class KeyboardKey
 	{
+		NONE,
+		A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
 	};
 
-	enum class KeyModifier
+	enum class ModifierKey
 	{
-
+		NONE,
+		SHIFT,
+		LEFT_SHIFT,
+		RIGHT_SHIFT,
+		CTRL,
+		LEFT_CTRL,
+		RIGHT_CTRL,
+		ALT,
+		LEFT_ALT,
+		RIGHT_ALT
 	};
 
 	struct bwInputKeys
 	{
-		std::vector<KeyboardKey> keys;
-		std::vector<KeyModifier> modifiers;
+	};
+
+	struct bwShortcut
+	{
+		ModifierKey FirstModKey = ModifierKey::NONE;
+		ModifierKey SecondModKey = ModifierKey::NONE;
+		KeyboardKey PrimaryKey = KeyboardKey::NONE;
+
+		bwShortcut() = default;
+
+		bwShortcut(KeyboardKey primary)
+			: FirstModKey(ModifierKey::NONE)
+			, SecondModKey(ModifierKey::NONE)
+			, PrimaryKey(primary)
+		{
+		}
+
+		bwShortcut(ModifierKey first, ModifierKey second, KeyboardKey primary)
+			: FirstModKey(first)
+			, SecondModKey(second)
+			, PrimaryKey(primary) 
+		{
+		}
+
+		bwShortcut(ModifierKey first, KeyboardKey primary)
+			: FirstModKey(first)
+			, SecondModKey(ModifierKey::NONE)
+			, PrimaryKey(primary)
+		{
+		}
+
+		const std::string& toString() const
+		{
+			return display;
+		}
+	private:
+		std::string display;
 	};
 
 	class bwEvent
