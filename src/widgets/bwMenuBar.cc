@@ -1,4 +1,5 @@
 #include "bwMenuBar.h"
+#include "paint/bwPainter.h"
 #include "styling/bwPreferences.h"
 
 namespace bWidgets
@@ -15,6 +16,8 @@ namespace bWidgets
 
 	void bwMenuBar::draw(bwStyle& style)
 	{
+		bwPainter painter;
+		painter.drawRectangle(rectangle);
 	}
 
 	uint32_t bwMenuBar::getHeightHint()

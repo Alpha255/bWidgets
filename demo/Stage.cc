@@ -165,7 +165,7 @@ namespace bWidgetsDemo
 
 		bwPainter::s_paint_engine->setupViewport(stage_rect, clear_color);
 
-		resolveScreenGraphNodeLayout(screen_graph->Root(), stage_rect, interface_scale);
+		screen_graph->Root().Layout()->resolve(screen_graph->Root(), stage_rect, interface_scale);
 
 		bwScreenGraph::bwDrawer::draw(*screen_graph, *style);
 

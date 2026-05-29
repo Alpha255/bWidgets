@@ -11,10 +11,21 @@ namespace bWidgets
 
 		virtual bwRectanglePixel getRectangle() = 0;
 
-		virtual void resolve(bWidgets::bwScreenGraph::bwNode& /*node*/,
-			const bWidgets::bwPoint& /*layout_pos*/,
-			const uint32_t /*item_margin*/,
-			const float /*scale_factor*/) 
+		virtual bwPoint getLayoutLocation(const bwRectangle<float>& layout_rect) const
+		{
+			return bwPoint(layout_rect.xmin, layout_rect.ymax);
+		}
+
+		virtual void resolve(bwScreenGraph::bwNode& node,
+			const bwRectangle<float>& layout_rect,
+			const float scale_factor) 
+		{
+			return resolve(node, getLayoutLocation(layout_rect), scale_factor);
+		}
+
+		virtual void resolve(bwScreenGraph::bwNode& /*node*/,
+			const bwPoint& /*layout_pos*/,
+			const float /*scale_factor*/)
 		{
 		}
 	};

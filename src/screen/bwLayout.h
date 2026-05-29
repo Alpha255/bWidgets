@@ -31,10 +31,6 @@ namespace bWidgets
 	class bwStyle;
 	class bwWidget;
 
-	void resolveScreenGraphNodeLayout(bWidgets::bwScreenGraph::bwLayoutNode& node,
-		const bWidgets::bwRectangle<float>& rect,
-		const float scale_fac);
-
 	/**
 	 * \brief An abstract class for defining items that form the layout.
 	 *
@@ -53,12 +49,8 @@ namespace bWidgets
 	 *       calculated widget-coordinates don't change.
 	 */
 
-	class bwLayoutItem : public bWidgets::bwLayoutInterface
+	class bwLayoutItem : public bwLayoutInterface
 	{
-		friend void resolveScreenGraphNodeLayout(bWidgets::bwScreenGraph::bwLayoutNode& node,
-			const bWidgets::bwRectangle<float>& rect,
-			const float scale_fac);
-
 	public:
 		enum class Type
 		{
@@ -78,13 +70,27 @@ namespace bWidgets
 
 		virtual ~bwLayoutItem() override = default;
 
-		void resolve(bWidgets::bwScreenGraph::bwNode& node,
-			const bWidgets::bwPoint& layout_pos,
-			const uint32_t item_margin,
+		void resolve(bwScreenGraph::bwNode& node,
+			const bwRectangle<float>& layout_rect,
 			const float scale_factor) override;
 
-		bWidgets::bwRectanglePixel getRectangle() override;
+		void resolve(bwScreenGraph::bwNode& node,
+			const bwPoint& layout_pos,
+			const float scale_factor) override;
+
+		bwRectanglePixel getRectangle() override;
 		uint32_t getHeight() const;
+
+		inline bwLayoutItem& setItemMargin(uint32_t margin)
+		{
+			item_margin = margin;
+			return *this;
+		}
+
+		inline uint32_t getItemMargin() const
+		{
+			return item_margin;
+		}
 
 		inline bwLayoutItem& setPadding(uint32_t inPadding)
 		{
@@ -106,18 +112,18 @@ namespace bWidgets
 			const bool align,
 			FlowDirection flow_direction = FLOW_DIRECTION_HORIZONTAL);
 
-		static void resolvePanelContents(bWidgets::bwScreenGraph::bwNode& panel_node,
-			const bWidgets::bwPoint& panel_pos,
+		static void resolvePanelContents(bwScreenGraph::bwNode& panel_node,
+			const bwPoint& panel_pos,
 			const uint32_t padding,
-			const uint32_t item_margin,
 			const float scale_fac);
 
 		int32_t width{ 0 }, height{ 0 };
-		bWidgets::bwPoint location;
+		uint32_t item_margin = 0;
+		bwPoint location;
 
 	private:
-		uint32_t countRowColumns(const bWidgets::bwScreenGraph::bwNode::ChildList& children) const;
-		uint32_t countNeededMargins(const bWidgets::bwScreenGraph::bwNode::ChildList& children) const;
+		uint32_t countRowColumns(const bwScreenGraph::bwNode::ChildList& children) const;
+		uint32_t countNeededMargins(const bwScreenGraph::bwNode::ChildList& children) const;
 	};
 
 	class bwColumnLayout : public bwLayoutItem
@@ -143,18 +149,11 @@ namespace bWidgets
 	public:
 		explicit bwScrollViewLayout();
 
-		void resolve(bWidgets::bwScreenGraph::bwNode& node,
-			const bWidgets::bwPoint& layout_pos,
-			const uint32_t item_margin,
+		bwPoint getLayoutLocation(const bwRectangle<float>& layout_rect) const override;
+
+		void resolve(bwScreenGraph::bwNode& node,
+			const bwPoint& layout_pos,
 			const float scale_fac) override;
-
-		inline bwScrollViewLayout& setItemMargin(uint32_t margin)
-		{
-			item_margin = margin;
-			return *this;
-		}
-
-		uint32_t item_margin = 0;
 	};
 
 }  // namespace bWidgets

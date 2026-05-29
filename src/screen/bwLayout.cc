@@ -29,32 +29,6 @@
 
 namespace bWidgets
 {
-	void resolveScreenGraphNodeLayout(bwScreenGraph::bwLayoutNode& node,
-		const bwRectangle<float>& rect,
-		const float scale_factor)
-	{
-		if (bwLayoutItem* layout = static_cast<bwLayoutItem*>(node.Layout()))
-		{
-			if (bwScrollViewLayout* root = dynamic_cast<bwScrollViewLayout*>(layout))
-			{
-				assert(node.Children());
-
-				if (bwWidget* widget = node.Widget())
-				{
-					widget->width_hint = rect.width();
-					widget->height_hint = rect.height();
-				}
-
-				root->resolve(node, { rect.xmin, rect.ymin }, root->item_margin, scale_factor);
-			}
-			else
-			{
-				layout->width = rect.width();
-				layout->resolve(node, { rect.xmin, rect.ymax }, 0, scale_factor);
-			}
-		}
-	}
-
 	bwLayoutItem::bwLayoutItem(bwLayoutItem::Type item_type, const bool align, FlowDirection flow_direction)
 		: type(item_type)
 		, flow_direction(flow_direction)
@@ -175,7 +149,6 @@ namespace bWidgets
 	void bwLayoutItem::resolvePanelContents(bwScreenGraph::bwNode& panel_node,
 		const bwPoint& panel_pos,
 		const uint32_t padding,
-		const uint32_t item_margin,
 		const float scale_factor)
 	{
 		const bwPanel* panel = static_cast<bwPanel*>(panel_node.Widget());
@@ -190,14 +163,31 @@ namespace bWidgets
 
 		//  layout->width -= 2.0f * padding;
 
-		layout->resolve(panel_node, panel_items_pos, item_margin, scale_factor);
+		layout->resolve(panel_node, panel_items_pos, scale_factor);
 
 		layout->width = initial_width;
 	}
 
 	void bwLayoutItem::resolve(bwScreenGraph::bwNode& node,
+		const bwRectangle<float>& layout_rect,
+		const float scale_factor)
+	{
+		width = width == 0u ? layout_rect.width() : width;
+		
+		if (bwWidget* widget = node.Widget())
+		{
+			widget->width_hint = widget->width_hint == 0 ? layout_rect.width() : widget->width_hint;
+			widget->height_hint = widget->height_hint == 0 ? layout_rect.height() : widget->height_hint;
+
+			bwPoint layout_pos = getLayoutLocation(layout_rect);
+			widget->rectangle.set(layout_pos.x, widget->width_hint, layout_pos.y, widget->height_hint);
+		}
+
+		bwLayoutInterface::resolve(node, layout_rect, scale_factor);
+	}
+
+	void bwLayoutItem::resolve(bwScreenGraph::bwNode& node,
 		const bwPoint& layout_pos,
-		const uint32_t item_margin,
 		const float scale_factor)
 	{
 		bwScreenGraph::bwNode::ChildList* children = node.Children();
@@ -287,8 +277,7 @@ namespace bWidgets
 				panel.header_height = panel.getHeaderHeightHint() * scale_factor;
 				if (child_node.childrenVisible())
 				{
-					resolvePanelContents(
-						child_node, bwPoint(xpos, ypos), item_margin, item_margin, scale_factor);
+					resolvePanelContents(child_node, bwPoint(xpos, ypos), item_margin, scale_factor);
 					layout->height += 2 * item_margin;
 				}
 				location.y = ypos - layout->height;
@@ -297,7 +286,7 @@ namespace bWidgets
 			else if (layout)
 			{
 				layout->width = item_width;
-				layout->resolve(child_node, bwPoint(xpos, ypos), item_margin, scale_factor);
+				layout->resolve(child_node, bwPoint(xpos, ypos), scale_factor);
 				location.y = ypos;
 			}
 			if (widget)
@@ -439,24 +428,19 @@ namespace bWidgets
 	{
 	}
 
+	bwPoint bwScrollViewLayout::getLayoutLocation(const bwRectangle<float>& layout_rect) const
+	{
+		return bwPoint(layout_rect.xmin, layout_rect.ymin);
+	}
+
 	void bwScrollViewLayout::resolve(bwScreenGraph::bwNode& node,
 		const bwPoint& layout_pos,
-		const uint32_t item_margin,
 		const float scale_factor)
 	{
-		bwWidget* widget = node.Widget();
-		bwScrollView* view_widget = widget_cast<bwScrollView>(widget);
-
-		if (!widget || !view_widget)
-		{
-			assert(false);
-			return;
-		}
+		bwScrollView* view_widget = widget_cast<bwScrollView>(node.Widget());
+		assert(view_widget);
 
 		// Could check if layout actually needs to be updated.
-
-		widget->rectangle.set(layout_pos.x, widget->width_hint, layout_pos.y, widget->height_hint);
-
 		bwRectanglePixel content_bounds = view_widget->getContentBounds(scale_factor);
 		width = content_bounds.width();
 
@@ -466,7 +450,7 @@ namespace bWidgets
 			float(content_bounds.ymax + view_widget->getScrollOffsetY())
 		};
 
-		bwLayoutItem::resolve(node, children_pos, item_margin, scale_factor);
+		bwLayoutItem::resolve(node, children_pos, scale_factor);
 		height += padding;
 	}
 
