@@ -180,7 +180,7 @@ namespace bWidgets
 			widget->height_hint = widget->height_hint == 0 ? layout_rect.height() : widget->height_hint;
 
 			bwPoint layout_pos = getLayoutLocation(layout_rect);
-			widget->rectangle.set(layout_pos.x, widget->width_hint, layout_pos.y, widget->height_hint);
+			widget->rectangle.set(layout_pos.x, widget->width_hint, layout_pos.y - widget->height_hint, widget->height_hint);
 		}
 
 		bwLayoutInterface::resolve(node, layout_rect, scale_factor);
