@@ -57,7 +57,10 @@ namespace bWidgets
 		}
 
 		glfw_window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
+		assert(glfw_window);
 		glfwMakeContextCurrent(glfw_window);
+
+		glfwGetWindowSize(glfw_window, &width, &height);
 
 		GPU_init();
 		gwn_context = GWN_context_create();

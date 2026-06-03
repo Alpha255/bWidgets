@@ -196,8 +196,8 @@ namespace bWidgetsDemo
 		bwUserPreferences::get().initalizeWithDpiAwareness(dpiHint);
 
 		auto& gwn_engine = dynamic_cast<GawainPaintEngine&>(*bwPainter::s_paint_engine);
-		gwn_engine.m_scale_x = scale_x;
-		gwn_engine.m_scale_y = scale_y;
+		gwn_engine.m_scale_x = interface_scale;
+		gwn_engine.m_scale_y = interface_scale;
 		setFontSize(11.0f);
 	}
 

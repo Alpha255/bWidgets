@@ -172,11 +172,11 @@ namespace bWidgets
 		const bwRectangle<float>& layout_rect,
 		const float scale_factor)
 	{
-		width = width == 0u ? layout_rect.width() : width;
+		width = layout_rect.width();
 		
 		if (bwWidget* widget = node.Widget())
 		{
-			widget->width_hint = widget->width_hint == 0 ? layout_rect.width() : widget->width_hint;
+			widget->width_hint = widget->width_hint < width ? width : widget->width_hint;
 			widget->height_hint = widget->height_hint == 0 ? layout_rect.height() : widget->height_hint;
 
 			bwPoint layout_pos = getLayoutLocation(layout_rect);
