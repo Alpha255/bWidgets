@@ -29,7 +29,11 @@ namespace bWidgets
 
 		// Text
 		painter.setContentMask(rectangle);
+#if 0
 		painter.setActiveColor(base_style.textColor());
+#else
+		painter.setActiveColor(bwColor::White);
+#endif
 		painter.drawTextAndIcon(text, getIcon(), rectangle, base_style.text_alignment, style.dpi_fac);
 	}
 

@@ -1,6 +1,7 @@
 #include "bwMenuBar.h"
 #include "paint/bwPainter.h"
 #include "styling/bwPreferences.h"
+#include "screen_graph/bwNode.h"
 
 namespace bWidgets
 {
@@ -18,6 +19,13 @@ namespace bWidgets
 	{
 		bwPainter painter;
 		painter.drawRectangle(rectangle);
+
+		for (auto& child : *node.Children())
+		{
+			auto widget = child->Widget();
+			assert(widget);
+			widget->draw(style);
+		}
 	}
 
 	uint32_t bwMenuBar::getHeightHint()
