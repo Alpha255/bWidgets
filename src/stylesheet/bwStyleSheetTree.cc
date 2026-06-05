@@ -100,14 +100,12 @@ namespace bWidgets
 	{
 		if (bwStyleSheetNode* node = lookupNode(class_name))
 		{
-			const bwStyleProperty* property = state_properties_lookup_property(
-				property_name, node->state_properties[int32_t(state)]);
+			const bwStyleProperty* property = state_properties_lookup_property(property_name, node->state_properties[int32_t(state)]);
 
 			if (!property && (state != bwWidget::State::NORMAL))
 			{
 				// Property for this state not set, check for STATE_NORMAL.
-				property = state_properties_lookup_property(
-					property_name, node->state_properties[int32_t(bwWidget::State::NORMAL)]);
+				property = state_properties_lookup_property(property_name, node->state_properties[int32_t(bwWidget::State::NORMAL)]);
 			}
 
 			return property;

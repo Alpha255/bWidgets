@@ -39,4 +39,12 @@ namespace bWidgets
 		float corner_radius{ 0.0f };  // TODO Utility function for calculating final radius (roundbox_radius * dpi_fac).
 	};
 
+	struct bwWidgetStyle : public bwWidgetBaseStyle
+	{
+		using bwWidgetBaseStyle::bwWidgetBaseStyle;
+
+	private:
+		bwStyleProperties* properties;
+	};
+
 }  // namespace bWidgets

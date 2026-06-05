@@ -170,8 +170,7 @@ namespace bWidgets
 		const bwWidget::State state,
 		bwStyleProperty& property)
 	{
-		const bwStyleProperty* property_from_tree = tree->resolveProperty(
-			class_name, property.getIdentifier(), state);
+		const bwStyleProperty* property_from_tree = tree->resolveProperty(class_name, property.getIdentifier(), state);
 
 		if (property_from_tree)
 		{

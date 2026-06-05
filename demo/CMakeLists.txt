@@ -27,6 +27,12 @@ set(INC
 	resources
 )
 
+set(STYLESHEET_CSS
+	resources/classic_style.css
+	resources/flat_light.css
+	resources/flat_dark.css
+)
+
 set(SRC
 	bwidgets_demo.cc
 	Application.cc
@@ -41,6 +47,7 @@ set(SRC
 	DefaultStageRNAFunctor.h
 	Stage.h
 	resources/blender_icon_defines.h
+	${STYLESHEET_CSS}
 )
 
 set(LIB
@@ -52,6 +59,7 @@ target_sources(demo PRIVATE ${SRC})
 include_directories(${INC})
 target_link_libraries(demo LINK_PRIVATE ${LIB})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SRC})
+source_group("stylesheet\\css" FILES ${STYLESHEET_CSS})
 
 if(WIN32)
 	add_custom_command(

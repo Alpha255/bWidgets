@@ -18,7 +18,9 @@ namespace bWidgets
 			FLAT_DARK,
 			FLAT_LIGHT,
 
-			BUILTIN_TOT,
+			CUSTOM,
+
+			NUM,
 
 			//		STYLE_CUSTOM, // For the future
 		};

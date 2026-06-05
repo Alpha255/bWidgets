@@ -7,7 +7,8 @@
 
 namespace bWidgets
 {
-	template<typename _Type> class bwStylePropertyInternal : public bwStyleProperty
+	template<typename _Type> 
+	class bwStylePropertyInternal : public bwStyleProperty
 	{
 	public:
 		bwStylePropertyInternal(const std::string_view& name, _Type& reference);
@@ -250,20 +251,21 @@ namespace bWidgets
 	}
 
 	template<typename _Type>
-	bwStylePropertyInternal<_Type>::bwStylePropertyInternal(const std::string_view& name,
-		_Type& reference)
+	bwStylePropertyInternal<_Type>::bwStylePropertyInternal(const std::string_view& name, _Type& reference)
 		: bwStyleProperty(name, PropType<_Type>::type), reference(reference)
 	{
 	}
 
 	template<typename _Type>
 	bwStylePropertyInternal<_Type>::bwStylePropertyInternal(const std::string_view& name)
-		: bwStyleProperty(name, PropType<_Type>::type), reference(value)
+		: bwStyleProperty(name, PropType<_Type>::type)
+		, reference(value)
 	{
 	}
 
 	template<typename _Type>
-	static bwStyleProperty& properties_add_property(bwStyleProperties::PropertyList& properties,
+	static bwStyleProperty& properties_add_property(
+		bwStyleProperties::PropertyList& properties, 
 		const std::string_view& name,
 		_Type& reference)
 	{
@@ -272,8 +274,7 @@ namespace bWidgets
 	}
 
 	template<typename _Type>
-	static bwStyleProperty& properties_add_property(bwStyleProperties::PropertyList& properties,
-		const std::string_view& name)
+	static bwStyleProperty& properties_add_property(bwStyleProperties::PropertyList& properties, const std::string_view& name)
 	{
 		properties.push_back(std::make_unique<bwStylePropertyInternal<_Type>>(name));
 		return *properties.back();
@@ -319,8 +320,7 @@ namespace bWidgets
 		return properties_add_property<bwColor>(properties, name);
 	}
 
-	bwStyleProperty& bwStyleProperties::addProperty(const std::string_view& name,
-		const bwStyleProperty::Type prop_type)
+	bwStyleProperty& bwStyleProperties::addProperty(const std::string_view& name, const bwStyleProperty::Type prop_type)
 	{
 		//	properties_add_property<PropDataType<prop_type>::type>(properties, name);
 		//	properties.push_back(std::make_unique<bwStylePropertyInternal<prop_type>(name));

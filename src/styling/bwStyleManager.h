@@ -13,7 +13,7 @@ namespace bWidgets
 	class bwStyleManager
 	{
 	public:
-		using StyleTypeArray = std::array<bwStyle::StyleType, int32_t(bwStyle::TypeID::BUILTIN_TOT)>;
+		using StyleTypeArray = std::array<bwStyle::StyleType, int32_t(bwStyle::TypeID::NUM)>;
 
 		static bwStyleManager& getStyleManager();
 		static std::unique_ptr<bwStyle> createStyleFromTypeID(bwStyle::TypeID type_id);
