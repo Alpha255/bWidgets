@@ -32,7 +32,8 @@
 
 namespace bWidgets
 {
-	bwStyleSheet::bwStyleSheet(std::string filepath) : filepath(std::move(filepath))
+	bwStyleSheet::bwStyleSheet(std::string_view filepath) 
+		: filepath(std::move(filepath))
 	{
 		load();
 	}

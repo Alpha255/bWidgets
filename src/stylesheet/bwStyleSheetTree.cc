@@ -19,177 +19,121 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
-#include <cassert>
-#include <fstream>
-#include <iostream>
-
-#include "utils/File.h"
-#include "katana.h"
-#include "bwPropertyParser.h"
 #include "bwStyleSheetTree.h"
-
-#include "stylesheet/bwStyleSheet.h"
 
 namespace bWidgets
 {
-	bwStyleSheet::bwStyleSheet(std::string_view filepath) 
-		: filepath(std::move(filepath))
+	class bwStateProperties
 	{
-		load();
-	}
+	public:
+		const bwStyleProperty* lookupProperty(const std::string_view& identifier) const;
+		bwStyleProperty& ensureProperty(const std::string_view& identifier, bwStyleProperty::Type type);
 
-	bwStyleSheet::~bwStyleSheet()
+	private:
+		bwStyleProperties properties;
+	};
+
+	class bwStyleSheetNode
 	{
-		unload();
-	}
+	public:
+		class bwStateProperties state_properties[int32_t(bwWidget::State::STATE_TOT)];
+	};
 
-	// TODO Right now the type of properties in the style sheet is decided based on
-	// the value they have set. E.g. "border-width: rgba(...)" would add a bwColor
-	// property to the tree. Instead we should have a global map of property types
-	// with the property identifier as key. Then we can check if the CSS rule is
-	// valid for the property.
-
-	static bwStyleProperty::Type stylesheet_property_type_get_from_katana(const KatanaValue& value)
+	bwStyleSheetNode* bwStyleSheetTree::lookupNode(const std::string_view& name) const
 	{
-		switch (value.unit)
+		const auto& node_iterator = std::find_if(
+			nodes.begin(), nodes.end(), [&name](auto& key_value_pair) {
+				return key_value_pair.first == name;
+			});
+		if (node_iterator == nodes.end())
 		{
-		case KATANA_VALUE_PARSER_FUNCTION: {
-			std::string function_name{ value.function->name };
-			if ((function_name == "rgb(") || (function_name == "rgba("))
+			return nullptr;
+		}
+
+		return node_iterator->second;
+	}
+
+	bwStyleSheetNode& bwStyleSheetTree::ensureNode(const std::string_view& class_name)
+	{
+		if (bwStyleSheetNode* node = lookupNode(class_name))
+		{
+			return *node;
+		}
+
+		bwStyleSheetNode* new_node = new bwStyleSheetNode;
+		nodes.insert({ std::string(class_name), new_node });
+		return *new_node;
+	}
+
+	bwStyleSheetTree::~bwStyleSheetTree()
+	{
+		while (!nodes.empty())
+		{
+			auto iterator = nodes.begin();
+			bwStyleSheetNode* node = iterator->second;
+
+			nodes.erase(iterator);
+			delete node;
+		}
+	}
+
+	bwStyleProperty& bwStyleSheetTree::ensureNodeWithProperty(const std::string_view& class_name,
+		const bwWidget::State pseudo_state,
+		const std::string_view& identifier,
+		const bwStyleProperty::Type type)
+	{
+		bwStyleSheetNode& node = ensureNode(class_name);
+		bwStateProperties& state_properties = node.state_properties[int32_t(pseudo_state)];
+
+		return state_properties.ensureProperty(identifier, type);
+	}
+
+	static const bwStyleProperty* state_properties_lookup_property(
+		const std::string_view& property_name, bwStateProperties& state_properties)
+	{
+		return state_properties.lookupProperty(property_name);
+	}
+
+	const bwStyleProperty* bwStyleSheetTree::resolveProperty(const std::string_view& class_name,
+		const std::string_view& property_name,
+		const bwWidget::State state)
+	{
+		if (bwStyleSheetNode* node = lookupNode(class_name))
+		{
+			const bwStyleProperty* property = state_properties_lookup_property(property_name, node->state_properties[int32_t(state)]);
+
+			if (!property && (state != bwWidget::State::NORMAL))
 			{
-				return bwStyleProperty::Type::COLOR;
+				// Property for this state not set, check for STATE_NORMAL.
+				property = state_properties_lookup_property(property_name, node->state_properties[int32_t(bwWidget::State::NORMAL)]);
 			}
-			break;
-		}
-		case KATANA_VALUE_PX:
-			return bwStyleProperty::Type::FLOAT;
-		case KATANA_VALUE_IDENT: {
-			// Customization to support booleans in CSS.
-			const std::string ident_value{ value.string };
-			assert(ident_value == "true" || ident_value == "false");
-			return bwStyleProperty::Type::BOOL;
-		}
-		default:
-			return bwStyleProperty::Type::INTEGER;
+
+			return property;
 		}
 
-		return bwStyleProperty::Type::INTEGER;
+		return nullptr;
 	}
 
-	static void stylesheet_set_value_from_katana_value(bwStyleProperty& property,
-		const KatanaValue& value)
+	const bwStyleProperty* bwStateProperties::lookupProperty(const std::string_view& identifier) const
 	{
-		std::unique_ptr<bwPropertyParser> parser(
-			bwPropertyParser::newFromPropertyType(property.getType()));
-		parser->parseIntoProperty(property, value);
+		return properties.lookup(identifier);
 	}
 
-	static bwWidget::State stylesheet_property_state_from_katana(const KatanaSelector& selector)
-	{
-		KatanaPseudoType pseudo_type = selector.tagHistory ? selector.tagHistory->pseudo :
-			KatanaPseudoEmpty;
+	/**
+	 * Performs a identifier based lookup of \a property and adds it if not found.
+	 */
 
-		switch (pseudo_type)
+	bwStyleProperty& bwStateProperties::ensureProperty(const std::string_view& identifier, bwStyleProperty::Type type)
+	{
+		for (auto& iter_property : properties)
 		{
-		case KatanaPseudoHover:
-			return bwWidget::State::HIGHLIGHTED;
-		case KatanaPseudoActive:
-			return bwWidget::State::SUNKEN;
-		case KatanaPseudoEmpty:
-		default:
-			return bwWidget::State::NORMAL;
-		}
-	}
-
-	static void stylesheet_tree_property_ensure_from_katana(bwStyleSheetTree& tree,
-		const KatanaSelector& selector,
-		const KatanaDeclaration& declaration,
-		const KatanaValue& value)
-	{
-		bwStyleProperty& property = tree.ensureNodeWithProperty(
-			selector.tag->local,
-			stylesheet_property_state_from_katana(selector),
-			declaration.property,
-			stylesheet_property_type_get_from_katana(value));
-		stylesheet_set_value_from_katana_value(property, value);
-	}
-
-	static void stylesheet_tree_node_fill_from_katana(bwStyleSheetTree& tree,
-		const KatanaStyleRule& rule,
-		const KatanaSelector& selector)
-	{
-		for (uint32_t declaration_idx = 0; declaration_idx < rule.declarations->length;
-			declaration_idx++)
-		{
-			auto* declaration = (KatanaDeclaration*)rule.declarations->data[declaration_idx];
-
-			for (uint32_t value_idx = 0; value_idx < declaration->values->length; value_idx++)
+			if (iter_property->getIdentifier() == identifier)
 			{
-				auto* value = (KatanaValue*)declaration->values->data[value_idx];
-				stylesheet_tree_property_ensure_from_katana(tree, selector, *declaration, *value);
-			}
-		}
-	}
-
-	static void stylesheet_tree_fill_from_katana(bwStyleSheetTree& tree, const KatanaOutput& katana_output)
-	{
-		for (uint32_t rule_idx = 0; rule_idx < katana_output.stylesheet->rules.length; rule_idx++)
-		{
-			const auto* rule = (KatanaStyleRule*)katana_output.stylesheet->rules.data[rule_idx];
-
-			for (uint32_t selector_idx = 0; selector_idx < rule->selectors->length; selector_idx++)
-			{
-				auto* selector = (KatanaSelector*)rule->selectors->data[selector_idx];
-				stylesheet_tree_node_fill_from_katana(tree, *rule, *selector);
+				return *iter_property;
 			}
 		}
-	}
 
-	void bwStyleSheet::load()
-	{
-		File file{ filepath };
-		std::string file_contents = file.readIntoString();
-		KatanaOutput* katana_output = katana_parse(file_contents.c_str(), file_contents.length(), KatanaParserModeStylesheet);
-
-		tree = std::make_unique<bwStyleSheetTree>();
-		stylesheet_tree_fill_from_katana(*tree, *katana_output);
-		katana_destroy_output(katana_output);
-	}
-
-	void bwStyleSheet::unload()
-	{
-		// Nothing right now.
-	}
-
-	void bwStyleSheet::reload()
-	{
-		unload();
-		load();
-	}
-
-	void bwStyleSheet::resolveValue(const std::string_view& class_name,
-		const bwWidget::State state,
-		bwStyleProperty& property)
-	{
-		const bwStyleProperty* property_from_tree = tree->resolveProperty(class_name, property.getIdentifier(), state);
-
-		if (property_from_tree)
-		{
-			property.setValue(*property_from_tree);
-		}
-		else
-		{
-			property.setValueToDefault();
-			//		std::cout << filepath << std::endl;
-			//		std::cout << "CSS resolving error: Failed to find property \"" <<
-			// property.getIdentifier() <<
-			//		             "\" for " << class_name << "." << std::endl << std::endl;
-		}
-	}
-
-	const std::string& bwStyleSheet::getFilepath() const
-	{
-		return filepath;
+		return properties.addProperty(identifier, type);
 	}
 
 }  // namespace bWidgets

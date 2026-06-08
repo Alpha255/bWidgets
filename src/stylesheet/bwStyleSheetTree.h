@@ -21,31 +21,32 @@
 
 #pragma once
 
-#include "bwUtil.h"
+#include <unordered_map>
+
 #include "bwWidget.h"
 
 namespace bWidgets
 {
-	class bwStyleSheet
+	class bwStyleSheetTree
 	{
 	public:
-		bwStyleSheet(std::string_view filepath);
-		~bwStyleSheet();
+		~bwStyleSheetTree();
 
-		void reload();
+		bwStyleProperty& ensureNodeWithProperty(const std::string_view& class_name,
+			const bwWidget::State state,
+			const std::string_view& identifier,
+			const bwStyleProperty::Type type);
 
-		void resolveValue(const std::string_view& class_name,
-			bwWidget::State state,
-			bwStyleProperty& property);
+		class bwStyleSheetNode& ensureNode(const std::string_view& class_name);
 
-		const std::string& getFilepath() const;
+		const bwStyleProperty* resolveProperty(const std::string_view& class_name,
+			const std::string_view& property_name,
+			const bwWidget::State state);
 
 	private:
-		void load();
-		void unload();
+		class bwStyleSheetNode* lookupNode(const std::string_view& name) const;
 
-		std::string filepath;
-		std::unique_ptr<class bwStyleSheetTree> tree;
+		std::unordered_map<std::string, class bwStyleSheetNode*> nodes{ 0 };
 	};
 
 }  // namespace bWidgets

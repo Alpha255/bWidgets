@@ -29,7 +29,7 @@ namespace bWidgets
 	class bwStyleSheet
 	{
 	public:
-		bwStyleSheet(std::string filepath);
+		bwStyleSheet(std::string_view filepath);
 		~bwStyleSheet();
 
 		void reload();
