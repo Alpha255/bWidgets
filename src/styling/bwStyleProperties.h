@@ -60,6 +60,7 @@ namespace bWidgets
 
 		std::string_view getIdentifier() const;
 		Type getType() const;
+		std::string getValueString() const;
 
 	private:
 		bwStyleProperty(std::string_view identifier, enum Type type);

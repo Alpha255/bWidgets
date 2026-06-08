@@ -25,6 +25,14 @@ namespace bWidgets
 			//		STYLE_CUSTOM, // For the future
 		};
 
+		enum class TypeID2
+		{
+			DARK,
+			LIGHT,
+			CUSTOM,
+			NUM
+		};
+
 		struct StyleType
 		{
 			TypeID type_id;

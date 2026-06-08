@@ -1,7 +1,11 @@
 #pragma once
 
 #include <array>
+#include <functional>
 #include <memory>
+#include <string_view>
+#include <unordered_map>
+#include <vector>
 #include <assert.h>
 
 #include "bwStyle.h"
@@ -34,7 +38,7 @@ namespace bWidgets
 
 			auto& style = getStyles(type_id)[Widget::identifier];
 			auto& properties = getProperties(type_id).emplace_back();
-			style.setProperties(properties);
+			style.setProperties(&properties);
 
 			bwStyleHandle<Widget>::onRegisterStyleProperties(type_id, properties);
 
@@ -57,7 +61,7 @@ namespace bWidgets
 		void load(bwStyle::TypeID type_id);
 
 		void setStyle(bwStyle::TypeID type_id);
-		inline bwStyle::TypeID getStyle() const { return current_style_type; }
+		inline bwStyle::TypeID getStyle() const { return current_style; }
 	protected:
 		inline std::unordered_map<std::string_view, bwWidgetStyle>& getStyles(bwStyle::TypeID type_id)
 		{
@@ -90,10 +94,13 @@ namespace bWidgets
 		StyleTypeArray builtin_style_types;
 		//	std::vector<StyleType> custom_types;
 
+		bwStyle::TypeID current_style = bwStyle::TypeID::CLASSIC;
+
+		std::array<std::unique_ptr<bwStyle>, (size_t)bwStyle::TypeID::NUM - 1u> builtin_stypes;
+
 		std::array<std::unordered_map<std::string_view, bwWidgetStyle>, (size_t)bwStyle::TypeID::NUM> styles;
 		std::array<std::vector<bwStyleProperties>, (size_t)bwStyle::TypeID::NUM> properties;
 		std::vector<onSetStyleCallback> onSetStyleCallbacks;
-		bwStyle::TypeID current_style_type = bwStyle::TypeID::CLASSIC;
 	};
 
 }  // namespace bWidgets

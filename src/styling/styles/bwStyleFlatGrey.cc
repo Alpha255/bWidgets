@@ -201,7 +201,8 @@ namespace bWidgets
 		}
 	}
 
-	bwStyleFlat::bwStyleFlat() : bwStyle(TypeID::FLAT_GREY)
+	bwStyleFlat::bwStyleFlat() 
+		: bwStyle(TypeID::FLAT_GREY)
 	{
 	}
 

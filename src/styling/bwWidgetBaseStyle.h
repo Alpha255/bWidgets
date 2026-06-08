@@ -47,8 +47,9 @@ namespace bWidgets
 		friend class bwStyleManager;
 	private:
 		void setProperties(const bwStyleProperties* in_properties) { properties = in_properties; }
+		const bwStyleProperties* getProperties() const { return properties; }
 
-		const bwStyleProperties* properties;
+		const bwStyleProperties* properties{};
 	};
 
 }  // namespace bWidgets

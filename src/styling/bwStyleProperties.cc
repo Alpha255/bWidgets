@@ -354,6 +354,34 @@ namespace bWidgets
 		return type;
 	}
 
+	std::string bwStyleProperty::getValueString() const
+	{
+		switch (type)
+		{
+		case Type::BOOL: {
+			auto& prop = static_cast<const bwStylePropertyInternal<bool>&>(*this);
+			return prop.getValue() ? "true" : "false";
+		}
+		case Type::INTEGER: {
+			auto& prop = static_cast<const bwStylePropertyInternal<int32_t>&>(*this);
+			return std::to_string(prop.getValue());
+		}
+		case Type::FLOAT: {
+			auto& prop = static_cast<const bwStylePropertyInternal<float>&>(*this);
+			return std::to_string(prop.getValue());
+		}
+		case Type::COLOR: {
+			auto& prop = static_cast<const bwStylePropertyInternal<bwColor>&>(*this);
+			const float* rgba = prop.getValue().getColor();
+			char buf[64];
+			snprintf(buf, sizeof(buf), "rgba(%.0f, %.0f, %.0f, %.2f)",
+			         rgba[0] * 255.0f, rgba[1] * 255.0f, rgba[2] * 255.0f, rgba[3]);
+			return buf;
+		}
+		}
+		return {};
+	}
+
 	// --------------------------------------------------------------------
 
 	const bwStyleProperty* bwStyleProperties::lookup(const std::string_view& name) const
