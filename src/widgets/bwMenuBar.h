@@ -9,7 +9,7 @@ namespace bWidgets
 	public:
 		bwMenuBar(const bwScreenGraph::bwContainerNode& node, uint32_t width);
 
-		std::string_view getTypeIdentifier() const override;
+		static constexpr std::string_view identifier = "bwMenuBar";
 
 		void draw(bwStyle& style) override;
 

@@ -9,7 +9,7 @@
 
 namespace bWidgets
 {
-	bwStyleManager& bwStyleManager::getStyleManager()
+	bwStyleManager& bwStyleManager::get()
 	{
 		static bwStyleManager instance;
 		return instance;

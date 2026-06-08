@@ -16,12 +16,7 @@ namespace bWidgets
 		, use_icon(useIcon)
 	{
 	}
-
-	std::string_view bwCheckbox::getTypeIdentifier() const
-	{
-		return "bwCheckbox";
-	}
-
+	
 	void bwCheckbox::draw(bwStyle& style)
 	{
 		const bwRectanglePixel checkbox_rect = getCheckboxRectangle();

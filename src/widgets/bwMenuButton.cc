@@ -19,11 +19,6 @@ namespace bWidgets
 		}
 	};
 
-	std::string_view bwMenuButton::getTypeIdentifier() const
-	{
-		return "bwMenuButton";
-	}
-
 	void bwMenuButton::draw(bwStyle& style)
 	{
 		bwAbstractButton::draw(style);

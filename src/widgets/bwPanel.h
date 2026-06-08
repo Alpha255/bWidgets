@@ -19,7 +19,7 @@ namespace bWidgets
 			std::string label,
 			std::optional<uint32_t> header_height_hint = std::nullopt);
 
-		std::string_view getTypeIdentifier() const override;
+		static constexpr std::string_view identifier = "bwPanel";
 
 		void draw(class bwStyle& style) override;
 

@@ -18,11 +18,6 @@ namespace bWidgets
 		initialize();
 	}
 
-	std::string_view bwPanel::getTypeIdentifier() const
-	{
-		return "bwPanel";
-	}
-
 	void bwPanel::draw(bwStyle& style)
 	{
 		const bwGradient gradient

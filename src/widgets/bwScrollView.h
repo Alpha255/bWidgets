@@ -22,7 +22,7 @@ namespace bWidgets
 			uint32_t width = 0,
 			uint32_t height = 0);
 
-		std::string_view getTypeIdentifier() const override;
+		static constexpr std::string_view identifier = "bwScrollView";
 
 		void draw(bwStyle& style) override;
 

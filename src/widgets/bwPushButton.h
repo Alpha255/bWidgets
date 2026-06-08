@@ -13,7 +13,7 @@ namespace bWidgets
 			std::optional<uint32_t> width_hint = std::nullopt,
 			std::optional<uint32_t> height_hint = std::nullopt);
 
-		std::string_view getTypeIdentifier() const override;
+		static constexpr std::string_view identifier = "bwPushButton";
 
 		const bwIconInterface* getIcon() const override;
 		bwPushButton& setIcon(const class bwIconInterface&);

@@ -15,11 +15,6 @@ namespace bWidgets
 		initialize();
 	}
 
-	std::string_view bwLabel::getTypeIdentifier() const
-	{
-		return "bwLabel";
-	}
-
 	void bwLabel::draw(bwStyle& style)
 	{
 		bwPainter painter;

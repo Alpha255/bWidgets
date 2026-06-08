@@ -11,11 +11,6 @@ namespace bWidgets
 	{
 	}
 
-	std::string_view bwScrollBar::getTypeIdentifier() const
-	{
-		return "bwScrollBar";
-	}
-
 	static bwRectanglePixel getInnerRect(bwScrollBar& scrollbar)
 	{
 		bwRectanglePixel rect_inner{ scrollbar.rectangle };

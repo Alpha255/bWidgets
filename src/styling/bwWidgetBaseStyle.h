@@ -11,6 +11,7 @@ namespace bWidgets
 	 * \class bwWidgetBaseStyle
 	 * \brief Properties for typical widgets with roundbox corners.
 	 */
+
 	class bwWidgetBaseStyle
 	{
 	public:
@@ -43,8 +44,11 @@ namespace bWidgets
 	{
 		using bwWidgetBaseStyle::bwWidgetBaseStyle;
 
+		friend class bwStyleManager;
 	private:
-		bwStyleProperties* properties;
+		void setProperties(const bwStyleProperties* in_properties) { properties = in_properties; }
+
+		const bwStyleProperties* properties;
 	};
 
 }  // namespace bWidgets

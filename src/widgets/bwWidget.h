@@ -48,7 +48,7 @@ namespace bWidgets
 		bwWidget& hide(bool _hidden = true);
 		bool isHidden();
 
-		virtual std::string_view getTypeIdentifier() const = 0;
+		std::string_view identifier;
 
 		virtual void draw(bwStyle& style) = 0;
 		virtual const std::string* getLabel() const;

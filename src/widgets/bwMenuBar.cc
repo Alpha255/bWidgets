@@ -10,11 +10,6 @@ namespace bWidgets
 	{
 	}
 
-	std::string_view bwMenuBar::getTypeIdentifier() const
-	{
-		return "bwMenuBar";
-	}
-
 	void bwMenuBar::draw(bwStyle& style)
 	{
 		bwPainter painter;

@@ -9,11 +9,6 @@ namespace bWidgets
 	{
 	}
 
-	std::string_view bwPushButton::getTypeIdentifier() const
-	{
-		return "bwPushButton";
-	}
-
 	const bwIconInterface* bwPushButton::getIcon() const
 	{
 		return icon;

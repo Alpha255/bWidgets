@@ -10,11 +10,6 @@ namespace bWidgets
 	{
 	}
 
-	std::string_view bwRadioButton::getTypeIdentifier() const
-	{
-		return "bwRadioButton";
-	}
-
 	bool bwRadioButton::canAlign() const
 	{
 		return true;

@@ -16,7 +16,7 @@ namespace bWidgets
 		{
 		}
 
-		std::string_view getTypeIdentifier() const override;
+		static constexpr std::string_view identifier = "bwMenuButton";
 
 		void draw(bwStyle& style) override;
 

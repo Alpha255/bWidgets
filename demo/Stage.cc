@@ -79,8 +79,7 @@ namespace bWidgetsDemo
 		bwPainter::s_paint_engine = std::make_unique<GawainPaintEngine>(*font, *icon_map);
 		bwStyleCSS::polish_cb = Stage::StyleSheetPolish;
 
-		bwStyleManager& style_manager = bwStyleManager::getStyleManager();
-		style_manager.registerDefaultStyleTypes();
+		bwStyleManager::get().registerDefaultStyleTypes();
 		activateStyleID(bwStyle::TypeID::CLASSIC);
 
 		setFontTightPositioning(true);
@@ -186,7 +185,7 @@ namespace bWidgetsDemo
 
 		for (auto& property : widget.style_properties)
 		{
-			stylesheet.resolveValue(widget.getTypeIdentifier(), widget.getState(), *property);
+			stylesheet.resolveValue(widget.identifier, widget.getState(), *property); // #TODO
 		}
 	}
 

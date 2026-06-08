@@ -63,8 +63,7 @@ namespace bWidgetsDemo
 			[](RNABuilder& builder) {
 				builder.addWidget<bwLabel>("Style:").setIcon(icon_map->getIcon(ICON_BLENDER));
 
-				for (const bwStyle::StyleType& type :
-					bwStyleManager::getStyleManager().getBuiltinStyleTypes())
+				for (const bwStyle::StyleType& type : bwStyleManager::get().getBuiltinStyleTypes())
 				{
 					if (type.type_id == bwStyle::TypeID::CLASSIC_CSS)
 					{

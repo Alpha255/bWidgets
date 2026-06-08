@@ -34,11 +34,6 @@ namespace bWidgets
 		item_hover_style.corner_radius = 4.0f;
 	}
 
-	std::string_view bwPopupMenu::getTypeIdentifier() const
-	{
-		return "bwPopupMenu";
-	}
-
 	bwMenuItem& bwPopupMenu::addAction(std::string label)
 	{
 		auto& item = menu_items.emplace_back(std::make_unique<bwMenuItem>(std::move(label)));

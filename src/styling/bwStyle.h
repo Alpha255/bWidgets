@@ -45,4 +45,18 @@ namespace bWidgets
 		bwStyle(TypeID type_id);
 	};
 
+	template<class Widget>
+	class bwStyleHandle
+	{
+	public:
+		static const struct bwWidgetStyle& get() { return *style; }
+
+		static void onRegisterStyleProperties(bwStyle::TypeID type_id, class bwStyleProperties& properties) {}
+
+		static void setStyle(struct bwWidgetStyle* in_style) { style = in_style; }
+	protected:
+	private:
+		static inline struct bwWidgetStyle* style = nullptr;
+	};
+
 }  // namespace bWidgets

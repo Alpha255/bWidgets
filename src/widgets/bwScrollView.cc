@@ -27,11 +27,6 @@ namespace bWidgets
 		bwScreenGraph::bwBuilder::setWidget(*scrollbar_node, std::move(scrollbar));
 	}
 
-	std::string_view bwScrollView::getTypeIdentifier() const
-	{
-		return "bwScrollView";
-	}
-
 	bwScrollBar& bwScrollView::getVerticalScrollBar() const
 	{
 		return static_cast<bwScrollBar&>(*scrollbar_node->Widget());

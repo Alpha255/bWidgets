@@ -176,7 +176,7 @@ namespace bWidgets
 		
 		if (bwWidget* widget = node.Widget())
 		{
-			widget->width_hint = widget->width_hint < width ? width : widget->width_hint;
+			widget->width_hint = widget->width_hint < (uint32_t)width ? width : widget->width_hint;
 			widget->height_hint = widget->height_hint == 0 ? layout_rect.height() : widget->height_hint;
 
 			bwPoint layout_pos = getLayoutLocation(layout_rect);

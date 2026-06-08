@@ -13,11 +13,6 @@ namespace bWidgets
 		initialize();
 	}
 
-	std::string_view bwTextBox::getTypeIdentifier() const
-	{
-		return "bwTextBox";
-	}
-
 	void bwTextBox::draw(bwStyle& style)
 	{
 		bwRectanglePixel inner_rect = rectangle;

@@ -19,11 +19,6 @@ namespace bWidgets
 	{
 	}
 
-	std::string_view bwNumberSlider::getTypeIdentifier() const
-	{
-		return "bwNumberSlider";
-	}
-
 	void bwNumberSlider::draw(bwStyle& style)
 	{
 		bwPainter painter;

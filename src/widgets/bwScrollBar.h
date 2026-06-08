@@ -9,7 +9,7 @@ namespace bWidgets
 	public:
 		bwScrollBar(uint32_t width_hint = 0, uint32_t height_hint = 0);
 
-		std::string_view getTypeIdentifier() const override;
+		static constexpr std::string_view identifier = "bwScrollBar";
 
 		void draw(bwStyle& style) override;
 
