@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <cereal/cereal.hpp>
 
 namespace bWidgets
 {
@@ -31,6 +32,14 @@ namespace bWidgets
 		operator const float* () const;
 
 		const static bwColor White;
+
+		template<class Archive>
+		void serialize(Archive ar)
+		{
+			ar(
+				CEREAL_NVP(rgba)
+			);
+		}
 	private:
 		enum class Component
 		{

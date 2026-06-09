@@ -1,14 +1,14 @@
 #include "bwStyle.h"
-
 #include "bwWidget.h"
+#include "styling/bwPreferences.h"
 
 namespace bWidgets
 {
 	bwWidget::bwWidget(std::optional<uint32_t> width_hint, std::optional<uint32_t> height_hint)
 		: state(State::NORMAL)
 		, rectangle(0, 0, 0, 0)
-		, width_hint(width_hint.value_or(bwStyle::s_default_widget_size_hint))
-		, height_hint(height_hint.value_or(bwStyle::s_default_widget_size_hint))
+		, width_hint(width_hint.value_or(bwUserPreferences::get().widget_unit))
+		, height_hint(height_hint.value_or(bwUserPreferences::get().widget_unit))
 	{
 	}
 
@@ -52,11 +52,6 @@ namespace bWidgets
 		/* Has to be done in init, can't be called from bwWidget constructor
 		 * (wouldn't call overwritten function). 
 		 */
-		registerProperties();
-	}
-
-	void bwWidget::registerProperties()
-	{
 	}
 
 }  // namespace bWidgets

@@ -2,18 +2,17 @@ set(INC
 	.
 	generics
 	styling
-	styling/styles
 	utils
 	widgets
 	${CMAKE_SOURCE_DIR}/demo
 	${CMAKE_SOURCE_DIR}/demo/extern/glew/include
 	${CMAKE_SOURCE_DIR}/demo/extern/glm
 	${CMAKE_SOURCE_DIR}/demo/extern/gawain
-	${CMAKE_SOURCE_DIR}/demo/extern/katana-parser/src
 	${CMAKE_SOURCE_DIR}/demo/resources
 	${CMAKE_SOURCE_DIR}/Submodules/freetype/include
 	${CMAKE_SOURCE_DIR}/Submodules/nanosvg/src
 	${CMAKE_SOURCE_DIR}/Submodules/magic_enum/include
+	${CMAKE_SOURCE_DIR}/Submodules/cereal/include
 )
 
 set(SRC
@@ -84,32 +83,10 @@ set(SRC
 
 	# styling
 	styling/bwStyle.cc
-	styling/bwStyleCSS.cc
 	styling/bwStyleManager.cc
-	styling/bwStyleProperties.cc
-	styling/bwWidgetBaseStyle.cc
-	styling/styles/bwStyleClassic.cc
-	styling/styles/bwStyleFlatGrey.cc
-	styling/styles/bwStyleFlatDark.cc
-	styling/styles/bwStyleFlatLight.cc
 	styling/bwPreferences.h
 	styling/bwStyle.h
-	styling/bwStyleCSS.h
 	styling/bwStyleManager.h
-	styling/bwStyleProperties.h
-	styling/bwWidgetBaseStyle.h
-	styling/styles/bwStyleClassic.h
-	styling/styles/bwStyleFlatDark.h
-	styling/styles/bwStyleFlatGrey.h
-	styling/styles/bwStyleFlatLight.h
-
-	# stylesheet
-	stylesheet/bwPropertyParser.cc
-	stylesheet/bwStyleSheet.cc
-	stylesheet/bwStyleSheetTree.cc
-	stylesheet/bwPropertyParser.h
-	stylesheet/bwStyleSheet.h
-	stylesheet/bwStyleSheetTree.h
 
 	# utils
 	utils/File.cc
@@ -152,6 +129,7 @@ set(SRC
 	widgets/bwTextBox.h
 	widgets/bwWidget.h
 	widgets/bwSplitView.h
+	widgets/bwProperty.h
 
 	# window_manager
 	window_manager/bwEvent.cc
@@ -171,7 +149,6 @@ set(LIB
 	freetype
 	zlib
 	libpng
-	extern_katana
 )
 
 if (UNIX)
@@ -216,3 +193,4 @@ else()
 	set(SHADERS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/paint/gpu/shaders)
 endif()
 add_definitions(-DSHADERS_PATH_STR="${SHADERS_PATH}")
+add_definitions(-DRESOURCES_PATH_STR="${CMAKE_SOURCE_DIR}/demo/resources")

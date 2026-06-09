@@ -19,3 +19,6 @@
 [submodule "Submodules/magic_enum"]
 	path = Submodules/magic_enum
 	url = https://github.com/Neargye/magic_enum.git
+[submodule "Submodules/cereal"]
+	path = Submodules/cereal
+	url = https://github.com/USCiLab/cereal.git

@@ -1,8 +1,5 @@
-#include <cassert>
-
 #include "bwStyle.h"
 #include "bwStyleManager.h"
-#include "bwStyleProperties.h"
 
 #include "widgets/bwAbstractButton.h"
 #include "widgets/bwCheckbox.h"
@@ -20,81 +17,31 @@
 
 namespace bWidgets
 {
-	uint32_t bwStyle::s_default_widget_size_hint = 20;
 
-	bwStyle::bwStyle(TypeID type_id)
-		: type_id(type_id)
+	template<class Widget>
+	struct bwWidgetStyleRegister
 	{
-	}
+		bwWidgetStyleRegister()
+		{
+			bwStyleManager::get().registerWidgetStyle<Widget>();
+		}
+	};
 
-	void bwStyle::polish(class bwWidget&)
-	{
-		/* Nothing by default. */
-	}
+#define WIDGET_STYLE_STATIC_REGISTER(Type) \
+	static bwWidgetStyleRegister<Type> s_##Type##_style_register;
 
-	template<>
-	void bwStyleHandle<bwAbstractButton>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
-
-	template<>
-	void bwStyleHandle<bwCheckbox>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
-
-	template<>
-	void bwStyleHandle<bwLabel>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
-
-	template<>
-	void bwStyleHandle<bwMenuBar>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
-
-	template<>
-	void bwStyleHandle<bwMenuButton>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
-
-	template<>
-	void bwStyleHandle<bwNumberSlider>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
-
-	template<>
-	void bwStyleHandle<bwPanel>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
-
-	template<>
-	void bwStyleHandle<bwPopupMenu>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
-
-	template<>
-	void bwStyleHandle<bwPushButton>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
-
-	template<>
-	void bwStyleHandle<bwRadioButton>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
-
-	template<>
-	void bwStyleHandle<bwScrollBar>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
-
-	template<>
-	void bwStyleHandle<bwScrollView>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
-
-	template<>
-	void bwStyleHandle<bwTextBox>::onRegisterStyleProperties(bwStyle::TypeID type_id, bwStyleProperties& properties)
-	{
-	}
+	WIDGET_STYLE_STATIC_REGISTER(bwAbstractButton);
+	WIDGET_STYLE_STATIC_REGISTER(bwCheckbox);
+	WIDGET_STYLE_STATIC_REGISTER(bwLabel);
+	WIDGET_STYLE_STATIC_REGISTER(bwMenuBar);
+	WIDGET_STYLE_STATIC_REGISTER(bwMenuButton);
+	WIDGET_STYLE_STATIC_REGISTER(bwNumberSlider);
+	WIDGET_STYLE_STATIC_REGISTER(bwPanel);
+	WIDGET_STYLE_STATIC_REGISTER(bwPopupMenu);
+	WIDGET_STYLE_STATIC_REGISTER(bwPushButton);
+	WIDGET_STYLE_STATIC_REGISTER(bwRadioButton);
+	WIDGET_STYLE_STATIC_REGISTER(bwScrollBar);
+	WIDGET_STYLE_STATIC_REGISTER(bwScrollView);
+	WIDGET_STYLE_STATIC_REGISTER(bwTextBox);
 
 }  // namespace bWidgets

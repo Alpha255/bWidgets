@@ -9,9 +9,6 @@
 #include <assert.h>
 
 #include "bwStyle.h"
-#include "stylesheet/bwStyleSheet.h"
-#include "bwStyleProperties.h"
-#include "styling/bwWidgetBaseStyle.h"
 
 namespace bWidgets
 {
@@ -21,85 +18,56 @@ namespace bWidgets
 	class bwStyleManager
 	{
 	public:
-		using StyleTypeArray = std::array<bwStyle::StyleType, int32_t(bwStyle::TypeID::NUM)>;
-
 		static bwStyleManager& get();
 
-		static std::unique_ptr<bwStyle> createStyleFromTypeID(bwStyle::TypeID type_id);
-
-		void registerDefaultStyleTypes();
-
-		const StyleTypeArray& getBuiltinStyleTypes() const;
-
 		template<class Widget>
-		void registerStyle(bwStyle::TypeID type_id)
+		inline void registerWidgetStyle()
 		{
-			assert(type_id < bwStyle::TypeID::NUM);
+			onSetStyleCallback callback = [this](bwStyle::Type type) {
+				auto style = getWidgetStyle<Widget>(type);
+				bwWidgetStyleHandle<Widget>::setStyle(style);
+			};
+			callback(current_style);
 
-			auto& style = getStyles(type_id)[Widget::identifier];
-			auto& properties = getProperties(type_id).emplace_back();
-			style.setProperties(&properties);
-
-			bwStyleHandle<Widget>::onRegisterStyleProperties(type_id, properties);
-
-			registerOnSetStyleCallback<Widget>([](bwStyle::TypeID type_id) {
-				auto& style = getStyles(type_id)[Widget::identifier];
-				bwStyleHandle<Widget>::setStyle(&style);
-			});
+			registerOnSetStyleCallback<Widget>(std::move(callback));
 		}
 
 		template<class Widget>
-		const bwWidgetStyle* getStyle(bwStyle::TypeID type_id) const
+		inline const bwWidgetStyle* getWidgetStyle(bwStyle::Type type) const
 		{
-			assert(type_id < bwStyle::TypeID::NUM);
-
-			auto it = getStyles(type_id).find(Widget::identifier);
-			return it == getStyles(type_id).end() ? nullptr : &it->second;
+			assert(type < bwStyle::Type::NUM);
+			return getStyle(type).getWidgetStyle<Widget>;
 		}
 
-		void save(bwStyle::TypeID type_id);
-		void load(bwStyle::TypeID type_id);
-
-		void setStyle(bwStyle::TypeID type_id);
-		inline bwStyle::TypeID getStyle() const { return current_style; }
+		void setStyle(bwStyle::Type type);
+		inline bwStyle::Type getCurrentStyle() const { return current_style; }
 	protected:
-		inline std::unordered_map<std::string_view, bwWidgetStyle>& getStyles(bwStyle::TypeID type_id)
+		void save(bwStyle::Type type);
+		void load(bwStyle::Type type);
+
+		static bool s_initialized;
+
+		inline bwStyle& getStyle(bwStyle::Type type)
 		{
-			assert(type_id < bwStyle::TypeID::NUM);
-			return styles[static_cast<size_t>(type_id)];
+			assert(type < bwStyle::Type::NUM);
+			return *styles[static_cast<size_t>(type)];
 		}
 
-		inline std::vector<bwStyleProperties>& getProperties(bwStyle::TypeID type_id)
-		{
-			assert(type_id < bwStyle::TypeID::NUM);
-			return properties[static_cast<size_t>(type_id)];
-		}
-
-		void saveToCss(std::string_view path);
-		void loadFromCss(std::string_view path);
-
-		using onSetStyleCallback = std::function<void(bwStyle::TypeID)>;
+		using onSetStyleCallback = std::function<void(bwStyle::Type)>;
 
 		template<class Widget>
-		void registerOnSetStyleCallback(onSetStyleCallback&& callback)
+		inline void registerOnSetStyleCallback(onSetStyleCallback&& callback)
 		{
 			onSetStyleCallbacks.emplace_back(std::move(callback));
 		}
 	private:
 		bwStyleManager() = default;
 		bwStyleManager(bwStyleManager const&) = delete;
-
 		void operator=(bwStyleManager const&) = delete;
 
-		StyleTypeArray builtin_style_types;
-		//	std::vector<StyleType> custom_types;
+		bwStyle::Type current_style = bwStyle::Type::NUM;
 
-		bwStyle::TypeID current_style = bwStyle::TypeID::CLASSIC;
-
-		std::array<std::unique_ptr<bwStyle>, (size_t)bwStyle::TypeID::NUM - 1u> builtin_stypes;
-
-		std::array<std::unordered_map<std::string_view, bwWidgetStyle>, (size_t)bwStyle::TypeID::NUM> styles;
-		std::array<std::vector<bwStyleProperties>, (size_t)bwStyle::TypeID::NUM> properties;
+		std::array<std::unique_ptr<bwStyle>, (size_t)bwStyle::Type::NUM> styles;
 		std::vector<onSetStyleCallback> onSetStyleCallbacks;
 	};
 

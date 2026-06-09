@@ -34,12 +34,7 @@ namespace bWidgets
 #else
 		painter.setActiveColor(bwColor::White);
 #endif
-		painter.drawTextAndIcon(text, getIcon(), rectangle, base_style.text_alignment, style.dpi_fac);
-	}
-
-	void bwAbstractButton::registerProperties()
-	{
-		base_style.registerProperties(style_properties);
+		painter.drawTextAndIcon(text, getIcon(), rectangle, base_style.text_alignment, style.scale_factor);
 	}
 
 	const std::string* bwAbstractButton::getLabel() const

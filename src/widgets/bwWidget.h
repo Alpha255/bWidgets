@@ -6,7 +6,6 @@
 #include "bwDistance.h"
 #include "bwFunctorInterface.h"
 #include "bwRectangle.h"
-#include "bwStyleProperties.h"
 #include "event/bwEventHandler.h"
 
 namespace bWidgets
@@ -70,12 +69,8 @@ namespace bWidgets
 		 */
 		uint32_t width_hint, height_hint;
 
-		bwStyleProperties style_properties;
-
 	protected:
 		void initialize();
-		virtual void registerProperties();
-
 	private:
 		/**
 		 * Hint if widget was explicitly hidden. bWidgets itself doesn't do

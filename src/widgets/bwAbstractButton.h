@@ -5,7 +5,6 @@
 
 #include "bwUtil.h"
 #include "bwWidget.h"
-#include "bwWidgetBaseStyle.h"
 
 namespace bWidgets
 {
@@ -18,7 +17,6 @@ namespace bWidgets
 	{
 	public:
 		void draw(class bwStyle& style) override;
-		void registerProperties() override;
 
 		const std::string* getLabel() const override;
 		bwAbstractButton& setLabel(const std::string& label);
@@ -59,9 +57,6 @@ namespace bWidgets
 		void apply();
 
 		std::string text;
-
-	public:
-		bwWidgetBaseStyle base_style;  // XXX public for setWidgetStyle. Should only be temporarily needed.
 	};
 
 	class bwAbstractButtonHandler : public bwScreenGraph::bwEventHandler
