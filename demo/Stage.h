@@ -28,7 +28,6 @@
 #include "bwStyle.h"
 #include "screen_graph/bwNode.h"
 #include "screen_graph/bwScreenGraph.h"
-#include "stylesheet/bwStyleSheet.h"
 
 #include "rna/RNAProperty.h"
 
@@ -72,7 +71,7 @@ namespace bWidgetsDemo
 		virtual std::unique_ptr<bWidgets::bwScreenGraph::bwScreenGraph> createScreenGraph(uint32_t width, uint32_t height);
 		virtual void buildWidgets() {}
 
-		virtual void activateStyleID(bWidgets::bwStyle::TypeID type_id);
+		virtual void activateStyleID(bWidgets::bwStyle::Type type_id);
 
 		std::unique_ptr<bWidgets::bwScreenGraph::bwScreenGraph> screen_graph;
 
@@ -80,7 +79,6 @@ namespace bWidgetsDemo
 		static std::unique_ptr<bWidgets::bwStyle> style;
 		static std::unique_ptr<bWidgets::bwFont> font;
 		static std::unique_ptr<bWidgets::bwIconMap> icon_map;
-		static std::unique_ptr<bWidgets::bwStyleSheet> style_sheet;
 		static float interface_scale;
 
 		uint32_t mask_width;

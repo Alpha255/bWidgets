@@ -1,8 +1,8 @@
 #include "event/bwEvent.h"
 #include "paint/bwPainter.h"
 #include "bwStyle.h"
-
 #include "bwCheckbox.h"
+#include "styling/bwPreferences.h"
 
 namespace bWidgets
 {
@@ -10,37 +10,37 @@ namespace bWidgets
 		bool useIcon,
 		std::optional<uint32_t> width_hint,
 		std::optional<uint32_t> height_hint)
-		: bwAbstractButton(text,
-			width_hint.value_or(bwStyle::s_default_widget_size_hint),
-			height_hint.value_or(bwStyle::s_default_widget_size_hint))
+		: bwAbstractButton(text, width_hint.value_or(bwUserPreferences::get().widget_unit), height_hint.value_or(bwUserPreferences::get().widget_unit))
 		, use_icon(useIcon)
 	{
 	}
 	
-	void bwCheckbox::draw(bwStyle& style)
+	void bwCheckbox::draw()
 	{
+		auto& style = getStyle<bwCheckbox>();
+
 		const bwRectanglePixel checkbox_rect = getCheckboxRectangle();
 		const bwRectanglePixel text_rect = getTextRectangle(checkbox_rect);
 		const bwGradient gradient
 		{ 
-			base_style.backgroundColor(),
-			base_style.shadeTop(),
-			base_style.shadeBottom()
+			style.background_color,
+			style.shadeTop(),
+			style.shadeBottom()
 		};
 		bwPainter painter;
 
-		painter.drawRoundboxWidgetBase(base_style, style, checkbox_rect, gradient, base_style.corner_radius);
+		painter.drawRoundboxWidgetBase(style, checkbox_rect, gradient);
 
 		if (isChecked())
 		{
 			painter.active_drawtype = bwPainter::DrawType::OUTLINE;
-			painter.setActiveColor(base_style.decorationColor());
+			painter.setActiveColor(style.decoration_color);
 			painter.drawCheckMark(checkbox_rect);
 		}
 
 		painter.setContentMask(text_rect);  // Not sure if we should set this here.
-		painter.setActiveColor(base_style.textColor());
-		painter.drawText(text, text_rect, base_style.text_alignment);
+		painter.setActiveColor(style.text_color);
+		painter.drawText(text, text_rect, style.text_alignment);
 	}
 
 	bool bwCheckbox::isChecked() const

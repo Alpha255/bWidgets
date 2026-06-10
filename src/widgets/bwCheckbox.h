@@ -14,7 +14,7 @@ namespace bWidgets
 
 		static constexpr std::string_view identifier = "bwCheckbox";
 
-		void draw(class bwStyle& style) override;
+		void draw() override;
 
 		std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 

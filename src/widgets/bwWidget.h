@@ -7,13 +7,13 @@
 #include "bwFunctorInterface.h"
 #include "bwRectangle.h"
 #include "event/bwEventHandler.h"
+#include "styling/bwStyle.h"
 
 namespace bWidgets
 {
 	class bwEvent;
 	class bwMouseButtonEvent;
 	class bwMouseButtonDragEvent;
-	class bwStyle;
 
 	/**
 	 * \brief Abstract base class that all widgets derive from.
@@ -47,12 +47,16 @@ namespace bWidgets
 		bwWidget& hide(bool _hidden = true);
 		bool isHidden();
 
-		std::string_view identifier;
-
-		virtual void draw(bwStyle& style) = 0;
-		virtual const std::string* getLabel() const;
+		virtual void draw() = 0;
+		virtual const std::string_view getLabel() const;
 		virtual bool canAlign() const;
 		virtual std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() = 0;
+
+		template<class Widget>
+		inline const bwWidgetStyle& getStyle() const
+		{
+			return bwWidgetStyleHandle<Widget>::get();
+		}
 
 		/**
 		 * Final rectangle defining the widget bounding-box.

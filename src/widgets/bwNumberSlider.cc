@@ -7,9 +7,8 @@
 
 #include "event/bwEvent.h"
 #include "paint/bwPainter.h"
-#include "bwStyle.h"
-
 #include "bwNumberSlider.h"
+#include "styling/bwStyleManager.h"
 
 namespace bWidgets
 {
@@ -19,19 +18,22 @@ namespace bWidgets
 	{
 	}
 
-	void bwNumberSlider::draw(bwStyle& style)
+	void bwNumberSlider::draw()
 	{
+		auto& style = getStyle<bwNumberSlider>();
+		const float scale_factor = bwStyleManager::get().getCurrentStyle().scale_factor;
+
 		bwPainter painter;
 		bwRectanglePixel inner_rect = rectangle;
-		const float radius = base_style.corner_radius * style.dpi_fac;
+		const float radius = style.corner_radius * scale_factor;
 
 		// Inner - "inside" of outline, so scale down
 		inner_rect.resize(-1);
 
 		painter.setContentMask(inner_rect);
 
-		painter.enableGradient(bwGradient(base_style.backgroundColor(), base_style.shadeTop(), base_style.shadeBottom()));
-		painter.drawRoundbox(inner_rect, base_style.roundbox_corners, radius - 1.0f);
+		painter.enableGradient(bwGradient(style.background_color, style.shadeTop(), style.shadeBottom()));
+		painter.drawRoundbox(inner_rect, style.roundbox_corners, radius - 1.0f);
 
 		painter.active_drawtype = bwPainter::DrawType::FILLED;
 
@@ -39,45 +41,45 @@ namespace bWidgets
 		if (is_text_editing)
 		{
 			// Selection drawing
-			painter.setActiveColor(base_style.decorationColor());
+			painter.setActiveColor(style.decoration_color);
 			painter.drawRectangle(selection_rectangle);
 		}
 		else
 		{
-			drawValueIndicator(painter, style);
+			drawValueIndicator(painter, style, scale_factor);
 		}
 
 		// Outline
-		painter.setActiveColor(base_style.borderColor());
+		painter.setActiveColor(style.border_color);
 		painter.active_drawtype = bwPainter::DrawType::OUTLINE;
-		painter.drawRoundbox(rectangle, base_style.roundbox_corners, radius);
+		painter.drawRoundbox(rectangle, style.roundbox_corners, radius);
 
-		painter.setActiveColor(base_style.textColor());
+		painter.setActiveColor(style.text_color);
 		if (!is_text_editing)
 		{
-			painter.drawText(text, rectangle, base_style.text_alignment);
+			painter.drawText(text, rectangle, style.text_alignment);
 		}
 		painter.drawText(valueToString(precision),
 			rectangle,
 			is_text_editing ? TextAlignment::LEFT : TextAlignment::RIGHT);
 	}
 
-	void bwNumberSlider::drawValueIndicator(bwPainter& painter, bwStyle& style) const
+	void bwNumberSlider::drawValueIndicator(bwPainter& painter, const bwWidgetStyle& style, const float scale) const
 	{
-		bwGradient gradient = bwGradient(base_style.decorationColor(),
+		bwGradient gradient = bwGradient(style.decoration_color,
 			// shadeTop/Bottom intentionally inverted
-			base_style.shadeBottom(),
-			base_style.shadeTop());
+			style.shadeBottom(),
+			style.shadeTop());
 		bwRectanglePixel indicator_offset_rect = rectangle;
 		bwRectanglePixel indicator_rect = rectangle;
-		uint32_t roundbox_corners = base_style.roundbox_corners;
-		const float radius = base_style.corner_radius * style.dpi_fac;
+		uint32_t roundbox_corners = style.roundbox_corners;
+		const float radius = style.corner_radius * scale;
 		float right_side_radius = radius;
 
 		indicator_offset_rect.xmax = indicator_offset_rect.xmin + right_side_radius;
 
 		indicator_rect.xmin = indicator_offset_rect.xmax;
-		indicator_rect.xmax = indicator_rect.xmin + calcValueIndicatorWidth(style);
+		indicator_rect.xmax = indicator_rect.xmin + calcValueIndicatorWidth(style, scale);
 		if (indicator_rect.xmax > (rectangle.xmax - right_side_radius))
 		{
 			right_side_radius *= (indicator_rect.xmax + right_side_radius - rectangle.xmax) / right_side_radius;
@@ -120,10 +122,10 @@ namespace bWidgets
 		return string_stream.str();
 	}
 
-	float bwNumberSlider::calcValueIndicatorWidth(bwStyle& style) const
+	float bwNumberSlider::calcValueIndicatorWidth(const bwWidgetStyle& style, const float scale) const
 	{
 		const float range = max - min;
-		const float radius = base_style.corner_radius * style.dpi_fac;
+		const float radius = style.corner_radius * scale;
 
 		assert(max > min);
 		return ((value - min) * (rectangle.width() - radius)) / range;

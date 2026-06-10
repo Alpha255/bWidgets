@@ -25,6 +25,7 @@ namespace bWidgets
 	{
 		initialize();
 
+#if 0
 		item_style.background_color = bwColor(0.25f);
 		item_style.text_color = bwColor(1.0f);
 		item_style.corner_radius = 4.0f;
@@ -32,6 +33,7 @@ namespace bWidgets
 		item_hover_style.background_color = bwColor(0.3f, 0.5f, 1.0f, 0.8f);
 		item_hover_style.text_color = bwColor(1.0f);
 		item_hover_style.corner_radius = 4.0f;
+#endif
 	}
 
 	bwMenuItem& bwPopupMenu::addAction(std::string label)
@@ -66,8 +68,10 @@ namespace bWidgets
 		};
 	}
 
-	void bwPopupMenu::draw(bwStyle& style)
+	void bwPopupMenu::draw()
 	{
+		auto& style = getStyle<bwPopupMenu>();
+
 		bwPainter painter;
 
 		const bwRectanglePixel btn_rect
@@ -80,11 +84,11 @@ namespace bWidgets
 
 		const bwGradient hover_gradient
 		{
-			base_style.backgroundColor(),
-			base_style.shadeTop(),
-			base_style.shadeBottom()
+			style.background_color,
+			style.shadeTop(),
+			style.shadeBottom()
 		};
-		painter.drawRoundboxWidgetBase(base_style, style, btn_rect, hover_gradient, base_style.corner_radius);
+		painter.drawRoundboxWidgetBase(style, btn_rect, hover_gradient);
 
 #if 0
 		bwRectanglePixel text_rect = btn_rect;
@@ -95,15 +99,18 @@ namespace bWidgets
 #endif
 	}
 
-	void bwPopupMenu::drawDropdown(bwStyle& style)
+	void bwPopupMenu::drawDropdown(const bwWidgetStyle& style)
 	{
 		bwPainter painter;
 		bwRectanglePixel dropdown_rect = getDropdownRect();
 
-		const bwGradient gradient{ base_style.backgroundColor(),
-								   base_style.shadeTop(),
-								   base_style.shadeBottom() };
-		painter.drawRoundboxWidgetBase(base_style, style, dropdown_rect, gradient, base_style.corner_radius);
+		const bwGradient gradient
+		{
+			style.background_color,
+			style.shadeTop(),
+			style.shadeBottom()
+		};
+		painter.drawRoundboxWidgetBase(style, dropdown_rect, gradient);
 
 		int32_t y = dropdown_rect.ymax - static_cast<int32_t>(item_padding);
 		int32_t item_index = 0;
@@ -121,7 +128,7 @@ namespace bWidgets
 
 			if (item->isSeparator())
 			{
-				drawSeparator(item_rect);
+				drawSeparator(style, item_rect);
 			}
 			else
 			{
@@ -132,7 +139,7 @@ namespace bWidgets
 		}
 	}
 
-	void bwPopupMenu::drawItem(bwStyle& style,
+	void bwPopupMenu::drawItem(const bwWidgetStyle& style,
 		const bwMenuItem& item,
 		const bwRectanglePixel& item_rect,
 		bool hovered)
@@ -213,12 +220,12 @@ namespace bWidgets
 #endif
 	}
 
-	void bwPopupMenu::drawSeparator(const bwRectanglePixel& item_rect)
+	void bwPopupMenu::drawSeparator(const bwWidgetStyle& style, const bwRectanglePixel& item_rect)
 	{
 		bwPainter painter;
 
 		const int32_t sep_y = item_rect.ymin + (item_rect.height() / 2);
-		const float* tc = item_style.textColor().getColor();
+		const float* tc = style.text_color.getColor();
 		painter.setActiveColor(bwColor(tc[0], tc[1], tc[2], 0.12f));
 		painter.drawLine(bwPoint(item_rect.xmin + static_cast<int32_t>(item_padding), sep_y),
 			bwPoint(item_rect.xmax - static_cast<int32_t>(item_padding), sep_y));

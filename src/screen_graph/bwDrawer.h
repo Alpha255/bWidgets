@@ -6,8 +6,6 @@
 
 namespace bWidgets
 {
-	class bwStyle;
-
 	namespace bwScreenGraph
 	{
 		class bwScreenGraph;
@@ -16,18 +14,16 @@ namespace bWidgets
 		class bwDrawer
 		{
 		public:
-			static void draw(bwScreenGraph& screen_graph, bwStyle& style);
-			static void drawSubtree(bwNode& subtree_root, bwStyle& style);
+			static void draw(bwScreenGraph& screen_graph);
+			static void drawSubtree(bwNode& subtree_root);
 
 		private:
-			bwDrawer(bwStyle& style);
 
 			void drawSubtreeRecursive(bwNode& subtree_root);
 			void drawNode(bwNode& node);
 			void pushMask(const bwNode& node);
 			void popMask();
 
-			bwStyle& style;
 			std::stack<bwRectanglePixel> maskrect_stack;
 		};
 

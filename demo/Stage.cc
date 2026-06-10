@@ -29,7 +29,6 @@
 #include "bwRectangle.h"
 #include "bwPopupMenu.h"
 #include "bwScrollView.h"
-#include "bwStyleCSS.h"
 #include "bwStyleManager.h"
 #include "screen_graph/bwBuilder.h"
 #include "screen_graph/bwDrawer.h"
@@ -41,7 +40,6 @@
 #include "paint/GawainPaintEngine.h"
 #include "screen/bwIcon.h"
 #include "screen/bwLayout.h"
-#include "stylesheet/bwStyleSheet.h"
 #include "window_manager/bwWindow.h"
 #include "styling/bwPreferences.h"
 
@@ -52,7 +50,6 @@ using namespace bWidgets;  // Less verbose
 namespace bWidgetsDemo
 {
 	std::unique_ptr<bwStyle> Stage::style = nullptr;
-	std::unique_ptr<bwStyleSheet> Stage::style_sheet = nullptr;
 	std::unique_ptr<bwFont> Stage::font = nullptr;
 	std::unique_ptr<bwIconMap> Stage::icon_map = nullptr;
 	float Stage::interface_scale = 1.0f;
@@ -77,10 +74,6 @@ namespace bWidgetsDemo
 
 		// After font-init!
 		bwPainter::s_paint_engine = std::make_unique<GawainPaintEngine>(*font, *icon_map);
-		bwStyleCSS::polish_cb = Stage::StyleSheetPolish;
-
-		bwStyleManager::get().registerDefaultStyleTypes();
-		activateStyleID(bwStyle::TypeID::CLASSIC);
 
 		setFontTightPositioning(true);
 	}
@@ -125,10 +118,8 @@ namespace bWidgetsDemo
 		icon_map = reader.readIconMap(iconFile);
 	}
 
-	void Stage::activateStyleID(bwStyle::TypeID type_id)
+	void Stage::activateStyleID(bwStyle::Type type_id)
 	{
-		style = std::unique_ptr<bwStyle>(bwStyleManager::createStyleFromTypeID(type_id));
-		style->dpi_fac = interface_scale;
 	}
 
 	void Stage::draw()
@@ -136,37 +127,13 @@ namespace bWidgetsDemo
 		assert(screen_graph);
 
 		bwRectanglePixel stage_rect{ 0, int32_t(mask_width) - 1, 0, int32_t(mask_height - 1) };
-		bwStyleProperties properties;
 		bwColor clear_color{ 114u };
-
-		if (style->type_id == bwStyle::TypeID::CLASSIC_CSS)
-		{
-			setStyleSheet(std::string(RESOURCES_PATH_STR) + "/" + "classic_style.css");
-		}
-		else if (style->type_id == bwStyle::TypeID::FLAT_LIGHT)
-		{
-			setStyleSheet(std::string(RESOURCES_PATH_STR) + "/" + "flat_light.css");
-		}
-		else if (style->type_id == bwStyle::TypeID::FLAT_DARK)
-		{
-			setStyleSheet(std::string(RESOURCES_PATH_STR) + "/" + "flat_dark.css");
-		}
-		else
-		{
-			style_sheet = nullptr;
-		}
-
-		bwStyleProperty& property = properties.addColor("background-color", clear_color);
-		if (style_sheet)
-		{
-			style_sheet->resolveValue("Stage", bwWidget::State::NORMAL, property);
-		}
 
 		bwPainter::s_paint_engine->setupViewport(stage_rect, clear_color);
 
 		screen_graph->Root().Layout()->resolve(screen_graph->Root(), stage_rect, interface_scale);
 
-		bwScreenGraph::bwDrawer::draw(*screen_graph, *style);
+		bwScreenGraph::bwDrawer::draw(*screen_graph);
 
 #if 0
 		for (bwScreenGraph::bwNode& node : *screen_graph)
@@ -181,12 +148,6 @@ namespace bWidgetsDemo
 
 	void Stage::StyleSheetPolish(bwWidget& widget)
 	{
-		bwStyleSheet& stylesheet = *Stage::style_sheet;
-
-		for (auto& property : widget.style_properties)
-		{
-			stylesheet.resolveValue(widget.identifier, widget.getState(), *property); // #TODO
-		}
 	}
 
 	void Stage::setContentScale(const float scale_x, const float scale_y)
@@ -205,7 +166,6 @@ namespace bWidgetsDemo
 		if (value != interface_scale)
 		{
 			interface_scale = value;
-			style->dpi_fac = value;
 			setFontSize(11.0f);
 		}
 	}
@@ -238,15 +198,6 @@ namespace bWidgetsDemo
 
 	void Stage::setStyleSheet(const std::string& filepath)
 	{
-		if (!style_sheet || (style_sheet->getFilepath() != filepath))
-		{
-			style_sheet = std::make_unique<bwStyleSheet>(filepath);
-		}
-		else
-		{
-			/* TODO skip if file didn't change. */
-			style_sheet->reload();
-		}
 	}
 
 	void Stage::handleMouseMovementEvent(const bwMouseEvent& event)

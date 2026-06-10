@@ -21,11 +21,9 @@ namespace bWidgets
 
 		static constexpr std::string_view identifier = "bwPanel";
 
-		void draw(class bwStyle& style) override;
+		void draw() override;
 
-		void registerProperties() override;
-
-		const std::string* getLabel() const override;
+		const std::string_view getLabel() const override;
 		bool childrenVisible() const override;
 
 		std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
@@ -36,7 +34,7 @@ namespace bWidgets
 		State panel_state{ State::OPEN };
 
 	private:
-		void drawHeader(class bwStyle& style) const;
+		void drawHeader(const bwWidgetStyle& style, const float scale) const;
 		bwRectanglePixel getHeaderRectangle() const;
 		bool isCoordinateInsideHeader(const bwPoint& point) const;
 

@@ -2,7 +2,6 @@
 
 #include "bwWidget.h"
 #include "bwAbstractButton.h"
-#include "bwWidgetBaseStyle.h"
 #include "bwPopupMenu.h"
 
 namespace bWidgets
@@ -18,7 +17,7 @@ namespace bWidgets
 
 		static constexpr std::string_view identifier = "bwMenuButton";
 
-		void draw(bwStyle& style) override;
+		void draw() override;
 
 		std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 

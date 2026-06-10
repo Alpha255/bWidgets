@@ -4,14 +4,13 @@
 #include "event/bwEvent.h"
 #include "paint/bwPainter.h"
 #include "bwRange.h"
-#include "bwStyle.h"
+#include "bwStyleManager.h"
 
 #include "screen_graph/bwBuilder.h"
 #include "screen_graph/bwDrawer.h"
 #include "screen_graph/bwNode.h"
 
 #include "bwScrollBar.h"
-
 #include "bwScrollView.h"
 
 namespace bWidgets
@@ -32,19 +31,21 @@ namespace bWidgets
 		return static_cast<bwScrollBar&>(*scrollbar_node->Widget());
 	}
 
-	bwRectanglePixel bwScrollView::getVerticalScrollbarRect(const bwStyle& style) const
+	bwRectanglePixel bwScrollView::getVerticalScrollbarRect(const bwWidgetStyle& style) const
 	{
+		const float scale_factor = bwStyleManager::get().getCurrentStyle().scale_factor;
+
 		bwRectanglePixel scroll_rectangle{ rectangle };
 		/* TODO hardcoded padding */
-		const int32_t padding = 4 * (int32_t)style.dpi_fac;
+		const int32_t padding = 4 * (int32_t)scale_factor;
 
-		scroll_rectangle.xmin = scroll_rectangle.xmax - bwScrollView::getScrollbarWidth(style.dpi_fac) - padding;
+		scroll_rectangle.xmin = scroll_rectangle.xmax - bwScrollView::getScrollbarWidth(scale_factor) - padding;
 		scroll_rectangle.resize(-padding);
 
 		return scroll_rectangle;
 	}
 
-	void bwScrollView::drawScrollBars(bwStyle& style)
+	void bwScrollView::drawScrollBars(const bwWidgetStyle& style)
 	{
 		bwScrollBar& scrollbar = getVerticalScrollBar();
 
@@ -54,21 +55,23 @@ namespace bWidgets
 		scrollbar.ratio = (rectangle.height() - 2) / float(node.ContentRectangle().height());
 		scrollbar.scroll_offset = vert_scroll;
 
-		bwScreenGraph::bwDrawer::drawSubtree(*scrollbar_node, style);
+		bwScreenGraph::bwDrawer::drawSubtree(*scrollbar_node);
 	}
 
-	void bwScrollView::draw(bwStyle& style)
+	void bwScrollView::draw()
 	{
+		auto& style = getStyle<bwScrollView>();
+
 		bwPainter painter;
 
 		painter.active_drawtype = bwPainter::DrawType::FILLED;
-		painter.setActiveColor(base_style.background_color);
+		painter.setActiveColor(style.background_color);
 		painter.drawRectangle(rectangle);
 
-		if (base_style.isBorderVisible())
+		if (style.isBorderVisible())
 		{
 			painter.active_drawtype = bwPainter::DrawType::OUTLINE;
-			painter.setActiveColor(base_style.border_color);
+			painter.setActiveColor(style.border_color);
 			painter.drawRectangle(rectangle);
 		}
 		if (isScrollable())

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "bwWidget.h"
-#include "bwWidgetBaseStyle.h"
 
 namespace bWidgets
 {
@@ -15,11 +14,10 @@ namespace bWidgets
 
 		static constexpr std::string_view identifier = "bwTextBox";
 
-		void draw(class bwStyle& style) override;
-		void registerProperties() override;
+		void draw() override;
 
 		bwTextBox& setText(const std::string& value);
-		const std::string* getLabel() const override;
+		const std::string_view getLabel() const override;
 
 		bool canAlign() const override;
 
@@ -30,9 +28,6 @@ namespace bWidgets
 	protected:
 		std::string text;
 		bool is_text_editing = false;
-
-	public:
-		bwWidgetBaseStyle base_style;  // XXX public for setWidgetStyle. Should only be temporarily needed.
 	};
 
 	class bwTextBoxHandler : public bwScreenGraph::bwEventHandler

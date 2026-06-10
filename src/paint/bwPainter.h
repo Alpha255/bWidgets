@@ -6,39 +6,12 @@
 
 #include "bwGradient.h"
 #include "screen/bwIconInterface.h"
+#include "styling/bwStyle.h"
 
 namespace bWidgets
 {
 	class bwPaintEngine;
 	class bwPolygon;
-	class bwStyle;
-	class bwWidgetBaseStyle;
-
-	enum RoundboxCorner
-	{
-		NONE = 0,
-		BOTTOM_LEFT = (1 << 0),
-		BOTTOM_RIGHT = (1 << 1),
-		TOP_LEFT = (1 << 2),
-		TOP_RIGHT = (1 << 3),
-		/* Convenience */
-		ALL = (BOTTOM_LEFT | BOTTOM_RIGHT | TOP_LEFT | TOP_RIGHT),
-	};
-
-	enum class TextAlignment
-	{
-		LEFT,
-		CENTER,
-		RIGHT,
-	};
-
-	enum class Direction
-	{
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT,
-	};
 
 	class bwPainter
 	{
@@ -76,26 +49,22 @@ namespace bWidgets
 			const bwIconInterface* icon,
 			const bwRectanglePixel& rectangle,
 			const TextAlignment alignment,
-			float dpi_fac,
 			const bwColor& color) const;
 		void drawTextAndIcon(
 			const std::string& text,
 			const bwIconInterface* icon,
 			const bwRectanglePixel& rectangle,
-			const TextAlignment alignment,
-			float dpi_fac) const
+			const TextAlignment alignment) const
 		{
-			drawTextAndIcon(text, icon, rectangle, alignment, dpi_fac, bwColor::White);
+			drawTextAndIcon(text, icon, rectangle, alignment, bwColor::White);
 		}
 
 		// Primitives
 		void drawRoundbox(const bwRectanglePixel& rect, uint32_t corners, const float radius);
 		void drawRectangle(const bwRectanglePixel& rect);
-		void drawRoundboxWidgetBase(const bwWidgetBaseStyle& base_style,
-			const bwStyle& style,
+		void drawRoundboxWidgetBase(const bwWidgetStyle& style,
 			const bwRectanglePixel& rectangle,
-			const bwGradient& gradient,
-			const float radius);
+			const bwGradient& gradient);
 		void drawCheckMark(const bwRectanglePixel& rect);
 		void drawTriangle(const bwRectanglePixel& rect, Direction direction);
 		void drawLine(const bwPoint& from, const bwPoint& to);
@@ -106,8 +75,7 @@ namespace bWidgets
 		DrawType active_drawtype;
 
 	private:
-		void fillVertexColorsWithGradient(const bwPolygon& polygon,
-			const bwRectanglePixel& bounding_box);
+		void fillVertexColorsWithGradient(const bwPolygon& polygon, const bwRectanglePixel& bounding_box);
 
 		bwColor active_color;
 		std::vector<bwColor> vert_colors;

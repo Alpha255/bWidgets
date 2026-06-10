@@ -11,7 +11,7 @@ namespace bWidgets
 
 		static constexpr std::string_view identifier = "bwScrollBar";
 
-		void draw(bwStyle& style) override;
+		void draw() override;
 
 		std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 

@@ -27,6 +27,7 @@ namespace bWidgets
 		bwColor& operator=(const bwColor& other_color);
 
 		bool operator==(const bwColor& compare_color) const;
+		bool operator!=(const bwColor& compare_color) const;
 		float& operator[](const int32_t index);
 		// Implicit conversion to float*
 		operator const float* () const;
@@ -34,7 +35,7 @@ namespace bWidgets
 		const static bwColor White;
 
 		template<class Archive>
-		void serialize(Archive ar)
+		void serialize(Archive& ar)
 		{
 			ar(
 				CEREAL_NVP(rgba)

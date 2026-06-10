@@ -12,9 +12,11 @@ namespace bWidgets
 
 	bwRectanglePixel bwContainerWidget::getMaskRectangle()
 	{
+		auto& style = getStyle<bwContainerWidget>();
+
 		bwRectanglePixel maskrect = rectangle;
 
-		if (base_style.isBorderVisible())
+		if (style.isBorderVisible())
 		{
 			/* With a visible border, we have to exclude the border size from the
 			 * mask, so that content appears clipped by the border. */
@@ -30,11 +32,6 @@ namespace bWidgets
 		 * widget supports hiding children. */
 
 		return true;
-	}
-
-	void bwContainerWidget::registerProperties()
-	{
-		base_style.registerProperties(style_properties);
 	}
 
 }  // namespace bWidgets

@@ -18,12 +18,12 @@ namespace bWidgets
 
 		static constexpr std::string_view identifier = "bwLabel";
 
-		void draw(bwStyle& style) override;
-		void registerProperties() override;
+		void draw() override;
 		std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
-		const std::string* getLabel() const override;
-		bwLabel& setLabel(const std::string&);
+		const std::string_view getLabel() const override;
+
+		bwLabel& setLabel(const std::string& label, const bwColor& color = bwColor::White);
 		bwLabel& setIcon(const bwIconInterface& icon_interface);
 
 	private:

@@ -9,23 +9,26 @@ namespace bWidgets
 	bwAbstractButton::bwAbstractButton(const std::string& text,
 		std::optional<uint32_t> width_hint,
 		std::optional<uint32_t> height_hint)
-		: bwWidget(width_hint, height_hint), rounded_corners(RoundboxCorner::ALL),
-		text(text)
+		: bwWidget(width_hint, height_hint)
+		, rounded_corners(RoundboxCorner::ALL)
+		, text(text)
 	{
 		initialize();
 	}
 
-	void bwAbstractButton::draw(bwStyle& style)
+	void bwAbstractButton::draw()
 	{
+		auto& style = getStyle<bwAbstractButton>();
+
 		const bwGradient gradient
 		{ 
-			base_style.backgroundColor(),
-			base_style.shadeTop(),
-			base_style.shadeBottom()
+			style.background_color,
+			style.shadeTop(),
+			style.shadeBottom()
 		};
 		bwPainter painter;
 
-		painter.drawRoundboxWidgetBase(base_style, style, rectangle, gradient, base_style.corner_radius);
+		painter.drawRoundboxWidgetBase(style, rectangle, gradient);
 
 		// Text
 		painter.setContentMask(rectangle);
@@ -34,12 +37,12 @@ namespace bWidgets
 #else
 		painter.setActiveColor(bwColor::White);
 #endif
-		painter.drawTextAndIcon(text, getIcon(), rectangle, base_style.text_alignment, style.scale_factor);
+		painter.drawTextAndIcon(text, getIcon(), rectangle, style.text_alignment);
 	}
 
-	const std::string* bwAbstractButton::getLabel() const
+	const std::string_view bwAbstractButton::getLabel() const
 	{
-		return &text;
+		return std::string_view(text);
 	}
 
 	bwAbstractButton& bwAbstractButton::setLabel(const std::string& label)

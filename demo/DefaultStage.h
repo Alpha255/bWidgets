@@ -38,7 +38,7 @@ namespace bWidgetsDemo
 	private:
 		void registerProperties(bWidgets::RNAProperties<DefaultStage>& properties);
 
-		void activateStyleID(bWidgets::bwStyle::TypeID) override;
+		void activateStyleID(bWidgets::bwStyle::Type) override;
 		void addStyleSelector(bWidgets::bwScreenGraph::bwLayoutNode& parent_node);
 		void updateFontAAMode(bool value);
 

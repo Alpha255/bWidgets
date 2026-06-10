@@ -10,33 +10,30 @@ namespace bWidgets
 	bwLabel::bwLabel(std::string text,
 		std::optional<uint32_t> width_hint,
 		std::optional<uint32_t> height_hint)
-		: bwWidget(width_hint, height_hint), text(std::move(text))
+		: bwWidget(width_hint, height_hint)
+		, text(std::move(text))
 	{
 		initialize();
 	}
 
-	void bwLabel::draw(bwStyle& style)
+	void bwLabel::draw()
 	{
 		bwPainter painter;
 
 		painter.setContentMask(rectangle);
 		painter.setActiveColor(text_color);
-		painter.drawTextAndIcon(text, icon, rectangle, TextAlignment::LEFT, style.dpi_fac);
+		painter.drawTextAndIcon(text, icon, rectangle, TextAlignment::LEFT);
 	}
 
-	void bwLabel::registerProperties()
+	const std::string_view bwLabel::getLabel() const
 	{
-		style_properties.addColor("color", text_color);
+		return std::string_view(text);
 	}
 
-	const std::string* bwLabel::getLabel() const
-	{
-		return &text;
-	}
-
-	bwLabel& bwLabel::setLabel(const std::string& label)
+	bwLabel& bwLabel::setLabel(const std::string& label, const bwColor& color)
 	{
 		text = label;
+		text_color = color;
 		return *this;
 	}
 

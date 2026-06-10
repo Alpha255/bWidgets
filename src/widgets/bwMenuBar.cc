@@ -10,7 +10,7 @@ namespace bWidgets
 	{
 	}
 
-	void bwMenuBar::draw(bwStyle& style)
+	void bwMenuBar::draw()
 	{
 		bwPainter painter;
 		painter.drawRectangle(rectangle);
@@ -19,7 +19,7 @@ namespace bWidgets
 		{
 			auto widget = child->Widget();
 			assert(widget);
-			widget->draw(style);
+			widget->draw();
 		}
 	}
 

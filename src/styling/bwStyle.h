@@ -5,64 +5,64 @@
 #include <string>
 #include <unordered_map>
 #include <cereal/cereal.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/unordered_map.hpp>
 
 #include "bwColor.h"
-#include "bwWidget.h"
 
 namespace bWidgets
 {
+	enum RoundboxCorner
+	{
+		NONE = 0,
+		BOTTOM_LEFT = (1 << 0),
+		BOTTOM_RIGHT = (1 << 1),
+		TOP_LEFT = (1 << 2),
+		TOP_RIGHT = (1 << 3),
+		/* Convenience */
+		ALL = (BOTTOM_LEFT | BOTTOM_RIGHT | TOP_LEFT | TOP_RIGHT),
+	};
+
+	enum class TextAlignment
+	{
+		LEFT,
+		CENTER,
+		RIGHT,
+	};
+
+	enum class Direction
+	{
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT,
+	};
+
 	struct bwWidgetStyle
 	{
-		inline const bwColor& backgroundColor(bwWidget::State state) const
-		{
-			assert(state < bwWidget::State::STATE_TOT);
-			return background_colors[static_cast<size_t>(state)];
-		}
-
-		inline const bwColor& textColor(bwWidget::State state) const
-		{
-			assert(state < bwWidget::State::STATE_TOT);
-			return text_colors[static_cast<size_t>(state)];
-		}
-
-		inline const bwColor& borderColor(bwWidget::State state) const
-		{
-			assert(state < bwWidget::State::STATE_TOT);
-			return border_colors[static_cast<size_t>(state)];
-		}
-
-		inline const bwColor& decorationColor(bwWidget::State state) const
-		{
-			assert(state < bwWidget::State::STATE_TOT);
-			return decoration_colors[static_cast<size_t>(state)];
-		}
-
-		float shadeTop() const;
-		float shadeBottom() const;
-
-		bool isBorderVisible() const;
-
-		static constexpr size_t NUM_STATES = static_cast<size_t>(bwWidget::State::STATE_TOT);
-
-		std::array<bwColor, NUM_STATES> background_colors;
-		std::array<bwColor, NUM_STATES> text_colors;
-		std::array<bwColor, NUM_STATES> border_colors;
-		std::array<bwColor, NUM_STATES> decoration_colors;
+		bwColor background_color;
+		bwColor text_color;
+		bwColor border_color;
+		bwColor decoration_color;
 
 		int32_t shade_top = 0;
 		int32_t shade_bottom = 0;  // TODO could make this a char - or support gradient for background_color even.
-		enum TextAlignment text_alignment;  // Default value set in constructor.
-		enum RoundboxCorner roundbox_corners;
+		TextAlignment text_alignment;  // Default value set in constructor.
+		RoundboxCorner roundbox_corners;
 		float corner_radius = 0.0f;  // TODO Utility function for calculating final radius (roundbox_radius * dpi_fac).
 
+		inline float shadeTop() const { return shade_top / 255.0f; }
+		inline float shadeBottom() const { return shade_bottom / 255.0f; }
+		inline bool isBorderVisible() const { return background_color != border_color;}
+
 		template<class Archive>
-		void serialize(Archive ar)
+		void serialize(Archive& ar)
 		{
 			ar(
-				CEREAL_NVP(background_colors),
-				CEREAL_NVP(text_colors),
-				CEREAL_NVP(border_colors),
-				CEREAL_NVP(decoration_colors),
+				CEREAL_NVP(background_color),
+				CEREAL_NVP(text_color),
+				CEREAL_NVP(border_color),
+				CEREAL_NVP(decoration_color),
 				CEREAL_NVP(shade_top),
 				CEREAL_NVP(shade_bottom),
 				CEREAL_NVP(text_alignment),
@@ -86,7 +86,7 @@ namespace bWidgets
 		float scale_factor = 1.0f;
 
 		template<class Archive>
-		void serialize(Archive ar)
+		void serialize(Archive& ar)
 		{
 			ar(
 				CEREAL_NVP(type),
@@ -104,9 +104,9 @@ namespace bWidgets
 		}
 
 		template<class Widget>
-		inline const bwWidgetStyle* getWidgetStyle()
+		inline const bwWidgetStyle* getWidgetStyle() const
 		{
-			auto it = widget_styles.find(Widget::identifier);
+			auto it = widget_styles.find(std::string(Widget::identifier));
 			return it == widget_styles.cend() ? nullptr : &it->second;
 		}
 
@@ -118,7 +118,7 @@ namespace bWidgets
 	class bwWidgetStyleHandle
 	{
 	public:
-		static inline const struct bwWidgetStyle& get()
+		static inline const bwWidgetStyle& get()
 		{
 			assert(style);
 			return *style;
@@ -127,9 +127,9 @@ namespace bWidgets
 	protected:
 		friend class bwStyleManager;
 
-		static inline void setStyle(struct bwWidgetStyle* in_style) { style = in_style; }
+		static inline void setStyle(const bwWidgetStyle* in_style) { style = in_style; }
 	private:
-		static inline struct bwWidgetStyle* style = nullptr;
+		static inline const bwWidgetStyle* style = nullptr;
 	};
 
 }  // namespace bWidgets

@@ -34,9 +34,9 @@ namespace bWidgets
 		return hidden;
 	}
 
-	const std::string* bwWidget::getLabel() const
+	const std::string_view bwWidget::getLabel() const
 	{
-		return nullptr;
+		return std::string_view();
 	}
 
 	bool bwWidget::canAlign() const

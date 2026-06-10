@@ -24,6 +24,7 @@ set(INC
 	../src/utils
 	../src/widgets
 	${CMAKE_SOURCE_DIR}/demo/extern/glew/include
+	${CMAKE_SOURCE_DIR}/Submodules/cereal/include
 	resources
 )
 

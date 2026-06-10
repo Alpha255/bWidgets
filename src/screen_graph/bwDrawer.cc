@@ -11,20 +11,15 @@ namespace bWidgets
 {
 	namespace bwScreenGraph
 	{
-		bwDrawer::bwDrawer(bwStyle& _style) 
-			: style(_style)
+		void bwDrawer::draw(bwScreenGraph& screen_graph)
 		{
-		}
-
-		void bwDrawer::draw(bwScreenGraph& screen_graph, bwStyle& style)
-		{
-			bwDrawer drawer{ style };
+			bwDrawer drawer;
 			drawer.drawSubtreeRecursive(screen_graph.Root());
 		}
 
-		void bwDrawer::drawSubtree(bwNode& subtree_root, bwStyle& style)
+		void bwDrawer::drawSubtree(bwNode& subtree_root)
 		{
-			bwDrawer drawer{ style };
+			bwDrawer drawer;
 			drawer.drawSubtreeRecursive(subtree_root);
 		}
 
@@ -61,8 +56,7 @@ namespace bWidgets
 				return;
 			}
 
-			style.setWidgetStyle(*widget);
-			widget->draw(style);
+			widget->draw();
 		}
 
 		void bwDrawer::pushMask(const bwNode& node)

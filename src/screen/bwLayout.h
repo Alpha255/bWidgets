@@ -22,13 +22,11 @@
 #pragma once
 
 #include "bwRectangle.h"
-
 #include "screen_graph/bwNode.h"
 
 namespace bWidgets
 {
 	class bwPoint;
-	class bwStyle;
 	class bwWidget;
 
 	/**

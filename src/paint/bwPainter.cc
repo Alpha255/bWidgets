@@ -9,9 +9,9 @@
 #include "bwRange.h"
 #include "bwStyle.h"
 #include "bwUtil.h"
-#include "bwWidgetBaseStyle.h"
-
 #include "paint/bwPainter.h"
+#include "styling/bwPreferences.h"
+#include "styling/bwStyleManager.h"
 
 namespace bWidgets
 {
@@ -126,7 +126,6 @@ namespace bWidgets
 		const bwIconInterface* icon,
 		const bwRectanglePixel& rectangle,
 		const TextAlignment alignment,
-		float dpi_fac,
 		const bwColor& color) const
 	{
 		bwRectanglePixel icon_rect{ rectangle };
@@ -134,7 +133,7 @@ namespace bWidgets
 
 		if (icon)
 		{
-			const float icon_size = std::round(bwIconInterface::ICON_DEFAULT_SIZE * dpi_fac);
+			const float icon_size = std::round(bwUserPreferences::get().getDefaultIconSize());
 			icon_rect.xmax = int32_t(icon_rect.xmin + icon_size);
 			icon_rect.ymax = int32_t(icon_rect.ymin + icon_size);
 			drawIcon(*icon, icon_rect, color);
@@ -381,7 +380,7 @@ namespace bWidgets
 
 	void PolygonRoundboxCreator::endRoundbox(bwPolygon& polygon) const
 	{
-		uint32_t first_vert_index = std::max(0, start_vertex_count - 1);
+		uint32_t first_vert_index = std::max<int32_t>(0, start_vertex_count - 1);
 		// Back to start
 		polygon.addVertex(polygon[first_vert_index]);
 		if (is_outline)
@@ -416,7 +415,7 @@ namespace bWidgets
 			1 :
 			2;
 
-		return std::min(rect.width() * hnum, rect.height() * vnum);
+		return std::min<int32_t>(rect.width() * hnum, rect.height() * vnum);
 	}
 
 	void bwPainter::drawRoundbox(const bwRectanglePixel& rect,
@@ -488,17 +487,15 @@ namespace bWidgets
 		assert(vert_colors.size() == vertices.size());
 	}
 
-	void bwPainter::drawRoundboxWidgetBase(const bwWidgetBaseStyle& base_style,
-		const bwStyle& style,
+	void bwPainter::drawRoundboxWidgetBase(const bwWidgetStyle& style,
 		const bwRectanglePixel& rectangle,
-		const bwGradient& gradient,
-		const float radius)
+		const bwGradient& gradient)
 	{
 		bwRectanglePixel inner_rect = rectangle;
-		const float radius_pixel = radius * style.dpi_fac;
+		const float radius_pixel = style.corner_radius * bwStyleManager::get().getCurrentStyle().scale_factor;
 
-		assert(bwRange<int32_t>::isInside(base_style.shade_top, -255, 255, true));
-		assert(bwRange<int32_t>::isInside(base_style.shade_bottom, -255, 255, true));
+		assert(bwRange<int32_t>::isInside(style.shade_top, -255, 255, true));
+		assert(bwRange<int32_t>::isInside(style.shade_bottom, -255, 255, true));
 
 		// Inner - "inside" of outline, so scale down
 		inner_rect.resize(-1);
@@ -507,12 +504,12 @@ namespace bWidgets
 
 		active_drawtype = bwPainter::DrawType::FILLED;
 		enableGradient(gradient);
-		drawRoundbox(inner_rect, base_style.roundbox_corners, radius_pixel - 1.0f);
+		drawRoundbox(inner_rect, style.roundbox_corners, radius_pixel - 1.0f);
 
 		// Outline
 		active_drawtype = bwPainter::DrawType::OUTLINE;
-		setActiveColor(base_style.borderColor());
-		drawRoundbox(rectangle, base_style.roundbox_corners, radius_pixel);
+		setActiveColor(style.border_color);
+		drawRoundbox(rectangle, style.roundbox_corners, radius_pixel);
 	}
 
 }  // namespace bWidgets

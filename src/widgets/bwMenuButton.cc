@@ -19,9 +19,9 @@ namespace bWidgets
 		}
 	};
 
-	void bwMenuButton::draw(bwStyle& style)
+	void bwMenuButton::draw()
 	{
-		bwAbstractButton::draw(style);
+		bwAbstractButton::draw();
 	}
 
 	std::unique_ptr<bwScreenGraph::bwEventHandler> bwMenuButton::createHandler()

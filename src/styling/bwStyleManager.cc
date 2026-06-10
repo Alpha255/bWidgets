@@ -1,7 +1,6 @@
 #include <cassert>
-#include <fstream>
-#include <string>
 #include <filesystem>
+#include <string>
 #include <cereal/archives/json.hpp>
 
 #include "bwStyleManager.h"
@@ -16,6 +15,7 @@ namespace bWidgets
 
 		switch (type)
 		{
+		default:
 		case bwStyle::Type::DARK:
 			return root_path / "style_dark.json";
 		case bwStyle::Type::LIGHT:
@@ -60,6 +60,7 @@ namespace bWidgets
 	void bwStyleManager::setStyle(bwStyle::Type type)
 	{
 		current_style = type;
+		getStyle(type).in_use = true;
 
 		for (auto& callback : onSetStyleCallbacks) 
 		{

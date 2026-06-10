@@ -21,49 +21,57 @@ namespace bWidgets
 		return rect_inner;
 	}
 
-	void bwScrollBar::draw(bwStyle& style)
+	void bwScrollBar::draw()
 	{
+		auto& style = getStyle<bwScrollBar>();
+
 		bwRectanglePixel rect_inner{ getInnerRect(*this) };
 
 		/* TODO maybe a wrapper could ensure old style is unchanged after drawing
 		 * (by resetting it) */
-		const char old_shade_top = base_style.shade_top;
-		const char old_shade_bottom = base_style.shade_bottom;
+		const char old_shade_top = style.shade_top;
+		const char old_shade_bottom = style.shade_bottom;
 		const bwGradient gradient_outer
 		{ 
-			base_style.backgroundColor(),
-			base_style.shadeBottom(),
-			base_style.shadeTop(),
+			style.background_color,
+			style.shadeBottom(),
+			style.shadeTop(),
 			bwGradient::Direction::LEFT_RIGHT
 		};
 		bwPainter painter;
 
-		painter.drawRoundboxWidgetBase(base_style, style, rectangle, gradient_outer, base_style.corner_radius);
+		painter.drawRoundboxWidgetBase(style, rectangle, gradient_outer);
 
-		if (base_style.shadeTop() == base_style.shadeBottom())
+		if (style.shadeTop() == style.shadeBottom())
 		{
 			// no shading, skip
 		}
-		else if (base_style.shadeTop() > base_style.shadeBottom())
+		else if (style.shadeTop() > style.shadeBottom())
 		{
-			base_style.shade_top += 20;
+#if 0
+			style.shade_top += 20;
+#endif
 		}
 		else
 		{
-			base_style.shade_bottom += 20;
+#if 0
+			style.shade_bottom += 20;
+#endif
 		}
 
 		const bwGradient gradient_inner
 		{ 
-			base_style.decorationColor(),
-			base_style.shadeTop(),
-			base_style.shadeBottom(),
+			style.decoration_color,
+			style.shadeTop(),
+			style.shadeBottom(),
 			bwGradient::Direction::LEFT_RIGHT
 		};
-		painter.drawRoundboxWidgetBase(base_style, style, rect_inner, gradient_inner, base_style.corner_radius);
+		painter.drawRoundboxWidgetBase(style, rect_inner, gradient_inner);
 
-		base_style.shade_top = old_shade_top;
-		base_style.shade_bottom = old_shade_bottom;
+#if 0
+		style.shade_top = old_shade_top;
+		style.shade_bottom = old_shade_bottom;
+#endif
 	}
 
 	// ------------------ Handling ------------------

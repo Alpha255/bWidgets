@@ -5,7 +5,6 @@
 namespace bWidgets
 {
 	class bwPainter;
-	class bwStyle;
 
 	class bwNumberSlider : public bwTextBox
 	{
@@ -17,7 +16,7 @@ namespace bWidgets
 
 		static constexpr std::string_view identifier = "bwNumberSlider";
 
-		void draw(bwStyle& style) override;
+		void draw() override;
 
 		std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
@@ -29,8 +28,8 @@ namespace bWidgets
 
 	private:
 		std::string valueToString(uint32_t precision) const;
-		void drawValueIndicator(bwPainter& painter, bwStyle& style) const;
-		float calcValueIndicatorWidth(class bwStyle& style) const;
+		void drawValueIndicator(bwPainter& painter, const bwWidgetStyle& style, const float scale) const;
+		float calcValueIndicatorWidth(const bwWidgetStyle& style, const float scale) const;
 
 		/**
 		 * Support multiple numeric types. bwNumberSlider could be made

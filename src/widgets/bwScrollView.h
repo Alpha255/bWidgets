@@ -24,7 +24,7 @@ namespace bWidgets
 
 		static constexpr std::string_view identifier = "bwScrollView";
 
-		void draw(bwStyle& style) override;
+		void draw() override;
 
 		std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
@@ -33,8 +33,8 @@ namespace bWidgets
 
 	private:
 		bwScrollBar& getVerticalScrollBar() const;
-		bwRectanglePixel getVerticalScrollbarRect(const bwStyle& style) const;
-		void drawScrollBars(bwStyle& style);
+		bwRectanglePixel getVerticalScrollbarRect(const bwWidgetStyle& style) const;
+		void drawScrollBars(const bwWidgetStyle& style);
 		bool isScrollable() const;
 		void validizeScrollValues();
 

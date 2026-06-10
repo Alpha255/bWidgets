@@ -36,16 +36,22 @@ namespace bWidgets
 		inline const bwWidgetStyle* getWidgetStyle(bwStyle::Type type) const
 		{
 			assert(type < bwStyle::Type::NUM);
-			return getStyle(type).getWidgetStyle<Widget>;
+			return getStyle(type).getWidgetStyle<Widget>();
 		}
 
 		void setStyle(bwStyle::Type type);
-		inline bwStyle::Type getCurrentStyle() const { return current_style; }
+		inline const bwStyle& getCurrentStyle() const { return getStyle(current_style); }
 	protected:
 		void save(bwStyle::Type type);
 		void load(bwStyle::Type type);
 
 		static bool s_initialized;
+
+		inline const bwStyle& getStyle(bwStyle::Type type) const
+		{
+			assert(type < bwStyle::Type::NUM);
+			return *styles[static_cast<size_t>(type)];
+		}
 
 		inline bwStyle& getStyle(bwStyle::Type type)
 		{

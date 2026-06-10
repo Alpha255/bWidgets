@@ -16,9 +16,11 @@ namespace bWidgets
 	class bwAbstractButton : public bwWidget
 	{
 	public:
-		void draw(class bwStyle& style) override;
+		static constexpr std::string_view identifier = "bwAbstractButton";
 
-		const std::string* getLabel() const override;
+		void draw() override;
+
+		const std::string_view getLabel() const override;
 		bwAbstractButton& setLabel(const std::string& label);
 		virtual const bwIconInterface* getIcon() const;
 

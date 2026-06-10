@@ -6,7 +6,6 @@
 
 #include "bwContainerWidget.h"
 #include "bwRectangle.h"
-#include "bwWidgetBaseStyle.h"
 #include "blender_icon_defines.h"
 #include "event/bwEvent.h"
 
@@ -71,7 +70,7 @@ namespace bWidgets
 
 		static constexpr std::string_view identifier = "bwPopupMenu";
 
-		void draw(bwStyle& style) override;
+		void draw() override;
 
 		std::unique_ptr<bwScreenGraph::bwEventHandler> createHandler() override;
 
@@ -80,14 +79,14 @@ namespace bWidgets
 		bwPopupMenu& addSeparator();
 
 		bwRectanglePixel getDropdownRect() const;
-		void drawDropdown(bwStyle& style);
+		void drawDropdown(const bwWidgetStyle& style);
 	private:
-		void drawItem(bwStyle& style,
+		void drawItem(const bwWidgetStyle& style,
 			const bwMenuItem& item,
 			const bwRectanglePixel& rect,
 			bool hovered);
 
-		void drawSeparator(const bwRectanglePixel& rect);
+		void drawSeparator(const bwWidgetStyle& style, const bwRectanglePixel& rect);
 
 		std::vector<std::unique_ptr<bwMenuItem>> menu_items;
 
@@ -96,8 +95,5 @@ namespace bWidgets
 		static constexpr uint32_t preferred_dropdown_width = 200;
 
 		int32_t hovered_item{ -1 };
-
-		bwWidgetBaseStyle item_style;
-		bwWidgetBaseStyle item_hover_style;
 	};
 }  // namespace bWidgets

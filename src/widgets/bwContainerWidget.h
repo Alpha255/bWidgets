@@ -1,7 +1,6 @@
 #pragma once
 
 #include "bwWidget.h"
-#include "bwWidgetBaseStyle.h"
 
 namespace bWidgets
 {
@@ -16,8 +15,6 @@ namespace bWidgets
 		virtual bwRectanglePixel getMaskRectangle();
 		virtual bool childrenVisible() const;
 
-		void registerProperties() override;
-
 	protected:
 		bwContainerWidget(const bwScreenGraph::bwContainerNode& node,
 			std::optional<uint32_t> width_hint = std::nullopt,
@@ -25,9 +22,6 @@ namespace bWidgets
 
 		/** Reference to node owning this widget, for additional info queries. */
 		const bwScreenGraph::bwContainerNode& node;
-
-	public:
-		bwWidgetBaseStyle base_style;  // XXX public for setWidgetStyle. Should only be temporarily needed.
 	};
 
 }  // namespace bWidgets

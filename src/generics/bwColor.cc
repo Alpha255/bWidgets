@@ -114,6 +114,14 @@ namespace bWidgets
 			(rgba[3] == compare_color[3]));
 	}
 
+	auto bwColor::operator!=(const bwColor& compare_color) const -> bool
+	{
+		return ((rgba[0] != compare_color[0]) ||
+			(rgba[1] != compare_color[1]) ||
+			(rgba[2] != compare_color[2]) ||
+			(rgba[3] != compare_color[3]));
+	}
+
 	float& bwColor::operator[](const int32_t index)
 	{
 		assert((index >= 0) && (index < 4));

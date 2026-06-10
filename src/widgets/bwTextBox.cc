@@ -8,39 +8,37 @@ namespace bWidgets
 {
 	bwTextBox::bwTextBox(std::optional<uint32_t> width_hint,
 		std::optional<uint32_t> height_hint)
-		: bwWidget(width_hint, height_hint), selection_rectangle(bwRectanglePixel())
+		: bwWidget(width_hint, height_hint)
+		, selection_rectangle(bwRectanglePixel())
 	{
 		initialize();
 	}
 
-	void bwTextBox::draw(bwStyle& style)
+	void bwTextBox::draw()
 	{
+		auto& style = getStyle<bwTextBox>();
+
 		bwRectanglePixel inner_rect = rectangle;
 		const bwGradient gradient
 		{ 
-			base_style.backgroundColor(),
-			base_style.shadeTop(),
-			base_style.shadeBottom()
+			style.background_color,
+			style.shadeTop(),
+			style.shadeBottom()
 		};
 		bwPainter painter;
 
-		painter.drawRoundboxWidgetBase(base_style, style, inner_rect, gradient, base_style.corner_radius);
+		painter.drawRoundboxWidgetBase(style, inner_rect, gradient);
 
 		// Text editing
 		if (is_text_editing && !selection_rectangle.isEmpty())
 		{
 			// Selection drawing
 			painter.active_drawtype = bwPainter::DrawType::FILLED;
-			painter.setActiveColor(base_style.decorationColor());
+			painter.setActiveColor(style.decoration_color);
 			painter.drawRectangle(selection_rectangle);
 		}
-		painter.setActiveColor(base_style.textColor());
-		painter.drawText(text, rectangle, base_style.text_alignment);
-	}
-
-	void bwTextBox::registerProperties()
-	{
-		base_style.registerProperties(style_properties);
+		painter.setActiveColor(style.text_color);
+		painter.drawText(text, rectangle, style.text_alignment);
 	}
 
 	bwTextBox& bwTextBox::setText(const std::string& value)
@@ -49,9 +47,9 @@ namespace bWidgets
 		return *this;
 	}
 
-	const std::string* bwTextBox::getLabel() const
+	const std::string_view bwTextBox::getLabel() const
 	{
-		return &text;
+		return std::string_view(text);
 	}
 
 	bool bwTextBox::canAlign() const
