@@ -12,6 +12,8 @@ namespace bWidgets
 	class bwContainerWidget : public bwWidget
 	{
 	public:
+		static constexpr std::string_view identifier = "bwContainerWidget";
+
 		virtual bwRectanglePixel getMaskRectangle();
 		virtual bool childrenVisible() const;
 
