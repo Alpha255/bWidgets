@@ -98,6 +98,8 @@ namespace bWidgets
 	private:
 		friend class bwStyleManager;
 
+		static constexpr std::string_view identifier = "bwStyle";
+
 		bwStyle(Type in_type)
 			: type(in_type)
 		{
@@ -108,6 +110,12 @@ namespace bWidgets
 		{
 			auto it = widget_styles.find(std::string(Widget::identifier));
 			return it == widget_styles.cend() ? nullptr : &it->second;
+		}
+
+		template<class Widget>
+		inline void registerWidgetStyle()
+		{
+			widget_styles.emplace(std::make_pair(std::string(Widget::identifier), bwWidgetStyle()));
 		}
 
 		bool in_use = false;

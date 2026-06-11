@@ -59,6 +59,8 @@ namespace bWidgets
 			return *styles[static_cast<size_t>(type)];
 		}
 
+		void createDefaultWidgetStyles(bwStyle::Type type);
+
 		using onSetStyleCallback = std::function<void(bwStyle::Type)>;
 
 		template<class Widget>
@@ -67,7 +69,8 @@ namespace bWidgets
 			onSetStyleCallbacks.emplace_back(std::move(callback));
 		}
 	private:
-		bwStyleManager() = default;
+		bwStyleManager();
+
 		bwStyleManager(bwStyleManager const&) = delete;
 		void operator=(bwStyleManager const&) = delete;
 

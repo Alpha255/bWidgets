@@ -1,11 +1,13 @@
 #include <cassert>
 #include <filesystem>
+#include <fstream>
 #include <string>
 #include <cereal/archives/json.hpp>
 
 #include "bwStyleManager.h"
 #include "widgets/bwAbstractButton.h"
 #include "widgets/bwCheckbox.h"
+#include "widgets/bwContainerWidget.h"
 #include "widgets/bwLabel.h"
 #include "widgets/bwMenuBar.h"
 #include "widgets/bwMenuButton.h"
@@ -21,6 +23,38 @@
 namespace bWidgets
 {
 	bool bwStyleManager::s_initialized = false;
+
+	bwStyleManager::bwStyleManager()
+	{
+		for (uint32_t index = 0u; index < styles.size(); ++index)
+		{
+			styles[index].reset(new bwStyle(static_cast<bwStyle::Type>(index)));
+		}
+	}
+
+	void bwStyleManager::createDefaultWidgetStyles(bwStyle::Type type)
+	{
+#define REGISTER_DEFAULT_WIDGET_STYLE(Type) getStyle(type).registerWidgetStyle<Type>()
+
+		REGISTER_DEFAULT_WIDGET_STYLE(bwAbstractButton);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwContainerWidget);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwCheckbox);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwLabel);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwMenuBar);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwMenuButton);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwNumberSlider);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwPanel);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwPopupMenu);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwPushButton);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwRadioButton);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwScrollBar);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwScrollView);
+		REGISTER_DEFAULT_WIDGET_STYLE(bwTextBox);
+
+		save(type);
+
+#undef REGISTER_DEFAULT_WIDGET_STYLE
+	}
 
 	std::filesystem::path getStyleFilePath(bwStyle::Type type)
 	{
@@ -56,6 +90,11 @@ namespace bWidgets
 				type = static_cast<bwStyle::Type>(static_cast<size_t>(type) + 1u);
 			}
 
+			if (instance.current_style == bwStyle::Type::NUM)
+			{
+				instance.current_style = bwStyle::Type::DARK;
+			}
+
 			s_initialized = true;
 		}
 
@@ -64,10 +103,27 @@ namespace bWidgets
 
 	void bwStyleManager::save(bwStyle::Type type)
 	{
+		auto path = getStyleFilePath(type);
+		std::ofstream file(path);
+		cereal::JSONOutputArchive archive(file);
+		archive(
+			cereal::make_nvp(bwStyle::identifier.data(), getStyle(type))
+		);
 	}
 
 	void bwStyleManager::load(bwStyle::Type type)
 	{
+		auto path = getStyleFilePath(type);
+		if (!std::filesystem::exists(path))
+		{
+			createDefaultWidgetStyles(type);
+		}
+
+		std::ifstream file(path);
+		cereal::JSONInputArchive archive(file);
+		archive(
+			cereal::make_nvp(bwStyle::identifier.data(), getStyle(type))
+		);
 	}
 
 	void bwStyleManager::setStyle(bwStyle::Type type)
@@ -75,7 +131,7 @@ namespace bWidgets
 		current_style = type;
 		getStyle(type).in_use = true;
 
-		for (auto& callback : onSetStyleCallbacks) 
+		for (auto& callback : onSetStyleCallbacks)
 		{
 			callback(type);
 		}
@@ -91,7 +147,7 @@ namespace bWidgets
 	};
 
 #define WIDGET_STYLE_STATIC_REGISTER(Type) \
-	static bwWidgetStyleRegister<Type> s_##Type##_style_register;
+		static bwWidgetStyleRegister<Type> s_##Type##_style_register;
 
 	WIDGET_STYLE_STATIC_REGISTER(bwAbstractButton);
 	WIDGET_STYLE_STATIC_REGISTER(bwContainerWidget);
